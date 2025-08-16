@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - IT Store{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-2">
+                                <i class="fas fa-tachometer-alt me-3"></i>
+                                Welcome back, {{ user.get_full_name|default:user.email }}!
+                            </h2>
+                            <p class="mb-0">Manage your account, view orders, and get support</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <div class="me-3">
+                                    <h4 class="mb-0">{{ user.user_type|title }}</h4>
+                                    <small>Account Type</small>
+                                </div>
+                                <div class="bg-white bg-opacity-25 rounded-circle p-3">
+                                    <i class="fas fa-user fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-3">
+                <i class="fas fa-bolt me-2 text-warning"></i>
+                Quick Actions
+            </h4>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="fas fa-shopping-cart fa-2x text-primary"></i>
+                    </div>
+                    <h6 class="card-title">Shop Products</h6>
+                    <p class="card-text text-muted small">Browse our IT materials and security equipment</p>
+                    <a href="{% url 'store:product_list' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-arrow-right me-1"></i>
+                        Browse Products
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="fas fa-headset fa-2x text-success"></i>
+                    </div>
+                    <h6 class="card-title">Get Support</h6>
+                    <p class="card-text text-muted small">Create support tickets for technical issues</p>
+                    <a href="{% url 'support:ticket_list' %}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-arrow-right me-1"></i>
+                        Support Center
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="fas fa-tools fa-2x text-info"></i>
+                    </div>
+                    <h6 class="card-title">Request Service</h6>
+                    <p class="card-text text-muted small">Schedule technical support and maintenance</p>
+                    <a href="{% url 'support:service_list' %}" class="btn btn-outline-info btn-sm">
+                        <i class="fas fa-arrow-right me-1"></i>
+                        Request Service
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <i class="fas fa-user-edit fa-2x text-warning"></i>
+                    </div>
+                    <h6 class="card-title">Edit Profile</h6>
+                    <p class="card-text text-muted small">Update your personal information</p>
+                    <a href="{% url 'users:profile' %}" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-arrow-right me-1"></i>
+                        Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Content -->
+    <div class="row">
+        <!-- Left Column - Account & Orders -->
+        <div class="col-md-8">
+            <!-- Recent Orders -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2 text-primary"></i>
+                            Recent Orders
+                        </h5>
+                        <a href="{% url 'store:product_list' %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>
+                            New Order
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                        <h6 class="text-muted">No orders yet</h6>
+                        <p class="text-muted small">Start shopping to see your order history here</p>
+                        <a href="{% url 'store:product_list' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-shopping-cart me-2"></i>
+                            Start Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Tickets -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-ticket-alt me-2 text-success"></i>
+                            Support Tickets
+                        </h5>
+                        <a href="{% url 'support:ticket_list' %}" class="btn btn-success btn-sm">
+                            <i class="fas fa-plus me-1"></i>
+                            New Ticket
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="text-center py-4">
+                        <i class="fas fa-headset fa-3x text-muted mb-3"></i>
+                        <h6 class="text-muted">No support tickets</h6>
+                        <p class="text-muted small">Create a ticket when you need technical support</p>
+                        <a href="{% url 'support:ticket_list' %}" class="btn btn-outline-success">
+                            <i class="fas fa-plus me-2"></i>
+                            Create Ticket
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Account Info & Quick Stats -->
+        <div class="col-md-4">
+            <!-- Account Information -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h6 class="mb-0">
+                        <i class="fas fa-user-circle me-2 text-info"></i>
+                        Account Information
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted">Email</small>
+                        <div class="fw-bold">{{ user.email }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted">Full Name</small>
+                        <div class="fw-bold">{{ user.get_full_name|default:"Not provided" }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted">Account Type</small>
+                        <div class="fw-bold">{{ user.user_type|title }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted">Phone</small>
+                        <div class="fw-bold">{{ user.phone|default:"Not provided" }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted">Company</small>
+                        <div class="fw-bold">{{ user.company|default:"Not provided" }}</div>
+                    </div>
+                    <div class="d-grid">
+                        <a href="{% url 'users:profile' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-edit me-2"></i>
+                            Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-bar me-2 text-warning"></i>
+                        Quick Stats
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <div class="bg-primary bg-opacity-10 rounded p-3">
+                                <h4 class="text-primary mb-1">0</h4>
+                                <small class="text-muted">Orders</small>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="bg-success bg-opacity-10 rounded p-3">
+                                <h4 class="text-success mb-1">0</h4>
+                                <small class="text-muted">Tickets</small>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="bg-info bg-opacity-10 rounded p-3">
+                                <h4 class="text-info mb-1">0</h4>
+                                <small class="text-muted">Services</small>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="bg-warning bg-opacity-10 rounded p-3">
+                                <h4 class="text-warning mb-1">0</h4>
+                                <small class="text-muted">Cart Items</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h6 class="mb-0">
+                        <i class="fas fa-link me-2 text-secondary"></i>
+                        Quick Links
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'store:home' %}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-home me-2"></i>
+                            Home
+                        </a>
+                        <a href="{% url 'users:change_password' %}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-key me-2"></i>
+                            Change Password
+                        </a>
+                        <a href="{% url 'support:document_list' %}" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-file-alt me-2"></i>
+                            Documents
+                        </a>
+                        <a href="{% url 'users:logout' %}" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-sign-out-alt me-2"></i>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 15px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.rounded-circle {
+    transition: all 0.3s ease;
+}
+
+.rounded-circle:hover {
+    transform: scale(1.1);
+}
+
+.bg-opacity-10 {
+    background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+}
+
+.text-primary {
+    color: #0d6efd !important;
+}
+
+.text-success {
+    color: #198754 !important;
+}
+
+.text-info {
+    color: #0dcaf0 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.badge {
+    font-size: 0.75em;
+}
+</style>
+{% endblock %}

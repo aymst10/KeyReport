@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Verify Email - IT Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white text-center py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-envelope me-2"></i>
+                        Verify Your Email
+                    </h2>
+                    <p class="mb-0 mt-2">Check your inbox for the verification code</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="text-center mb-4">
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-envelope fa-2x text-primary"></i>
+                        </div>
+                        <h5>Verification Code Sent!</h5>
+                        <p class="text-muted">
+                            We've sent a 6-digit verification code to:<br>
+                            <strong>{{ email }}</strong>
+                        </p>
+                    </div>
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            {{ form.verification_code|as_crispy_field }}
+                        </div>
+                        
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check me-2"></i>
+                                Verify Email
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="text-center">
+                        <p class="text-muted mb-2">Didn't receive the code?</p>
+                        <a href="{% url 'users:resend_verification' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-redo me-2"></i>
+                            Resend Code
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card-footer text-center py-3">
+                    <p class="mb-0">
+                        <a href="{% url 'users:signup' %}" class="text-decoration-none">
+                            <i class="fas fa-arrow-left me-1"></i>
+                            Back to Sign Up
+                        </a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Help Section -->
+            <div class="card mt-4 border-0 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-question-circle me-2 text-primary"></i>
+                        Need Help?
+                    </h6>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Check your spam/junk folder
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Make sure the email address is correct
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            Wait a few minutes for the email to arrive
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.btn-success {
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-weight: 600;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+.rounded-circle {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+}
+
+.text-primary {
+    color: #0d6efd !important;
+}
+</style>
+
+<script>
+// Auto-focus on verification code input
+document.addEventListener('DOMContentLoaded', function() {
+    const codeInput = document.querySelector('input[name="verification_code"]');
+    if (codeInput) {
+        codeInput.focus();
+    }
+    
+    // Auto-advance to next input (if you want to split into 6 separate inputs)
+    codeInput.addEventListener('input', function(e) {
+        if (this.value.length === 6) {
+            this.form.submit();
+        }
+    });
+});
+</script>
+{% endblock %}

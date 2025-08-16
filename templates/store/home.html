@@ -1,0 +1,774 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}IT Store - Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <!-- User Profile Section -->
+        <div class="user-profile">
+            <div class="profile-picture">
+                {% if user.is_authenticated %}
+                    <i class="fas fa-user fa-2x"></i>
+                {% else %}
+                    <i class="fas fa-user-circle fa-2x"></i>
+                {% endif %}
+            </div>
+            <div class="user-info">
+                {% if user.is_authenticated %}
+                    <h6 class="user-name">{{ user.get_full_name|default:user.email }}</h6>
+                    <div class="user-status">
+                        <span class="status-item">3/6</span>
+                        <span class="status-item">4/5</span>
+                        <span class="status-item">Active</span>
+                    </div>
+                {% else %}
+                    <h6 class="user-name">Guest User</h6>
+                    <div class="user-status">
+                        <span class="status-item">Please Login</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li class="nav-item active">
+                    <a href="{% url 'store:home' %}" class="nav-link">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'store:product_list' %}" class="nav-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'support:ticket_list' %}" class="nav-link">
+                        <i class="fas fa-headset"></i>
+                        <span>Support</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'support:service_list' %}" class="nav-link">
+                        <i class="fas fa-tools"></i>
+                        <span>Services</span>
+                    </a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a href="{% url 'users:dashboard' %}" class="nav-link">
+                        <i class="fas fa-user-cog"></i>
+                        <span>My Account</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'support:document_list' %}" class="nav-link">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Documents</span>
+                    </a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Top Header -->
+        <div class="top-header">
+            <div class="header-left">
+                <h1 class="page-title">
+                    <i class="fas fa-laptop-code me-3"></i>
+                    IT Store Dashboard
+                </h1>
+                <p class="page-subtitle">Manage your IT materials and technical support</p>
+            </div>
+            <div class="header-right">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search products, services...">
+                </div>
+                {% if user.is_authenticated %}
+                <div class="user-actions">
+                    <a href="{% url 'users:profile' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-user me-2"></i>Profile
+                    </a>
+                    <a href="{% url 'users:logout' %}" class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </div>
+                {% else %}
+                <div class="auth-actions">
+                    <a href="{% url 'users:login' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                    <a href="{% url 'users:signup' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-user-plus me-2"></i>Sign Up
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Project Overview Cards -->
+        <div class="overview-section">
+            <div class="section-header">
+                <h3>System Overview</h3>
+                <div class="action-buttons">
+                    <button class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-2"></i>New Project
+                    </button>
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-download me-2"></i>Export
+                    </button>
+                </div>
+            </div>
+            
+            <div class="overview-cards">
+                <div class="overview-card">
+                    <div class="card-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="card-content">
+                        <h4>Products Available</h4>
+                        <p class="card-value">156</p>
+                        <p class="card-subtitle">IT Materials & Equipment</p>
+                    </div>
+                </div>
+                
+                <div class="overview-card">
+                    <div class="card-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div class="card-content">
+                        <h4>Active Tickets</h4>
+                        <p class="card-value">23</p>
+                        <p class="card-subtitle">Support Requests</p>
+                    </div>
+                </div>
+                
+                <div class="overview-card">
+                    <div class="card-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="card-content">
+                        <h4>Services</h4>
+                        <p class="card-value">8</p>
+                        <p class="card-subtitle>Technical Support</p>
+                    </div>
+                </div>
+                
+                <div class="overview-card">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-content">
+                        <h4>Customers</h4>
+                        <p class="card-value">89</p>
+                        <p class="card-subtitle">Registered Users</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Content -->
+        <div class="dashboard-content">
+            <div class="content-left">
+                <!-- Recent Activities -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-clock me-2"></i>Recent Activities</h5>
+                        <a href="#" class="btn btn-outline-primary btn-sm">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-shopping-cart text-primary"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h6>New Order Placed</h6>
+                                    <p>Security camera system ordered by TechCorp</p>
+                                    <small class="text-muted">2 hours ago</small>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-ticket-alt text-success"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h6>Support Ticket Resolved</h6>
+                                    <p>Network configuration issue fixed</p>
+                                    <small class="text-muted">4 hours ago</small>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-tools text-warning"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h6>Service Request</h6>
+                                    <p>Maintenance scheduled for next week</p>
+                                    <small class="text-muted">1 day ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="quick-actions">
+                            <a href="{% url 'store:product_list' %}" class="action-btn">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Shop Products</span>
+                            </a>
+                            <a href="{% url 'support:ticket_list' %}" class="action-btn">
+                                <i class="fas fa-headset"></i>
+                                <span>Get Support</span>
+                            </a>
+                            <a href="{% url 'support:service_list' %}" class="action-btn">
+                                <i class="fas fa-tools"></i>
+                                <span>Request Service</span>
+                            </a>
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'users:profile' %}" class="action-btn">
+                                <i class="fas fa-user-edit"></i>
+                                <span>Edit Profile</span>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-right">
+                <!-- Summary Stats -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-bar me-2"></i>Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="summary-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Total Orders</span>
+                                <span class="stat-value">1,247</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Revenue</span>
+                                <span class="stat-value">$45,892</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Support Tickets</span>
+                                <span class="stat-value">156</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Products Sold</span>
+                                <span class="stat-value">892</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-list me-2"></i>Recent Orders</h5>
+                        <a href="#" class="btn btn-outline-primary btn-sm">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="order-list">
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <h6>Security Camera System</h6>
+                                    <p class="text-muted">Order #DC-2024-1403</p>
+                                </div>
+                                <div class="order-status">
+                                    <span class="badge bg-success">Completed</span>
+                                </div>
+                            </div>
+                            
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <h6>Network Scanner</h6>
+                                    <p class="text-muted">Order #BAR-TH-172</p>
+                                </div>
+                                <div class="order-status">
+                                    <span class="badge bg-warning">Processing</span>
+                                </div>
+                            </div>
+                            
+                            <div class="order-item">
+                                <div class="order-info">
+                                    <h6>Thermostat Programmable</h6>
+                                    <p class="text-muted">Order #BAR-TH-108</p>
+                                </div>
+                                <div class="order-status">
+                                    <span class="badge bg-info">Shipped</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 20px 0;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.user-profile {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+}
+
+.profile-picture {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+}
+
+.user-name {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.user-status {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.status-item {
+    background: rgba(255,255,255,0.1);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+}
+
+.sidebar-nav {
+    padding: 0 20px;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin-bottom: 5px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    transform: translateX(5px);
+}
+
+.nav-link.active {
+    background: #3498db;
+    color: white;
+}
+
+.nav-link i {
+    width: 20px;
+    margin-right: 12px;
+}
+
+/* Main Content Styles */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 20px;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.page-title {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.8rem;
+}
+
+.page-subtitle {
+    margin: 5px 0 0;
+    color: #7f8c8d;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar input {
+    padding: 10px 15px 10px 40px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    width: 300px;
+    outline: none;
+}
+
+.search-bar i {
+    position: absolute;
+    left: 15px;
+    color: #7f8c8d;
+}
+
+/* Overview Section */
+.overview-section {
+    margin-bottom: 30px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h3 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.overview-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.overview-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.overview-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+}
+
+.card-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.card-content h4 {
+    margin: 0 0 5px;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.card-value {
+    margin: 0 0 5px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.card-subtitle {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #95a5a6;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    padding: 20px 20px 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h5 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Activity List */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-content h6 {
+    margin: 0 0 5px;
+    font-size: 0.9rem;
+    color: #2c3e50;
+}
+
+.activity-content p {
+    margin: 0 0 5px;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+.activity-content small {
+    font-size: 0.75rem;
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #2c3e50;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.action-btn:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+    color: #2c3e50;
+}
+
+.action-btn i {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #3498db;
+}
+
+.action-btn span {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Summary Stats */
+.summary-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.stat-value {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+/* Order List */
+.order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.order-info h6 {
+    margin: 0 0 5px;
+    font-size: 0.9rem;
+    color: #2c3e50;
+}
+
+.order-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #7f8c8d;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .dashboard-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .overview-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .header-right {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .search-bar input {
+        width: 250px;
+    }
+}
+</style>
+{% endblock %}

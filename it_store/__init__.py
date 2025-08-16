@@ -1,0 +1,1 @@
+# IT Store Django Project
