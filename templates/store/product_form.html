@@ -1,0 +1,403 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if object %}Modifier le Produit{% else %}Nouveau Produit{% endif %} - KeyReport
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-form-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 40px 20px;
+    }
+
+    .form-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .form-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .form-subtitle {
+        color: #7f8c8d;
+        font-size: 1.1rem;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 8px;
+        font-size: 1rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #fff;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 5px;
+    }
+
+    .form-text {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-top: 5px;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 40px;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: #f8f9fa;
+        color: #6c757d;
+        border: 2px solid #e9ecef;
+    }
+
+    .btn-secondary:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+        color: #6c757d;
+        text-decoration: none;
+    }
+
+    .image-preview {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 10px;
+        margin-top: 10px;
+        border: 2px solid #e9ecef;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .form-card {
+            padding: 30px 20px;
+            margin: 10px;
+        }
+
+        .form-title {
+            font-size: 2rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="product-form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h1 class="form-title">
+                {% if object %}
+                    <i class="fas fa-edit"></i> Modifier le Produit
+                {% else %}
+                    <i class="fas fa-plus"></i> Nouveau Produit
+                {% endif %}
+            </h1>
+            <p class="form-subtitle">
+                {% if object %}
+                    Modifiez les informations de votre produit
+                {% else %}
+                    Ajoutez un nouveau produit à votre catalogue
+                {% endif %}
+            </p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}" class="form-label">
+                    <i class="fas fa-tag"></i> Nom du Produit
+                </label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.name.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}" class="form-label">
+                    <i class="fas fa-align-left"></i> Description
+                </label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.description.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.price.id_for_label }}" class="form-label">
+                        <i class="fas fa-dollar-sign"></i> Prix (MAD)
+                    </label>
+                    {{ form.price }}
+                    {% if form.price.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.price.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.stock.id_for_label }}" class="form-label">
+                        <i class="fas fa-boxes"></i> Stock
+                    </label>
+                    {{ form.stock }}
+                    {% if form.stock.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.stock.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.category.id_for_label }}" class="form-label">
+                        <i class="fas fa-folder"></i> Catégorie
+                    </label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.category.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.brand.id_for_label }}" class="form-label">
+                        <i class="fas fa-industry"></i> Marque
+                    </label>
+                    {{ form.brand }}
+                    {% if form.brand.errors %}
+                        <div class="invalid-feedback">
+                            {{ form.brand.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.image.id_for_label }}" class="form-label">
+                    <i class="fas fa-image"></i> Image du Produit
+                </label>
+                {{ form.image }}
+                {% if form.image.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.image.errors.0 }}
+                    </div>
+                {% endif %}
+                {% if object.image %}
+                    <img src="{{ object.image.url }}" alt="Image actuelle" class="image-preview">
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.slug.id_for_label }}" class="form-label">
+                    <i class="fas fa-link"></i> URL (Slug)
+                </label>
+                {{ form.slug }}
+                <div class="form-text">L'URL sera générée automatiquement à partir du nom</div>
+                {% if form.slug.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.slug.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-toggle-on"></i> Statut
+                </label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    {{ form.is_active }}
+                    <span>Produit actif</span>
+                </div>
+                {% if form.is_active.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.is_active.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    {% if object %}Mettre à jour{% else %}Créer le Produit{% endif %}
+                </button>
+                <a href="{% url 'store:admin_dashboard' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-generate slug from name
+    const nameField = document.getElementById('{{ form.name.id_for_label }}');
+    const slugField = document.getElementById('{{ form.slug.id_for_label }}');
+    
+    if (nameField && slugField) {
+        nameField.addEventListener('input', function() {
+            const slug = this.value
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim('-');
+            slugField.value = slug;
+        });
+    }
+
+    // Image preview
+    const imageField = document.getElementById('{{ form.image.id_for_label }}');
+    if (imageField) {
+        imageField.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    let preview = document.querySelector('.image-preview');
+                    if (!preview) {
+                        preview = document.createElement('img');
+                        preview.className = 'image-preview';
+                        imageField.parentNode.appendChild(preview);
+                    }
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+            alert('Veuillez remplir tous les champs obligatoires.');
+        }
+    });
+});
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

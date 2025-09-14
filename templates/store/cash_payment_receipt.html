@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reçu de Paiement à la Livraison - Key Reports Analytics{% endblock %}
+
+{% block extra_css %}
+<style>
+    .receipt-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .receipt-header {
+        background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        color: white;
+        border-radius: 15px 15px 0 0;
+        padding: 2rem;
+        text-align: center;
+    }
+    .delivery-code {
+        font-family: 'Courier New', monospace;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #27ae60;
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        border: 3px solid #27ae60;
+        text-align: center;
+        margin: 1.5rem 0;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .order-details {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+    .item-row {
+        border-bottom: 1px solid #dee2e6;
+        padding: 0.5rem 0;
+    }
+    .item-row:last-child {
+        border-bottom: none;
+    }
+    .print-section {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+    .qr-code {
+        text-align: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 10px;
+        margin: 1rem 0;
+    }
+    .instructions {
+        background: #e8f5e8;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+    @media print {
+        .no-print { display: none !important; }
+        .receipt-card { box-shadow: none; }
+        .delivery-code { border: 2px solid #000; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card receipt-card">
+                <div class="receipt-header">
+                    <i class="fas fa-truck fa-3x mb-3"></i>
+                    <h2>Paiement à la Livraison</h2>
+                    <p class="mb-0">Votre commande sera livrée et payée en espèces</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <!-- Code de livraison -->
+                    <div class="text-center">
+                        <h5 class="mb-3">
+                            <i class="fas fa-qrcode me-2"></i>Code de Livraison
+                        </h5>
+                        <div class="delivery-code" id="deliveryCode">
+                            {{ delivery_code }}
+                        </div>
+                        <p class="text-muted">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Montrez ce code au livreur lors de la livraison
+                        </p>
+                    </div>
+
+                    <!-- Détails de la commande -->
+                    <div class="order-details">
+                        <h5 class="mb-3">
+                            <i class="fas fa-receipt me-2"></i>Détails de la commande
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Numéro de commande:</strong><br>
+                                <span class="text-primary">{{ order.order_number }}</span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Date de commande:</strong><br>
+                                <span>{{ order.created_at|date:"d/m/Y à H:i" }}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Client:</strong><br>
+                                {{ order.customer.get_full_name|default:order.customer.username }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Téléphone:</strong><br>
+                                {{ order.customer.phone|default:"Non renseigné" }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Articles commandés -->
+                    <div class="mt-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-shopping-cart me-2"></i>Articles commandés
+                        </h5>
+                        <div class="order-details">
+                            {% for item in order.items.all %}
+                            <div class="item-row">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong>{{ item.product_name }}</strong><br>
+                                        <small class="text-muted">Quantité: {{ item.quantity }}</small>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <small class="text-muted">{{ item.unit_price|floatformat:0 }} MAD</small>
+                                    </div>
+                                    <div class="col-md-3 text-end">
+                                        <strong>{{ item.total_price|floatformat:0 }} MAD</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="text-end mt-3">
+                        <div class="row">
+                            <div class="col-md-6"></div>
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between">
+                                    <span>Sous-total:</span>
+                                    <span>{{ order.subtotal|floatformat:0 }} MAD</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Livraison:</span>
+                                    <span>Gratuite</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <strong>Total à payer:</strong>
+                                    <strong class="text-success fs-5">{{ order.total_amount|floatformat:0 }} MAD</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instructions pour la livraison -->
+                    <div class="instructions">
+                        <h6><i class="fas fa-list-check me-2"></i>Instructions pour la livraison:</h6>
+                        <ul class="mb-0">
+                            <li>Préparez exactement <strong>{{ order.total_amount|floatformat:0 }} MAD</strong> en espèces</li>
+                            <li>Montrez ce reçu et le code de livraison au livreur</li>
+                            <li>Vérifiez vos articles avant de payer</li>
+                            <li>Le livreur vous remettra un reçu de paiement</li>
+                            <li>Conservez ce document jusqu'à la livraison</li>
+                        </ul>
+                    </div>
+
+                    <!-- Section impression -->
+                    <div class="print-section">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h6 class="mb-1">
+                                    <i class="fas fa-print me-2"></i>Imprimez ce reçu
+                                </h6>
+                                <small class="text-muted">Gardez ce document avec vous lors de la livraison</small>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="btn btn-warning" onclick="window.print()">
+                                    <i class="fas fa-print me-2"></i>Imprimer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 no-print">
+                        <a href="{% url 'store:order_detail' order.id %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Retour à la commande
+                        </a>
+                        <button class="btn btn-primary" onclick="copyDeliveryCode()">
+                            <i class="fas fa-copy me-2"></i>Copier le code
+                        </button>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="text-center mt-4 no-print">
+                        <small class="text-muted">
+                            Questions sur votre commande ? Contactez-nous au 
+                            <strong>+212 5XX XXX XXX</strong> ou 
+                            <a href="mailto:contact@keyreport.ma">contact@keyreport.ma</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyDeliveryCode() {
+    const deliveryCode = document.getElementById('deliveryCode').textContent.trim();
+    
+    navigator.clipboard.writeText(deliveryCode).then(function() {
+        // Show success message
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copié!';
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-success');
+        
+        setTimeout(function() {
+            button.innerHTML = originalText;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-primary');
+        }, 2000);
+    }).catch(function(err) {
+        console.error('Erreur lors de la copie: ', err);
+        alert('Erreur lors de la copie. Le code est: ' + deliveryCode);
+    });
+}
+
+// Auto-print on mobile devices (optional)
+if (window.innerWidth < 768) {
+    setTimeout(function() {
+        if (confirm('Voulez-vous imprimer ce reçu maintenant ?')) {
+            window.print();
+        }
+    }, 1000);
+}
+</script>
+{% endblock %}
+

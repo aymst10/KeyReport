@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - KeyReport IT Solutions{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-primary">Contact Us</h1>
+                <p class="lead text-muted">Get in touch with our IT experts</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Contact Information -->
+        <div class="col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Contact Information
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="contact-item mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Email</h5>
+                                <p class="text-muted mb-0">contact@keyreport.ma</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-item mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon bg-success text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Phone</h5>
+                                <p class="text-muted mb-0">+212 5XX XXX XXX</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-item mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon bg-warning text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Address</h5>
+                                <p class="text-muted mb-0">123 Avenue Mohammed V<br>Casablanca 20000, Morocco</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="d-flex align-items-center">
+                            <div class="contact-icon bg-info text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Company</h5>
+                                <p class="text-muted mb-0">KeyReport IT Solutions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-paper-plane me-2"></i>Send us a Message
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'store:contact_demo' %}">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="subject" class="form-label">Subject *</label>
+                                <select class="form-select" id="subject" name="subject" required>
+                                    <option value="">Choose a subject</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="support">Technical Support</option>
+                                    <option value="sales">Sales Question</option>
+                                    <option value="service">Service Request</option>
+                                    <option value="partnership">Partnership</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="message" class="form-label">Message *</label>
+                                <textarea class="form-control" id="message" name="message" rows="5" required placeholder="Please describe your inquiry in detail..."></textarea>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter">
+                                    <label class="form-check-label" for="newsletter">
+                                        Subscribe to our newsletter for updates and promotions
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Business Hours -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-clock me-2"></i>Business Hours
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Office Hours</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM</li>
+                                <li><strong>Saturday:</strong> 9:00 AM - 2:00 PM</li>
+                                <li><strong>Sunday:</strong> Closed</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Support Hours</h5>
+                            <ul class="list-unstyled">
+                                <li><strong>Technical Support:</strong> 24/7</li>
+                                <li><strong>Emergency Service:</strong> 24/7</li>
+                                <li><strong>Online Support:</strong> 24/7</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-cogs me-2"></i>Our Services
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="service-icon bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-laptop"></i>
+                                </div>
+                                <h6>Hardware Sales</h6>
+                                <p class="text-muted small">Quality IT components and equipment</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="service-icon bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-tools"></i>
+                                </div>
+                                <h6>Installation</h6>
+                                <p class="text-muted small">Professional setup and configuration</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="service-icon bg-warning text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-wrench"></i>
+                                </div>
+                                <h6>Maintenance</h6>
+                                <p class="text-muted small">Regular maintenance and updates</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <div class="service-icon bg-info text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-headset"></i>
+                                </div>
+                                <h6>Support</h6>
+                                <p class="text-muted small">24/7 technical support</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.contact-item {
+    transition: transform 0.2s ease;
+}
+
+.contact-item:hover {
+    transform: translateX(5px);
+}
+
+.service-icon {
+    transition: transform 0.2s ease;
+}
+
+.service-icon:hover {
+    transform: scale(1.1);
+}
+
+.card {
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+</style>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

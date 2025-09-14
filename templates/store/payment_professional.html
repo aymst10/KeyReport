@@ -1,0 +1,702 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Paiement Sécurisé{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .payment-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f8f9fa;
+    }
+    
+    .payment-header h1 {
+        color: #2c3e50;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .payment-header p {
+        color: #6c757d;
+        font-size: 1.1rem;
+    }
+    
+    .order-summary {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .order-summary h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
+    
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .order-item:last-child {
+        border-bottom: none;
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: #2c3e50;
+    }
+    
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .payment-method-card {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #fff;
+    }
+    
+    .payment-method-card:hover {
+        border-color: #007bff;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,123,255,0.1);
+    }
+    
+    .payment-method-card.selected {
+        border-color: #007bff;
+        background: #f8f9ff;
+    }
+    
+    .payment-method-card input[type="radio"] {
+        display: none;
+    }
+    
+    .payment-method-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .payment-method-title {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.25rem;
+    }
+    
+    .payment-method-desc {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .payment-form {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+    }
+    
+    .card-input-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .btn-pay {
+        width: 100%;
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+    
+    .btn-pay:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+    }
+    
+    .btn-pay:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .security-badges {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    .security-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #28a745;
+        font-size: 0.9rem;
+    }
+    
+    .loading {
+        display: none;
+        text-align: center;
+        margin-top: 1rem;
+    }
+    
+    .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #007bff;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 0.75rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .success-message {
+        background: #d4edda;
+        color: #155724;
+        padding: 0.75rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .field-error {
+        border: 2px solid #dc3545 !important;
+        background-color: #fff5f5;
+    }
+    
+    .field-success {
+        border: 2px solid #28a745 !important;
+        background-color: #f8fff8;
+    }
+    
+    .validation-message {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+    }
+    
+    .validation-error {
+        color: #dc3545;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .validation-success {
+        color: #155724;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .card-brand-indicator {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        opacity: 0.7;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <div class="payment-header">
+        <h1><i class="fas fa-credit-card"></i> Paiement Sécurisé</h1>
+        <p>Finalisez votre commande en toute sécurité</p>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="order-summary">
+        <h3><i class="fas fa-shopping-cart"></i> Résumé de la commande</h3>
+        {% for item in order.items.all %}
+        <div class="order-item">
+            <span>{{ item.product.name }} x{{ item.quantity }}</span>
+            <span>{{ item.total_price }} MAD</span>
+        </div>
+        {% endfor %}
+        <div class="order-item">
+            <span><strong>Total</strong></span>
+            <span><strong>{{ order.total_amount }} MAD</strong></span>
+        </div>
+    </div>
+
+    <!-- Shipping Information -->
+    <div class="order-summary">
+        <h3><i class="fas fa-shipping-fast"></i> Informations de livraison</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <strong><i class="fas fa-map-marker-alt me-2"></i>Adresse de livraison:</strong><br>
+                    <span class="text-muted">{{ order.shipping_address }}</span><br>
+                    <span class="text-muted">{{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_zip_code }}</span><br>
+                    <span class="text-muted">{{ order.shipping_country }}</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <strong><i class="fas fa-phone me-2"></i>Contact pour la livraison:</strong><br>
+                    <span class="text-muted">
+                        <i class="fas fa-envelope me-1"></i>{{ order.contact_email }}
+                    </span><br>
+                    <span class="text-muted">
+                        <i class="fas fa-phone me-1"></i>{{ order.contact_phone }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% if order.customer_notes %}
+        <div class="mt-3">
+            <strong><i class="fas fa-sticky-note me-2"></i>Instructions spéciales:</strong><br>
+            <span class="text-muted">{{ order.customer_notes }}</span>
+        </div>
+        {% endif %}
+        <div class="mt-3">
+            <a href="{% url 'store:order_form_edit' order.id %}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-edit me-1"></i>Modifier les informations
+            </a>
+        </div>
+    </div>
+
+    <form method="post" id="paymentForm" action="{% url 'store:process_professional_payment' order.id %}">
+        {% csrf_token %}
+        
+        <!-- Payment Methods -->
+        <div class="payment-methods">
+            <div class="payment-method-card" data-method="credit_card">
+                <input type="radio" name="payment_method" value="credit_card" id="credit_card">
+                <div class="payment-method-icon">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                </div>
+                <div class="payment-method-title">Carte Bancaire</div>
+                <div class="payment-method-desc">Visa, Mastercard</div>
+            </div>
+            
+            <div class="payment-method-card" data-method="paypal">
+                <input type="radio" name="payment_method" value="paypal" id="paypal">
+                <div class="payment-method-icon">
+                    <i class="fab fa-paypal"></i>
+                </div>
+                <div class="payment-method-title">PayPal</div>
+                <div class="payment-method-desc">Paiement rapide et sécurisé</div>
+            </div>
+            
+            <div class="payment-method-card" data-method="cash_delivery">
+                <input type="radio" name="payment_method" value="cash_delivery" id="cash_delivery">
+                <div class="payment-method-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="payment-method-title">Paiement à la livraison</div>
+                <div class="payment-method-desc">Payez en espèces</div>
+            </div>
+        </div>
+
+        <!-- Credit Card Form -->
+        <div class="payment-form" id="creditCardForm" style="display: none;">
+            <h3><i class="fas fa-credit-card"></i> Informations de la carte</h3>
+            
+            <div class="form-group">
+                <label class="form-label">Numéro de carte</label>
+                <div style="position: relative;">
+                    <input type="text" name="card_number" id="card_number" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                    <span class="card-brand-indicator" id="card-brand"></span>
+                </div>
+                <div class="validation-message" id="card_number_error" style="display: none;"></div>
+            </div>
+            
+            <div class="card-input-group">
+                <div class="form-group">
+                    <label class="form-label">Date d'expiration</label>
+                    <input type="text" name="expiry_date" id="expiry_date" class="form-control" placeholder="MM/AA" maxlength="5" required>
+                    <div class="validation-message" id="expiry_date_error" style="display: none;"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CVV</label>
+                    <input type="text" name="cvv" id="cvv" class="form-control" placeholder="123" maxlength="4" required>
+                    <div class="validation-message" id="cvv_error" style="display: none;"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Nom du titulaire</label>
+                <input type="text" name="cardholder_name" id="cardholder_name" class="form-control" placeholder="Nom complet" required>
+                <div class="validation-message" id="cardholder_name_error" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- PayPal Form -->
+        <div class="payment-form" id="paypalForm" style="display: none;">
+            <h3><i class="fab fa-paypal"></i> Connexion PayPal</h3>
+            <p>Vous serez redirigé vers PayPal pour finaliser votre paiement.</p>
+            <div class="form-group">
+                <label class="form-label">Email PayPal</label>
+                <input type="email" name="paypal_email" class="form-control" placeholder="votre@email.com">
+            </div>
+        </div>
+
+        <!-- Cash Delivery Form -->
+        <div class="payment-form" id="cashDeliveryForm" style="display: none;">
+            <h3><i class="fas fa-money-bill-wave"></i> Paiement à la livraison</h3>
+            <p>Vous paierez en espèces lors de la livraison de votre commande.</p>
+            <div class="form-group">
+                <label class="form-label">Montant à payer</label>
+                <input type="text" class="form-control" value="{{ order.total_amount }} MAD" readonly>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-pay" id="payButton">
+            <i class="fas fa-lock"></i> Payer {{ order.total_amount }} MAD
+        </button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Traitement du paiement en cours...</p>
+        </div>
+    </form>
+
+    <div class="security-badges">
+        <div class="security-badge">
+            <i class="fas fa-shield-alt"></i>
+            <span>Paiement sécurisé SSL</span>
+        </div>
+        <div class="security-badge">
+            <i class="fas fa-lock"></i>
+            <span>Données cryptées</span>
+        </div>
+        <div class="security-badge">
+            <i class="fas fa-check-circle"></i>
+            <span>Garantie de sécurité</span>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentMethods = document.querySelectorAll('.payment-method-card');
+    const creditCardForm = document.getElementById('creditCardForm');
+    const paypalForm = document.getElementById('paypalForm');
+    const cashDeliveryForm = document.getElementById('cashDeliveryForm');
+    const payButton = document.getElementById('payButton');
+    const loading = document.getElementById('loading');
+    const form = document.getElementById('paymentForm');
+
+    // Payment method selection
+    paymentMethods.forEach(method => {
+        method.addEventListener('click', function() {
+            // Remove selected class from all methods
+            paymentMethods.forEach(m => m.classList.remove('selected'));
+            
+            // Add selected class to clicked method
+            this.classList.add('selected');
+            
+            // Check the radio button
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            // Show/hide forms
+            creditCardForm.style.display = 'none';
+            paypalForm.style.display = 'none';
+            cashDeliveryForm.style.display = 'none';
+            
+            const methodType = this.dataset.method;
+            if (methodType === 'credit_card') {
+                creditCardForm.style.display = 'block';
+            } else if (methodType === 'paypal') {
+                paypalForm.style.display = 'block';
+            } else if (methodType === 'cash_delivery') {
+                cashDeliveryForm.style.display = 'block';
+            }
+        });
+    });
+
+    // Validation functions
+    function validateCardNumber(cardNumber) {
+        const cleanNumber = cardNumber.replace(/\D/g, '');
+        if (cleanNumber.length < 13 || cleanNumber.length > 19) {
+            return { valid: false, message: 'Le numéro de carte doit contenir entre 13 et 19 chiffres' };
+        }
+        
+        // Luhn algorithm
+        let sum = 0;
+        let isEven = false;
+        for (let i = cleanNumber.length - 1; i >= 0; i--) {
+            let digit = parseInt(cleanNumber[i]);
+            if (isEven) {
+                digit *= 2;
+                if (digit > 9) {
+                    digit -= 9;
+                }
+            }
+            sum += digit;
+            isEven = !isEven;
+        }
+        
+        if (sum % 10 !== 0) {
+            return { valid: false, message: 'Numéro de carte invalide' };
+        }
+        
+        return { valid: true, message: 'Numéro de carte valide' };
+    }
+    
+    function getCardBrand(cardNumber) {
+        const cleanNumber = cardNumber.replace(/\D/g, '');
+        if (cleanNumber.startsWith('4')) return 'visa';
+        if (cleanNumber.startsWith('5') || cleanNumber.startsWith('2')) return 'mastercard';
+        if (cleanNumber.startsWith('3')) return 'amex';
+        return 'unknown';
+    }
+    
+    function validateExpiryDate(expiryDate) {
+        if (!expiryDate || expiryDate.length !== 5) {
+            return { valid: false, message: 'Format invalide (MM/AA)' };
+        }
+        
+        const [month, year] = expiryDate.split('/');
+        const monthNum = parseInt(month);
+        const yearNum = parseInt('20' + year);
+        
+        if (monthNum < 1 || monthNum > 12) {
+            return { valid: false, message: 'Mois invalide' };
+        }
+        
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1;
+        
+        if (yearNum < currentYear || (yearNum === currentYear && monthNum < currentMonth)) {
+            return { valid: false, message: 'Carte expirée' };
+        }
+        
+        return { valid: true, message: 'Date valide' };
+    }
+    
+    function validateCVV(cvv, cardNumber) {
+        const cleanCVV = cvv.replace(/\D/g, '');
+        const cardBrand = getCardBrand(cardNumber);
+        
+        if (cardBrand === 'amex') {
+            if (cleanCVV.length !== 4) {
+                return { valid: false, message: 'CVV doit contenir 4 chiffres pour American Express' };
+            }
+        } else {
+            if (cleanCVV.length !== 3) {
+                return { valid: false, message: 'CVV doit contenir 3 chiffres' };
+            }
+        }
+        
+        return { valid: true, message: 'CVV valide' };
+    }
+    
+    function validateCardholderName(name) {
+        if (!name || name.trim().length < 2) {
+            return { valid: false, message: 'Nom requis (minimum 2 caractères)' };
+        }
+        
+        if (!/^[a-zA-ZÀ-ÿ\s'-]+$/.test(name)) {
+            return { valid: false, message: 'Nom invalide (caractères spéciaux non autorisés)' };
+        }
+        
+        return { valid: true, message: 'Nom valide' };
+    }
+    
+    function showValidationMessage(fieldId, isValid, message) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(fieldId + '_error');
+        
+        if (isValid) {
+            field.classList.remove('field-error');
+            field.classList.add('field-success');
+            errorDiv.style.display = 'none';
+        } else {
+            field.classList.remove('field-success');
+            field.classList.add('field-error');
+            errorDiv.textContent = message;
+            errorDiv.className = 'validation-message validation-error';
+            errorDiv.style.display = 'block';
+        }
+    }
+    
+    function updateCardBrand(cardNumber) {
+        const brandSpan = document.getElementById('card-brand');
+        const brand = getCardBrand(cardNumber);
+        
+        const brandIcons = {
+            'visa': '<i class="fab fa-cc-visa"></i>',
+            'mastercard': '<i class="fab fa-cc-mastercard"></i>',
+            'amex': '<i class="fab fa-cc-amex"></i>',
+            'unknown': '<i class="fas fa-credit-card"></i>'
+        };
+        
+        brandSpan.innerHTML = brandIcons[brand] || brandIcons['unknown'];
+    }
+
+    // Card number formatting and validation
+    const cardNumberInput = document.getElementById('card_number');
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = value;
+            
+            // Update card brand
+            updateCardBrand(value);
+            
+            // Validate
+            const validation = validateCardNumber(value);
+            showValidationMessage('card_number', validation.valid, validation.message);
+        });
+    }
+
+    // Expiry date formatting and validation
+    const expiryInput = document.getElementById('expiry_date');
+    if (expiryInput) {
+        expiryInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+            
+            // Validate
+            const validation = validateExpiryDate(value);
+            showValidationMessage('expiry_date', validation.valid, validation.message);
+        });
+    }
+    
+    // CVV validation
+    const cvvInput = document.getElementById('cvv');
+    if (cvvInput) {
+        cvvInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            e.target.value = value;
+            
+            // Validate
+            const cardNumber = document.getElementById('card_number').value;
+            const validation = validateCVV(value, cardNumber);
+            showValidationMessage('cvv', validation.valid, validation.message);
+        });
+    }
+    
+    // Cardholder name validation
+    const cardholderInput = document.getElementById('cardholder_name');
+    if (cardholderInput) {
+        cardholderInput.addEventListener('input', function(e) {
+            const validation = validateCardholderName(e.target.value);
+            showValidationMessage('cardholder_name', validation.valid, validation.message);
+        });
+    }
+
+    // Form submission validation
+    form.addEventListener('submit', function(e) {
+        const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
+        
+        if (!selectedMethod) {
+            e.preventDefault();
+            alert('Veuillez sélectionner une méthode de paiement');
+            return;
+        }
+        
+        if (selectedMethod.value === 'credit_card') {
+            // Validate all credit card fields
+            const cardNumber = document.getElementById('card_number').value;
+            const expiryDate = document.getElementById('expiry_date').value;
+            const cvv = document.getElementById('cvv').value;
+            const cardholderName = document.getElementById('cardholder_name').value;
+            
+            const cardValidation = validateCardNumber(cardNumber);
+            const expiryValidation = validateExpiryDate(expiryDate);
+            const cvvValidation = validateCVV(cvv, cardNumber);
+            const nameValidation = validateCardholderName(cardholderName);
+            
+            if (!cardValidation.valid || !expiryValidation.valid || !cvvValidation.valid || !nameValidation.valid) {
+                e.preventDefault();
+                alert('Veuillez corriger les erreurs dans le formulaire avant de continuer');
+                return;
+            }
+        }
+        
+        // Show loading state
+        payButton.style.display = 'none';
+        loading.style.display = 'block';
+        
+        // Reset loading state after a delay (in case of errors)
+        setTimeout(function() {
+            payButton.style.display = 'block';
+            loading.style.display = 'none';
+        }, 10000); // 10 seconds timeout
+    });
+
+});
+</script>
+{% endblock %}

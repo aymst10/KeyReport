@@ -1,0 +1,371 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Paiement Réussi{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-container {
+        max-width: 600px;
+        margin: 3rem auto;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    
+    .success-icon {
+        font-size: 4rem;
+        color: #28a745;
+        margin-bottom: 1rem;
+    }
+    
+    .success-title {
+        color: #2c3e50;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .success-message {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .payment-details {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        text-align: left;
+    }
+    
+    .payment-details h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .detail-row:last-child {
+        border-bottom: none;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    
+    .detail-label {
+        color: #6c757d;
+    }
+    
+    .detail-value {
+        color: #2c3e50;
+        font-weight: 500;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(220,53,69,0.3);
+    }
+    
+    .btn-pdf {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        position: relative;
+    }
+    
+    .btn-pdf:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(220,53,69,0.4);
+    }
+    
+    .btn-pdf::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        border-radius: 8px;
+        z-index: -1;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline {
+        background: transparent;
+        color: #007bff;
+        border: 2px solid #007bff;
+    }
+    
+    .btn-outline:hover {
+        background: #007bff;
+        color: white;
+    }
+    
+    .receipt-section {
+        background: #fff;
+        border: 2px solid #28a745;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+    
+    .receipt-title {
+        color: #28a745;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .order-items {
+        margin: 1rem 0;
+    }
+    
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+    
+    .order-item:last-child {
+        border-bottom: none;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin: 0.5rem 0;
+    }
+    
+    .status-completed {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .email-notification {
+        background: #e7f3ff;
+        border: 1px solid #b8daff;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        color: #004085;
+    }
+    
+    .email-notification i {
+        color: #007bff;
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-icon">
+        <i class="fas fa-check-circle"></i>
+    </div>
+    
+    <h1 class="success-title">Paiement Réussi !</h1>
+    <p class="success-message">
+        Votre paiement a été traité avec succès. Vous recevrez un email de confirmation sous peu.
+    </p>
+    
+    <!-- Status Badge -->
+    {% if payment.status == 'completed' %}
+        <span class="status-badge status-completed">
+            <i class="fas fa-check"></i> Paiement Confirmé
+        </span>
+    {% elif payment.status == 'pending' %}
+        <span class="status-badge status-pending">
+            <i class="fas fa-clock"></i> En Attente de Paiement
+        </span>
+    {% endif %}
+    
+    <!-- Payment Details -->
+    <div class="payment-details">
+        <h3><i class="fas fa-receipt"></i> Détails du Paiement</h3>
+        
+        <div class="detail-row">
+            <span class="detail-label">Numéro de commande:</span>
+            <span class="detail-value">{{ order.order_number }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Date de paiement:</span>
+            <span class="detail-value">{{ payment.processed_at|date:"d/m/Y H:i" }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Mode de paiement:</span>
+            <span class="detail-value">
+                {% if payment.payment_method == 'credit_card' %}
+                    <i class="fas fa-credit-card"></i> Carte Bancaire
+                {% elif payment.payment_method == 'paypal' %}
+                    <i class="fab fa-paypal"></i> PayPal
+                {% elif payment.payment_method == 'cash_delivery' %}
+                    <i class="fas fa-money-bill-wave"></i> Paiement à la livraison
+                {% endif %}
+            </span>
+        </div>
+        
+        {% if payment.card_last_four %}
+        <div class="detail-row">
+            <span class="detail-label">Carte utilisée:</span>
+            <span class="detail-value">**** **** **** {{ payment.card_last_four }}</span>
+        </div>
+        {% endif %}
+        
+        <div class="detail-row">
+            <span class="detail-label">Montant payé:</span>
+            <span class="detail-value">{{ payment.amount }} MAD</span>
+        </div>
+    </div>
+    
+    <!-- Receipt Section -->
+    <div class="receipt-section">
+        <h3 class="receipt-title"><i class="fas fa-file-invoice"></i> Reçu de Paiement</h3>
+        
+        <div class="order-items">
+            {% for item in order.items.all %}
+            <div class="order-item">
+                <span>{{ item.product.name }} x{{ item.quantity }}</span>
+                <span>{{ item.total_price }} MAD</span>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="detail-row">
+            <span class="detail-label">Sous-total:</span>
+            <span class="detail-value">{{ order.subtotal }} MAD</span>
+        </div>
+        
+        {% if order.tax_amount > 0 %}
+        <div class="detail-row">
+            <span class="detail-label">Taxes:</span>
+            <span class="detail-value">{{ order.tax_amount }} MAD</span>
+        </div>
+        {% endif %}
+        
+        {% if order.shipping_cost > 0 %}
+        <div class="detail-row">
+            <span class="detail-label">Livraison:</span>
+            <span class="detail-value">{{ order.shipping_cost }} MAD</span>
+        </div>
+        {% endif %}
+        
+        <div class="detail-row">
+            <span class="detail-label"><strong>Total:</strong></span>
+            <span class="detail-value"><strong>{{ order.total_amount }} MAD</strong></span>
+        </div>
+    </div>
+    
+    <!-- Email Notification -->
+    <div class="email-notification">
+        <i class="fas fa-envelope"></i>
+        <strong>Email de confirmation envoyé</strong><br>
+        Un reçu détaillé a été envoyé à {{ order.customer.email }}
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="{% url 'store:download_payment_receipt_pdf' payment.id %}" class="btn btn-primary btn-pdf">
+            <i class="fas fa-file-pdf"></i> Télécharger PDF
+        </a>
+        
+        <a href="{% url 'store:order_detail' order.id %}" class="btn btn-outline">
+            <i class="fas fa-eye"></i> Voir la Commande
+        </a>
+        
+        <a href="{% url 'store:home' %}" class="btn btn-secondary">
+            <i class="fas fa-home"></i> Retour à l'Accueil
+        </a>
+        
+        <button onclick="window.print()" class="btn btn-secondary">
+            <i class="fas fa-print"></i> Imprimer
+        </button>
+    </div>
+</div>
+
+<script>
+// Auto-print functionality (optional)
+document.addEventListener('DOMContentLoaded', function() {
+    // You can add auto-print functionality here if needed
+    // window.print();
+});
+
+// Add some animation
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.success-container');
+    container.style.opacity = '0';
+    container.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+        container.style.transition = 'all 0.5s ease';
+        container.style.opacity = '1';
+        container.style.transform = 'translateY(0)';
+    }, 100);
+});
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

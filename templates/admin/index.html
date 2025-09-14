@@ -1,0 +1,101 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+.dashboard-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    display: block;
+    margin: 20px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.dashboard-link:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+}
+
+.dashboard-link h2 {
+    margin: 0 0 10px;
+    font-size: 1.5rem;
+}
+
+.dashboard-link p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.stat-item {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.stat-item h3 {
+    margin: 0 0 5px;
+    color: #333;
+    font-size: 1.8rem;
+}
+
+.stat-item p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+
+{% if has_store_dashboard %}
+<div class="dashboard-link" onclick="window.location.href='{% url 'admin:store_dashboard' %}'">
+    <h2>🏪 Store Dashboard</h2>
+    <p>Access comprehensive analytics, manage products, orders, and reviews</p>
+</div>
+
+<div class="dashboard-stats">
+    <div class="stat-item">
+        <h3>{{ total_products|default:"0" }}</h3>
+        <p>Products</p>
+    </div>
+    <div class="stat-item">
+        <h3>{{ total_orders|default:"0" }}</h3>
+        <p>Orders</p>
+    </div>
+    <div class="stat-item">
+        <h3>{{ total_reviews|default:"0" }}</h3>
+        <p>Reviews</p>
+    </div>
+    <div class="stat-item">
+        <h3>{{ total_customers|default:"0" }}</h3>
+        <p>Customers</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+

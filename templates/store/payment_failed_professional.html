@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Paiement Échoué{% endblock %}
+
+{% block extra_css %}
+<style>
+    .error-container {
+        max-width: 600px;
+        margin: 3rem auto;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    
+    .error-icon {
+        font-size: 4rem;
+        color: #dc3545;
+        margin-bottom: 1rem;
+    }
+    
+    .error-title {
+        color: #2c3e50;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .error-message {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .error-details {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        color: #721c24;
+    }
+    
+    .error-details h3 {
+        color: #721c24;
+        margin-bottom: 1rem;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+    }
+    
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(220,53,69,0.3);
+    }
+    
+    .btn-outline {
+        background: transparent;
+        color: #007bff;
+        border: 2px solid #007bff;
+    }
+    
+    .btn-outline:hover {
+        background: #007bff;
+        color: white;
+    }
+    
+    .help-section {
+        background: #e7f3ff;
+        border: 1px solid #b8daff;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        text-align: left;
+    }
+    
+    .help-section h3 {
+        color: #004085;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    .help-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    
+    .help-item i {
+        color: #007bff;
+        margin-top: 0.25rem;
+    }
+    
+    .help-item div {
+        flex: 1;
+    }
+    
+    .help-item strong {
+        color: #004085;
+    }
+    
+    .help-item p {
+        color: #004085;
+        margin: 0.25rem 0 0 0;
+        font-size: 0.9rem;
+    }
+    
+    .contact-info {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+    
+    .contact-info h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .contact-item i {
+        color: #007bff;
+        width: 20px;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin: 0.5rem 0;
+    }
+    
+    .status-failed {
+        background: #f8d7da;
+        color: #721c24;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-icon">
+        <i class="fas fa-times-circle"></i>
+    </div>
+    
+    <h1 class="error-title">Paiement Échoué</h1>
+    <p class="error-message">
+        Nous n'avons pas pu traiter votre paiement. Veuillez réessayer ou utiliser un autre mode de paiement.
+    </p>
+    
+    <!-- Status Badge -->
+    <span class="status-badge status-failed">
+        <i class="fas fa-exclamation-triangle"></i> Paiement Échoué
+    </span>
+    
+    <!-- Error Details -->
+    <div class="error-details">
+        <h3><i class="fas fa-info-circle"></i> Détails de l'Erreur</h3>
+        <p><strong>Numéro de commande:</strong> {{ order.order_number }}</p>
+        <p><strong>Date:</strong> {{ payment.processed_at|date:"d/m/Y H:i" }}</p>
+        <p><strong>Mode de paiement:</strong> 
+            {% if payment.payment_method == 'credit_card' %}
+                Carte Bancaire
+            {% elif payment.payment_method == 'paypal' %}
+                PayPal
+            {% elif payment.payment_method == 'cash_delivery' %}
+                Paiement à la livraison
+            {% endif %}
+        </p>
+        <p><strong>Montant:</strong> {{ payment.amount }} MAD</p>
+    </div>
+    
+    <!-- Help Section -->
+    <div class="help-section">
+        <h3><i class="fas fa-question-circle"></i> Que faire maintenant ?</h3>
+        
+        <div class="help-item">
+            <i class="fas fa-credit-card"></i>
+            <div>
+                <strong>Vérifiez vos informations de carte</strong>
+                <p>Assurez-vous que le numéro de carte, la date d'expiration et le CVV sont corrects.</p>
+            </div>
+        </div>
+        
+        <div class="help-item">
+            <i class="fas fa-university"></i>
+            <div>
+                <strong>Contactez votre banque</strong>
+                <p>Votre banque peut avoir bloqué la transaction. Contactez-les pour débloquer les paiements en ligne.</p>
+            </div>
+        </div>
+        
+        <div class="help-item">
+            <i class="fas fa-sync-alt"></i>
+            <div>
+                <strong>Essayez un autre mode de paiement</strong>
+                <p>Vous pouvez utiliser PayPal ou le paiement à la livraison comme alternative.</p>
+            </div>
+        </div>
+        
+        <div class="help-item">
+            <i class="fas fa-phone"></i>
+            <div>
+                <strong>Contactez notre support</strong>
+                <p>Notre équipe est là pour vous aider à résoudre ce problème.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contact Information -->
+    <div class="contact-info">
+        <h3><i class="fas fa-headset"></i> Besoin d'Aide ?</h3>
+        
+        <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <span>+212 5XX XXX XXX</span>
+        </div>
+        
+        <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <span>support@votresite.com</span>
+        </div>
+        
+        <div class="contact-item">
+            <i class="fas fa-clock"></i>
+            <span>Lun-Ven: 9h-18h, Sam: 9h-13h</span>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="{% url 'store:professional_payment' order.id %}" class="btn btn-primary">
+            <i class="fas fa-redo"></i> Réessayer le Paiement
+        </a>
+        
+        <a href="{% url 'store:cart' %}" class="btn btn-danger">
+            <i class="fas fa-shopping-cart"></i> Retour au Panier
+        </a>
+        
+        <a href="{% url 'store:home' %}" class="btn btn-outline">
+            <i class="fas fa-home"></i> Retour à l'Accueil
+        </a>
+    </div>
+</div>
+
+<script>
+// Add some animation
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.error-container');
+    container.style.opacity = '0';
+    container.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+        container.style.transition = 'all 0.5s ease';
+        container.style.opacity = '1';
+        container.style.transform = 'translateY(0)';
+    }, 100);
+});
+
+// Auto-retry functionality (optional)
+function autoRetry() {
+    const retryButton = document.querySelector('a[href*="professional_payment"]');
+    if (retryButton) {
+        // You can add auto-retry logic here
+        console.log('Auto-retry functionality can be implemented here');
+    }
+}
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,3903 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout - Key Reports Analytics{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <!-- Professional Header -->
+    <div class="checkout-header">
+<div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="checkout-title">
+                        <h1 class="display-6 fw-bold text-white mb-2">
+                            <i class="fas fa-shield-alt me-3"></i>Finalisation de Commande
+            </h1>
+                        <p class="text-white-50 mb-0">Paiement sécurisé et livraison rapide au Maroc</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="security-badges">
+                        <span class="badge bg-success me-2">
+                            <i class="fas fa-lock me-1"></i>SSL Sécurisé
+                        </span>
+                        <span class="badge bg-primary">
+                            <i class="fas fa-truck me-1"></i>Livraison Rapide
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="checkout-progress">
+        <div class="container">
+            <div class="progress-steps">
+                <div class="step completed">
+                    <div class="step-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <span class="step-label">Panier</span>
+                </div>
+                <div class="step active">
+                    <div class="step-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <span class="step-label">Paiement</span>
+                </div>
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <span class="step-label">Confirmation</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-4">
+
+    <form method="post" action="{% url 'store:process_checkout' %}" id="checkout-form">
+        {% csrf_token %}
+        <div class="row">
+            <!-- Checkout Form -->
+            <div class="col-lg-8">
+                <!-- Contact Information -->
+                <div class="checkout-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-user-circle"></i>
+                    </div>
+                        <div class="section-title">
+                            <h3>Informations de Contact</h3>
+                            <p>Vos coordonnées pour la livraison</p>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="form-group">
+                                    <label for="contact_email" class="form-label">
+                                        <i class="fas fa-envelope me-2"></i>Adresse Email *
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-at"></i>
+                                        </span>
+                                        <input type="email" class="form-control form-control-lg" id="contact_email" 
+                                               name="contact_email" value="{{ user.email }}" required
+                                               placeholder="votre@email.com">
+                            </div>
+                            </div>
+                        </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="form-group">
+                                    <label for="contact_phone" class="form-label">
+                                        <i class="fas fa-phone me-2"></i>Numéro de Téléphone *
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-globe"></i>
+                                        </span>
+                                        <select class="form-select form-select-lg" id="phone_country_code" style="max-width: 100px;">
+                                            <option value="+212">+212</option>
+                                            <option value="+33">+33</option>
+                                            <option value="+1">+1</option>
+                                            <option value="+44">+44</option>
+                                        </select>
+                                        <span class="input-group-text">
+                                            <i class="fas fa-mobile-alt"></i>
+                                        </span>
+                                        <input type="tel" class="form-control form-control-lg" id="contact_phone" 
+                                               name="contact_phone" required placeholder="6XX XXX XXX">
+                                    </div>
+                                    <small class="form-text text-muted">Format: +212 6XX XXX XXX (Maroc)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Address -->
+                <div class="checkout-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="section-title">
+                            <h3>Adresse de Livraison</h3>
+                            <p>Où souhaitez-vous recevoir votre commande ?</p>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="mb-4">
+                            <div class="form-group">
+                                <label for="shipping_address" class="form-label">
+                                    <i class="fas fa-home me-2"></i>Adresse Complète *
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-map-pin"></i>
+                                    </span>
+                                    <textarea class="form-control form-control-lg" id="shipping_address" 
+                                              name="shipping_address" rows="3" required 
+                                              placeholder="Rue, numéro, quartier..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="form-group">
+                                    <label for="shipping_city" class="form-label">
+                                        <i class="fas fa-city me-2"></i>Ville *
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-building"></i>
+                                        </span>
+                                        <input type="text" class="form-control form-control-lg" id="shipping_city" 
+                                               name="shipping_city" required placeholder="Casablanca">
+                            </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="form-group">
+                                    <label for="shipping_state" class="form-label">
+                                        <i class="fas fa-map me-2"></i>Région *
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-globe-africa"></i>
+                                        </span>
+                                        <select class="form-select form-select-lg" id="shipping_state" name="shipping_state" required>
+                                            <option value="">Sélectionner</option>
+                                            <option value="Casablanca-Settat">Casablanca-Settat</option>
+                                            <option value="Rabat-Salé-Kénitra">Rabat-Salé-Kénitra</option>
+                                            <option value="Fès-Meknès">Fès-Meknès</option>
+                                            <option value="Marrakech-Safi">Marrakech-Safi</option>
+                                            <option value="Tanger-Tétouan-Al Hoceïma">Tanger-Tétouan-Al Hoceïma</option>
+                                            <option value="Oriental">Oriental</option>
+                                            <option value="Béni Mellal-Khénifra">Béni Mellal-Khénifra</option>
+                                            <option value="Souss-Massa">Souss-Massa</option>
+                                            <option value="Guelmim-Oued Noun">Guelmim-Oued Noun</option>
+                                            <option value="Laâyoune-Sakia El Hamra">Laâyoune-Sakia El Hamra</option>
+                                            <option value="Dakhla-Oued Ed-Dahab">Dakhla-Oued Ed-Dahab</option>
+                                            <option value="Drâa-Tafilalet">Drâa-Tafilalet</option>
+                                </select>
+                            </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-4">
+                                <div class="form-group">
+                                    <label for="shipping_zip" class="form-label">
+                                        <i class="fas fa-mail-bulk me-2"></i>Code Postal *
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-hashtag"></i>
+                                        </span>
+                                        <input type="text" class="form-control form-control-lg" id="shipping_zip" 
+                                               name="shipping_zip" required placeholder="20000">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="checkout-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-credit-card"></i>
+                    </div>
+                        <div class="section-title">
+                            <h3>Méthode de Paiement</h3>
+                            <p>Choisissez votre mode de paiement préféré</p>
+                                            </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="payment-methods-grid">
+                            <!-- Cash on Delivery -->
+                            <div class="payment-card" data-payment="cash">
+                                <input type="radio" name="payment_method" id="payment_cash" value="cash" checked>
+                                <label for="payment_cash" class="payment-card-content">
+                                    <div class="payment-icon">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>Paiement à la Livraison</h4>
+                                        <p>Payez en espèces lors de la réception</p>
+                                        <span class="payment-badge free">Gratuit</span>
+                                        </div>
+                                    </label>
+                                </div>
+
+                            <!-- Moroccan Banks -->
+                            <div class="payment-card" data-payment="cih_bank">
+                                <input type="radio" name="payment_method" id="payment_cih" value="cih_bank">
+                                <label for="payment_cih" class="payment-card-content">
+                                    <div class="payment-icon cih">
+                                        <i class="fas fa-university"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>CIH Bank</h4>
+                                        <p>Paiement sécurisé via votre compte CIH</p>
+                                        <span class="payment-badge secure">Sécurisé</span>
+                                    </div>
+                                    <div class="payment-action">
+                                        <button type="button" class="btn-bank-payment" data-bank="cih">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            Payer avec CIH
+                                        </button>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="payment-card" data-payment="attijariwafa">
+                                <input type="radio" name="payment_method" id="payment_attijari" value="attijariwafa">
+                                <label for="payment_attijari" class="payment-card-content">
+                                    <div class="payment-icon attijari">
+                                        <i class="fas fa-university"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>Attijariwafa Bank</h4>
+                                        <p>Paiement via votre compte Attijariwafa</p>
+                                        <span class="payment-badge secure">Sécurisé</span>
+                                    </div>
+                                    <div class="payment-action">
+                                        <button type="button" class="btn-bank-payment" data-bank="attijari">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            Payer avec Attijari
+                                        </button>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="payment-card" data-payment="bmce">
+                                <input type="radio" name="payment_method" id="payment_bmce" value="bmce">
+                                <label for="payment_bmce" class="payment-card-content">
+                                    <div class="payment-icon bmce">
+                                        <i class="fas fa-university"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>BMCE Bank</h4>
+                                        <p>Paiement via votre compte BMCE</p>
+                                        <span class="payment-badge secure">Sécurisé</span>
+                                    </div>
+                                    <div class="payment-action">
+                                        <button type="button" class="btn-bank-payment" data-bank="bmce">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            Payer avec BMCE
+                                        </button>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Bank Transfer -->
+                            <div class="payment-card" data-payment="bank_transfer">
+                                <input type="radio" name="payment_method" id="payment_transfer" value="bank_transfer">
+                                <label for="payment_transfer" class="payment-card-content">
+                                    <div class="payment-icon transfer">
+                                        <i class="fas fa-exchange-alt"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>Virement Bancaire</h4>
+                                        <p>Transfert direct vers notre compte</p>
+                                        <span class="payment-badge instant">Instantané</span>
+                                    </div>
+                                    <div class="payment-action">
+                                        <button type="button" class="btn-bank-payment" data-bank="transfer">
+                                            <i class="fas fa-info-circle"></i>
+                                            Voir les détails
+                                        </button>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- Credit Card Payment -->
+                            <div class="payment-card" data-payment="visa">
+                                <input type="radio" name="payment_method" id="payment_card" value="visa">
+                                <label for="payment_card" class="payment-card-content">
+                                    <div class="payment-icon cards">
+                                        <i class="fab fa-cc-visa"></i>
+                                        <i class="fab fa-cc-mastercard"></i>
+                                            </div>
+                                    <div class="payment-info">
+                                        <h4>Carte Bancaire</h4>
+                                        <p>Visa, Mastercard acceptées</p>
+                                        <span class="payment-badge secure">Sécurisé</span>
+                                            </div>
+                                    <div class="payment-action">
+                                        <button type="button" class="btn-bank-payment" data-bank="visa">
+                                            <i class="fas fa-credit-card"></i>
+                                            Payer avec Carte
+                                        </button>
+                                        </div>
+                                    </label>
+                            </div>
+
+                            <!-- PayPal -->
+                            <div class="payment-card" data-payment="paypal">
+                                <input type="radio" name="payment_method" id="payment_paypal" value="paypal">
+                                <label for="payment_paypal" class="payment-card-content">
+                                    <div class="payment-icon paypal">
+                                        <i class="fab fa-paypal"></i>
+                                    </div>
+                                    <div class="payment-info">
+                                        <h4>PayPal</h4>
+                                        <p>Paiement sécurisé via PayPal</p>
+                                        <span class="payment-badge international">International</span>
+                                    </div>
+                                    <div class="payment-action">
+                                        <button type="button" class="btn-bank-payment" data-bank="paypal">
+                                            <i class="fab fa-paypal"></i>
+                                            Payer avec PayPal
+                                        </button>
+                                    </div>
+                                </label>
+                            </div>
+                                </div>
+                                
+                                <!-- Card Details Form -->
+                        <div class="card-details-form" id="card-details" style="display: none;">
+                            <div class="form-section-header">
+                                <h4><i class="fas fa-credit-card me-2"></i>Détails de la Carte</h4>
+                                <p>Entrez les informations de votre carte bancaire</p>
+                            </div>
+                                    <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-group">
+                                        <label for="card_number" class="form-label">
+                                            <i class="fas fa-credit-card me-2"></i>Numéro de Carte *
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-hashtag"></i>
+                                            </span>
+                                            <input type="text" class="form-control form-control-lg" id="card_number" 
+                                                   name="card_number" placeholder="1234 5678 9012 3456"
+                                                   maxlength="19">
+                                        </div>
+                                        </div>
+                                    </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-group">
+                                        <label for="card_name" class="form-label">
+                                            <i class="fas fa-user me-2"></i>Nom du Titulaire *
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-id-card"></i>
+                                            </span>
+                                            <input type="text" class="form-control form-control-lg" id="card_name" 
+                                                   name="card_name" placeholder="Nom Prénom">
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-group">
+                                        <label for="card_expiry" class="form-label">
+                                            <i class="fas fa-calendar me-2"></i>Date d'Expiration *
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-clock"></i>
+                                            </span>
+                                            <input type="text" class="form-control form-control-lg" id="card_expiry" 
+                                                   name="card_expiry" placeholder="MM/AA" maxlength="5">
+                            </div>
+                                            </div>
+                                        </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-group">
+                                        <label for="card_cvv" class="form-label">
+                                            <i class="fas fa-lock me-2"></i>Code CVV *
+                                    </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fas fa-shield-alt"></i>
+                                            </span>
+                                            <input type="text" class="form-control form-control-lg" id="card_cvv" 
+                                                   name="card_cvv" placeholder="123" maxlength="4">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="order-summary">
+                    <div class="summary-header">
+                        <h3><i class="fas fa-receipt me-2"></i>Résumé de Commande</h3>
+                        <p>Vérifiez votre commande avant de finaliser</p>
+                    </div>
+                    
+                    <div class="summary-content">
+                        <!-- Cart Items -->
+                        <div class="order-items">
+                            <h5 class="items-title">
+                                <i class="fas fa-shopping-bag me-2"></i>Articles ({{ cart_items|length }})
+                            </h5>
+                            <div class="items-list">
+                            {% for item in cart_items %}
+                                    <div class="order-item">
+                                        <div class="item-image">
+                                    {% if item.product.main_image %}
+                                        <img src="{{ item.product.main_image.url }}" 
+                                                     alt="{{ item.product.name }}">
+                                    {% else %}
+                                                <div class="no-image">
+                                                    <i class="fas fa-image"></i>
+                                        </div>
+                                    {% endif %}
+                                    </div>
+                                        <div class="item-details">
+                                            <h6 class="item-name">{{ item.product.name|truncatechars:25 }}</h6>
+                                            <div class="item-meta">
+                                                <span class="quantity">Qté: {{ item.quantity }}</span>
+                                                <span class="price">{{ item.total_price }} MAD</span>
+                                            </div>
+                                        </div>
+                                </div>
+                            {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Pricing Breakdown -->
+                        <div class="pricing-breakdown">
+                            <div class="price-row">
+                                <span class="price-label">Sous-total:</span>
+                                <span class="price-value">{{ cart.total_price }} MAD</span>
+                            </div>
+                            <div class="price-row">
+                                <span class="price-label">Livraison:</span>
+                                <span class="price-value" id="shipping-cost">Gratuit</span>
+                            </div>
+                            <div class="price-row">
+                                <span class="price-label">Taxes:</span>
+                                <span class="price-value">0.00 MAD</span>
+                            </div>
+                            <div class="price-divider"></div>
+                            <div class="price-row total">
+                                <span class="price-label">Total:</span>
+                                <span class="price-value" id="total-price">{{ cart.total_price }} MAD</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Delivery Info -->
+                        <div class="delivery-info">
+                            <div class="delivery-item">
+                                <i class="fas fa-truck"></i>
+                                <div>
+                                    <strong>Livraison Standard</strong>
+                                    <p id="delivery-time">1-2 jours ouvrables</p>
+                                </div>
+                            </div>
+                            <div class="delivery-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <div>
+                                    <strong>Garantie Sécurisée</strong>
+                                    <p>Paiement 100% sécurisé</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Place Order Button -->
+                        <div class="order-actions">
+                            <button type="submit" class="btn-place-order" id="place-order-btn">
+                                <i class="fas fa-lock me-2"></i>
+                                <span>Finaliser la Commande</span>
+                                <small>Paiement sécurisé</small>
+                            </button>
+                        </div>
+                        
+                        <!-- Security Badges -->
+                        <div class="security-badges">
+                            <div class="security-badge">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>SSL 256-bit</span>
+                        </div>
+                            <div class="security-badge">
+                                <i class="fas fa-lock"></i>
+                                <span>Chiffré</span>
+                            </div>
+                            <div class="security-badge">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Vérifié</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+    const cardDetails = document.getElementById('card-details');
+    const cardInputs = cardDetails ? cardDetails.querySelectorAll('input') : [];
+    
+    // Payment card selection
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Remove active class from all payment cards
+            document.querySelectorAll('.payment-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Add active class to selected payment card
+            const selectedCard = document.querySelector(`[data-payment="${this.value}"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('active');
+            }
+            
+            // Toggle card details visibility
+            if (this.value === 'visa' || this.value === 'mastercard') {
+                if (cardDetails) {
+                cardDetails.style.display = 'block';
+                cardInputs.forEach(input => input.required = true);
+                }
+            } else {
+                if (cardDetails) {
+                cardDetails.style.display = 'none';
+                cardInputs.forEach(input => input.required = false);
+                }
+            }
+        });
+    });
+    
+    // Initialize first payment card as active
+    const firstPaymentCard = document.querySelector('.payment-card');
+    if (firstPaymentCard) {
+        firstPaymentCard.classList.add('active');
+    }
+    
+    // Advanced Interactions System
+    initializeAdvancedInteractions();
+    
+    // Bank payment buttons
+    const bankPaymentButtons = document.querySelectorAll('.btn-bank-payment');
+    bankPaymentButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const bank = this.getAttribute('data-bank');
+            
+            // Select the payment method first
+            const paymentCard = this.closest('.payment-card');
+            const radioInput = paymentCard.querySelector('input[type="radio"]');
+            if (radioInput) {
+                radioInput.checked = true;
+                paymentCard.classList.add('selected');
+                
+                // Remove selection from other cards
+                document.querySelectorAll('.payment-card').forEach(card => {
+                    if (card !== paymentCard) {
+                        card.classList.remove('selected');
+                    }
+                });
+            }
+            
+            // Show confirmation and submit form
+            showPaymentConfirmation(bank);
+        });
+    });
+    
+    // Bank payment modal function
+    function showBankPaymentModal(bank, amount) {
+        const bankNames = {
+            'cih': 'CIH Bank',
+            'attijari': 'Attijariwafa Bank',
+            'bmce': 'BMCE Bank',
+            'transfer': 'Virement Bancaire'
+        };
+        
+        const bankUrls = {
+            'cih': 'https://www.cihbank.ma/',
+            'attijari': 'https://www.attijariwafabank.com/',
+            'bmce': 'https://www.bmcebank.ma/',
+            'transfer': '#'
+        };
+        
+        const bankName = bankNames[bank];
+        const bankUrl = bankUrls[bank];
+        
+        // Special handling for bank transfer
+        if (bank === 'transfer') {
+            showBankTransferDetails(amount);
+            return;
+        }
+        
+        // Create modal
+        const modal = document.createElement('div');
+        modal.className = 'bank-payment-modal';
+        modal.innerHTML = `
+            <div class="modal-overlay">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-university me-2"></i>Paiement via ${bankName}</h3>
+                        <button class="modal-close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="payment-info">
+                            <div class="amount-display">
+                                <span class="amount-label">Montant à payer :</span>
+                                <span class="amount-value">${amount}</span>
+                            </div>
+                            <div class="bank-info">
+                                <p>Vous allez être redirigé vers le portail sécurisé de <strong>${bankName}</strong> pour finaliser votre paiement.</p>
+                                <div class="security-features">
+                                    <div class="security-item">
+                                        <i class="fas fa-shield-alt"></i>
+                                        <span>Connexion SSL 256-bit</span>
+                                    </div>
+                                    <div class="security-item">
+                                        <i class="fas fa-lock"></i>
+                                        <span>Données chiffrées</span>
+                                    </div>
+                                    <div class="security-item">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Certifié PCI DSS</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel">Annuler</button>
+                        <button class="btn-confirm" onclick="confirmBankPayment('${bank}')">
+                            <i class="fas fa-check me-2"></i>
+                            Confirmer le Paiement
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Close modal events
+        modal.querySelector('.modal-close').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+        
+        modal.querySelector('.btn-cancel').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+        
+        modal.querySelector('.modal-overlay').addEventListener('click', (e) => {
+            if (e.target === modal.querySelector('.modal-overlay')) {
+                document.body.removeChild(modal);
+            }
+        });
+    }
+    
+    // Show payment confirmation and submit form
+    function showPaymentConfirmation(bank) {
+        const bankNames = {
+            'cih': 'CIH Bank',
+            'attijari': 'Attijariwafa Bank',
+            'bmce': 'BMCE Bank',
+            'transfer': 'Virement Bancaire',
+            'visa': 'Carte Visa',
+            'mastercard': 'Carte Mastercard',
+            'paypal': 'PayPal'
+        };
+        
+        const bankName = bankNames[bank] || bank.toUpperCase();
+        
+        // Show success notification
+        showNotification(`Paiement via ${bankName} sélectionné ! Finalisation de la commande...`, 'success');
+        
+        // Submit the form after a short delay
+        setTimeout(() => {
+            document.getElementById('checkout-form').submit();
+        }, 1500);
+    }
+    
+    // Confirm bank payment function (for modals)
+    window.confirmBankPayment = function(bank) {
+        // Close modal
+        const modal = document.querySelector('.bank-payment-modal');
+        if (modal) {
+            document.body.removeChild(modal);
+        }
+        
+        // Show success notification
+        showNotification(`Paiement via ${bank.toUpperCase()} confirmé ! Finalisation de la commande...`, 'success');
+        
+        // Submit the form after a short delay
+        setTimeout(() => {
+            document.getElementById('checkout-form').submit();
+        }, 2000);
+    }
+    
+    // Simulate bank payment (for demo)
+    function simulateBankPayment(bank) {
+        const placeOrderBtn = document.getElementById('place-order-btn');
+        placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Paiement en cours...';
+        placeOrderBtn.disabled = true;
+        
+        setTimeout(() => {
+            placeOrderBtn.innerHTML = '<i class="fas fa-check me-2"></i>Paiement Réussi !';
+            placeOrderBtn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+            
+            // Show success message
+            showPaymentSuccess(bank);
+        }, 2000);
+    }
+    
+    // Show payment success
+    function showPaymentSuccess(bank) {
+        // Store order data in localStorage for receipt
+        const orderData = {
+            customerName: document.getElementById('contact_name').value || 'Yassine Mousta',
+            customerEmail: document.getElementById('contact_email').value || 'yassinomousta2004@gmail.com',
+            customerPhone: document.getElementById('contact_phone').value || '+212 6 04 12 12 83',
+            paymentMethod: bank.toUpperCase(),
+            subtotal: '159.00',
+            shipping: 'Gratuit',
+            taxes: '0.00',
+            total: '159.00',
+            deliveryAddress: document.getElementById('shipping_address').value || 'Mazola rue 6, Casablanca',
+            deliveryRegion: document.getElementById('shipping_state').value || 'Casablanca-Settat',
+            deliveryTime: '1-2 jours ouvrables',
+            items: [
+                {
+                    name: 'Carte Graphique NVIDIA RTX 4060',
+                    sku: 'RTX4060-8GB',
+                    quantity: 1,
+                    price: '159.00',
+                    total: '159.00'
+                }
+            ]
+        };
+        
+        localStorage.setItem('orderData', JSON.stringify(orderData));
+        
+        const successModal = document.createElement('div');
+        successModal.className = 'payment-success-modal';
+        successModal.innerHTML = `
+            <div class="modal-overlay">
+                <div class="modal-content success">
+                    <div class="success-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Paiement Réussi !</h3>
+                    <p>Votre paiement via ${bank.toUpperCase()} a été traité avec succès.</p>
+                    <p>Vous allez être redirigé vers votre reçu de paiement.</p>
+                    <div class="success-actions">
+                        <button class="btn-ok" onclick="redirectToConfirmation()">Voir la Confirmation</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(successModal);
+        
+        // Auto redirect after 3 seconds
+        setTimeout(() => {
+            redirectToConfirmation();
+        }, 3000);
+    }
+    
+    // Redirect to confirmation page
+    function redirectToConfirmation() {
+        window.location.href = '/store/payment-confirmation/';
+    }
+    
+    // Redirect to receipt page
+    function redirectToReceipt() {
+        window.location.href = '/store/payment-receipt/';
+    }
+    
+    // Handle form submission
+    document.getElementById('checkout-form').addEventListener('submit', function(e) {
+        // Get form data
+        const formData = new FormData(this);
+        const paymentMethod = formData.get('payment_method');
+        
+        if (!paymentMethod) {
+            e.preventDefault();
+            showNotification('Veuillez sélectionner une méthode de paiement.', 'error');
+            return;
+        }
+        
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Traitement...';
+            submitBtn.disabled = true;
+        }
+        
+        // Let the form submit naturally
+    });
+    
+    // Advanced Interactions System
+    function initializeAdvancedInteractions() {
+        // 1. Form Field Animations
+        initializeFormAnimations();
+        
+        // 2. Payment Card Hover Effects
+        initializePaymentCardEffects();
+        
+        // 3. Real-time Form Validation
+        initializeRealTimeValidation();
+        
+        // 4. Interactive Progress Bar
+        initializeProgressBar();
+        
+        // 5. Smart Form Auto-fill
+        initializeSmartAutoFill();
+        
+        // 6. Interactive Tooltips
+        initializeInteractiveTooltips();
+        
+        // 7. Dynamic Price Calculator
+        initializeDynamicCalculator();
+        
+        // 8. Security Indicators
+        initializeSecurityIndicators();
+        
+        // 9. Interactive Help System
+        initializeHelpSystem();
+        
+        // 10. Gesture Controls
+        initializeGestureControls();
+        
+        // 11. Real-time Notifications
+        initializeNotifications();
+        
+        // 12. Sound Effects
+        initializeSoundEffects();
+        
+        // 13. Particle Effects
+        initializeParticleEffects();
+        
+        // 14. Interactive Tutorial
+        initializeTutorial();
+    }
+    
+    // 1. Form Field Animations
+    function initializeFormAnimations() {
+        const formFields = document.querySelectorAll('.form-control, .form-select');
+        
+        formFields.forEach(field => {
+            // Focus animations
+            field.addEventListener('focus', function() {
+                this.parentElement.classList.add('field-focused');
+                this.style.transform = 'scale(1.02)';
+                this.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.3)';
+                
+                // Add ripple effect
+                createRippleEffect(this.parentElement);
+            });
+            
+            // Blur animations
+            field.addEventListener('blur', function() {
+                this.parentElement.classList.remove('field-focused');
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = '';
+            });
+            
+            // Input animations
+            field.addEventListener('input', function() {
+                if (this.value.length > 0) {
+                    this.parentElement.classList.add('field-filled');
+                } else {
+                    this.parentElement.classList.remove('field-filled');
+                }
+                
+                // Add typing indicator
+                showTypingIndicator(this);
+            });
+        });
+    }
+    
+    // 2. Payment Card Hover Effects
+    function initializePaymentCardEffects() {
+        const paymentCards = document.querySelectorAll('.payment-card');
+        
+        paymentCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+                this.style.boxShadow = '0 15px 40px rgba(0,0,0,0.2)';
+                
+                // Add glow effect
+                this.style.filter = 'brightness(1.05)';
+                
+                // Animate payment icon
+                const icon = this.querySelector('.payment-icon');
+                if (icon) {
+                    icon.style.transform = 'rotate(5deg) scale(1.1)';
+                    icon.style.transition = 'all 0.3s ease';
+                }
+                
+                // Show payment details
+                showPaymentDetails(this);
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+                this.style.boxShadow = '';
+                this.style.filter = 'brightness(1)';
+                
+                // Reset payment icon
+                const icon = this.querySelector('.payment-icon');
+                if (icon) {
+                    icon.style.transform = 'rotate(0deg) scale(1)';
+                }
+                
+                // Hide payment details
+                hidePaymentDetails(this);
+            });
+            
+            // Click animation
+            card.addEventListener('click', function() {
+                // Add click animation
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1.02)';
+                }, 100);
+                
+                // Add selection effect
+                paymentCards.forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                // Show confirmation
+                showPaymentConfirmation(this);
+            });
+        });
+    }
+    
+    // 3. Real-time Form Validation
+    function initializeRealTimeValidation() {
+        const emailField = document.getElementById('contact_email');
+        const phoneField = document.getElementById('contact_phone');
+        const addressField = document.getElementById('shipping_address');
+        
+        if (emailField) {
+            emailField.addEventListener('input', function() {
+                validateEmailRealTime(this);
+            });
+        }
+        
+        if (phoneField) {
+            phoneField.addEventListener('input', function() {
+                validatePhoneRealTime(this);
+            });
+        }
+        
+        if (addressField) {
+            addressField.addEventListener('input', function() {
+                validateAddressRealTime(this);
+            });
+        }
+    }
+    
+    // 4. Interactive Progress Bar
+    function initializeProgressBar() {
+        const progressBar = document.createElement('div');
+        progressBar.className = 'checkout-progress-bar';
+        progressBar.innerHTML = `
+            <div class="progress-steps">
+                <div class="step active" data-step="1">
+                    <div class="step-icon">1</div>
+                    <div class="step-label">Informations</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-icon">2</div>
+                    <div class="step-label">Paiement</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-icon">3</div>
+                    <div class="step-label">Confirmation</div>
+                </div>
+            </div>
+        `;
+        
+        document.querySelector('.checkout-header').appendChild(progressBar);
+        
+        // Update progress based on form completion
+        updateProgressBar();
+    }
+    
+    // 5. Smart Form Auto-fill
+    function initializeSmartAutoFill() {
+        // Auto-fill based on user behavior
+        const smartSuggestions = {
+            'contact_email': ['yassinomousta2004@gmail.com', 'admin@keyreportsanalytics.com'],
+            'shipping_address': ['Mazola rue 6, Casablanca', 'Avenue Mohammed V, Rabat'],
+            'shipping_city': ['Casablanca', 'Rabat', 'Marrakech', 'Fès']
+        };
+        
+        Object.keys(smartSuggestions).forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('focus', function() {
+                    showSmartSuggestions(this, smartSuggestions[fieldId]);
+                });
+            }
+        });
+    }
+    
+    // 6. Interactive Tooltips
+    function initializeInteractiveTooltips() {
+        const tooltipElements = document.querySelectorAll('[data-tooltip]');
+        
+        tooltipElements.forEach(element => {
+            element.addEventListener('mouseenter', function() {
+                showTooltip(this);
+            });
+            
+            element.addEventListener('mouseleave', function() {
+                hideTooltip();
+            });
+        });
+    }
+    
+    // 7. Dynamic Price Calculator
+    function initializeDynamicCalculator() {
+        const priceElements = document.querySelectorAll('.price-value');
+        
+        priceElements.forEach(element => {
+            element.addEventListener('mouseenter', function() {
+                showPriceBreakdown(this);
+            });
+        });
+    }
+    
+    // 8. Security Indicators
+    function initializeSecurityIndicators() {
+        const securityIndicator = document.createElement('div');
+        securityIndicator.className = 'security-indicator';
+        securityIndicator.innerHTML = `
+            <div class="security-status">
+                <i class="fas fa-shield-alt"></i>
+                <span>Connexion Sécurisée</span>
+                <div class="security-level">
+                    <div class="security-bar">
+                        <div class="security-fill" style="width: 100%"></div>
+                    </div>
+                    <span class="security-text">SSL 256-bit</span>
+                </div>
+            </div>
+        `;
+        
+        document.querySelector('.checkout-container').appendChild(securityIndicator);
+    }
+    
+    // 9. Interactive Help System
+    function initializeHelpSystem() {
+        const helpButton = document.createElement('button');
+        helpButton.className = 'help-button';
+        helpButton.innerHTML = '<i class="fas fa-question-circle"></i>';
+        helpButton.title = 'Aide';
+        
+        helpButton.addEventListener('click', function() {
+            showHelpModal();
+        });
+        
+        document.querySelector('.checkout-container').appendChild(helpButton);
+    }
+    
+    // 10. Gesture Controls
+    function initializeGestureControls() {
+        let startY = 0;
+        let startX = 0;
+        
+        document.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].clientY;
+            startX = e.touches[0].clientX;
+        });
+        
+        document.addEventListener('touchend', function(e) {
+            const endY = e.changedTouches[0].clientY;
+            const endX = e.changedTouches[0].clientX;
+            const diffY = startY - endY;
+            const diffX = startX - endX;
+            
+            // Swipe up to go to next step
+            if (diffY > 50 && Math.abs(diffX) < 50) {
+                nextStep();
+            }
+            
+            // Swipe down to go to previous step
+            if (diffY < -50 && Math.abs(diffX) < 50) {
+                previousStep();
+            }
+        });
+    }
+    
+    // Helper Functions
+    function createRippleEffect(element) {
+        const ripple = document.createElement('div');
+        ripple.className = 'ripple-effect';
+        element.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    }
+    
+    function showTypingIndicator(field) {
+        const indicator = field.parentElement.querySelector('.typing-indicator');
+        if (indicator) {
+            indicator.style.opacity = '1';
+            setTimeout(() => {
+                indicator.style.opacity = '0';
+            }, 1000);
+        }
+    }
+    
+    function showPaymentDetails(card) {
+        const details = card.querySelector('.payment-details');
+        if (details) {
+            details.style.display = 'block';
+            details.style.animation = 'slideIn 0.3s ease';
+        }
+    }
+    
+    function hidePaymentDetails(card) {
+        const details = card.querySelector('.payment-details');
+        if (details) {
+            details.style.display = 'none';
+        }
+    }
+    
+    function showPaymentConfirmation(card) {
+        const confirmation = document.createElement('div');
+        confirmation.className = 'payment-confirmation';
+        confirmation.innerHTML = `
+            <div class="confirmation-content">
+                <i class="fas fa-check-circle"></i>
+                <span>Méthode sélectionnée</span>
+            </div>
+        `;
+        
+        card.appendChild(confirmation);
+        
+        setTimeout(() => {
+            confirmation.remove();
+        }, 2000);
+    }
+    
+    function validateEmailRealTime(field) {
+        const email = field.value;
+        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        
+        if (email.length > 0) {
+            field.style.borderColor = isValid ? '#28a745' : '#dc3545';
+            showValidationMessage(field, isValid ? 'Email valide' : 'Format email invalide', isValid);
+        }
+    }
+    
+    function validatePhoneRealTime(field) {
+        const phone = field.value.replace(/\D/g, '');
+        const isValid = phone.length >= 9;
+        
+        if (phone.length > 0) {
+            field.style.borderColor = isValid ? '#28a745' : '#dc3545';
+            showValidationMessage(field, isValid ? 'Numéro valide' : 'Numéro trop court', isValid);
+        }
+    }
+    
+    function validateAddressRealTime(field) {
+        const address = field.value;
+        const isValid = address.length >= 10;
+        
+        if (address.length > 0) {
+            field.style.borderColor = isValid ? '#28a745' : '#dc3545';
+            showValidationMessage(field, isValid ? 'Adresse valide' : 'Adresse trop courte', isValid);
+        }
+    }
+    
+    function showValidationMessage(field, message, isValid) {
+        let messageEl = field.parentElement.querySelector('.validation-message');
+        if (!messageEl) {
+            messageEl = document.createElement('div');
+            messageEl.className = 'validation-message';
+            field.parentElement.appendChild(messageEl);
+        }
+        
+        messageEl.textContent = message;
+        messageEl.className = `validation-message ${isValid ? 'valid' : 'invalid'}`;
+        messageEl.style.opacity = '1';
+        
+        setTimeout(() => {
+            messageEl.style.opacity = '0';
+        }, 3000);
+    }
+    
+    function updateProgressBar() {
+        const steps = document.querySelectorAll('.progress-steps .step');
+        const formFields = document.querySelectorAll('.form-control, .form-select');
+        let completedFields = 0;
+        
+        formFields.forEach(field => {
+            if (field.value.length > 0) {
+                completedFields++;
+            }
+        });
+        
+        const progress = (completedFields / formFields.length) * 100;
+        
+        steps.forEach((step, index) => {
+            if (index < Math.floor(progress / 33.33)) {
+                step.classList.add('completed');
+            } else if (index === Math.floor(progress / 33.33)) {
+                step.classList.add('active');
+            } else {
+                step.classList.remove('active', 'completed');
+            }
+        });
+    }
+    
+    function showSmartSuggestions(field, suggestions) {
+        const suggestionBox = document.createElement('div');
+        suggestionBox.className = 'smart-suggestions';
+        
+        suggestions.forEach(suggestion => {
+            const suggestionItem = document.createElement('div');
+            suggestionItem.className = 'suggestion-item';
+            suggestionItem.textContent = suggestion;
+            suggestionItem.addEventListener('click', function() {
+                field.value = suggestion;
+                suggestionBox.remove();
+            });
+            suggestionBox.appendChild(suggestionItem);
+        });
+        
+        field.parentElement.appendChild(suggestionBox);
+        
+        field.addEventListener('blur', function() {
+            setTimeout(() => {
+                if (suggestionBox.parentElement) {
+                    suggestionBox.remove();
+                }
+            }, 200);
+        });
+    }
+    
+    function showTooltip(element) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'interactive-tooltip';
+        tooltip.textContent = element.getAttribute('data-tooltip');
+        
+        document.body.appendChild(tooltip);
+        
+        const rect = element.getBoundingClientRect();
+        tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + 'px';
+        tooltip.style.top = rect.top - tooltip.offsetHeight - 10 + 'px';
+        
+        tooltip.style.opacity = '1';
+    }
+    
+    function hideTooltip() {
+        const tooltip = document.querySelector('.interactive-tooltip');
+        if (tooltip) {
+            tooltip.remove();
+        }
+    }
+    
+    function showPriceBreakdown(element) {
+        const breakdown = document.createElement('div');
+        breakdown.className = 'price-breakdown-tooltip';
+        breakdown.innerHTML = `
+            <div class="breakdown-content">
+                <h4>Détail des Prix</h4>
+                <div class="breakdown-item">
+                    <span>Sous-total:</span>
+                    <span>159.00 MAD</span>
+                </div>
+                <div class="breakdown-item">
+                    <span>Livraison:</span>
+                    <span>Gratuit</span>
+                </div>
+                <div class="breakdown-item total">
+                    <span>Total:</span>
+                    <span>159.00 MAD</span>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(breakdown);
+        
+        const rect = element.getBoundingClientRect();
+        breakdown.style.left = rect.left + rect.width / 2 - breakdown.offsetWidth / 2 + 'px';
+        breakdown.style.top = rect.bottom + 10 + 'px';
+        
+        breakdown.style.opacity = '1';
+        
+        setTimeout(() => {
+            breakdown.remove();
+        }, 3000);
+    }
+    
+    function showHelpModal() {
+        const helpModal = document.createElement('div');
+        helpModal.className = 'help-modal';
+        helpModal.innerHTML = `
+            <div class="modal-overlay">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-question-circle me-2"></i>Centre d'Aide</h3>
+                        <button class="modal-close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="help-sections">
+                            <div class="help-section">
+                                <h4><i class="fas fa-credit-card me-2"></i>Méthodes de Paiement</h4>
+                                <p>Nous acceptons tous les moyens de paiement marocains : cartes bancaires, virements, et paiement à la livraison.</p>
+                            </div>
+                            <div class="help-section">
+                                <h4><i class="fas fa-truck me-2"></i>Livraison</h4>
+                                <p>Livraison gratuite à Casablanca, frais variables selon la région. Délai de 1-7 jours.</p>
+                            </div>
+                            <div class="help-section">
+                                <h4><i class="fas fa-shield-alt me-2"></i>Sécurité</h4>
+                                <p>Vos données sont protégées par un cryptage SSL 256-bit. Paiements 100% sécurisés.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(helpModal);
+        
+        // Close modal events
+        helpModal.querySelector('.modal-close').addEventListener('click', () => {
+            helpModal.remove();
+        });
+        
+        helpModal.querySelector('.modal-overlay').addEventListener('click', (e) => {
+            if (e.target === helpModal.querySelector('.modal-overlay')) {
+                helpModal.remove();
+            }
+        });
+    }
+    
+    function nextStep() {
+        // Logic to go to next step
+        console.log('Next step');
+    }
+    
+    function previousStep() {
+        // Logic to go to previous step
+        console.log('Previous step');
+    }
+    
+    // 11. Real-time Notifications
+    function initializeNotifications() {
+        // Create notification container
+        const notificationContainer = document.createElement('div');
+        notificationContainer.className = 'notification-container';
+        document.body.appendChild(notificationContainer);
+        
+        // Show welcome notification
+        setTimeout(() => {
+            showNotification('Bienvenue ! Remplissez le formulaire pour continuer.', 'info');
+        }, 1000);
+        
+        // Monitor form progress
+        const formFields = document.querySelectorAll('.form-control, .form-select');
+        let completedFields = 0;
+        
+        formFields.forEach(field => {
+            field.addEventListener('input', function() {
+                if (this.value.length > 0 && !this.dataset.notified) {
+                    this.dataset.notified = 'true';
+                    completedFields++;
+                    showNotification(`Champ complété ! (${completedFields}/${formFields.length})`, 'success');
+                }
+            });
+        });
+    }
+    
+    // 12. Sound Effects
+    function initializeSoundEffects() {
+        // Create audio context for sound effects
+        let audioContext;
+        
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.log('Web Audio API not supported');
+            return;
+        }
+        
+        // Sound effect functions
+        window.playClickSound = function() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        };
+        
+        window.playSuccessSound = function() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(523, audioContext.currentTime); // C5
+            oscillator.frequency.setValueAtTime(659, audioContext.currentTime + 0.1); // E5
+            oscillator.frequency.setValueAtTime(784, audioContext.currentTime + 0.2); // G5
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        };
+        
+        // Add click sounds to buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('button, .payment-card, .btn-action')) {
+                playClickSound();
+            }
+        });
+    }
+    
+    // 13. Particle Effects
+    function initializeParticleEffects() {
+        // Create particle container
+        const particleContainer = document.createElement('div');
+        particleContainer.className = 'particle-container';
+        document.body.appendChild(particleContainer);
+        
+        // Create particles on payment card hover
+        const paymentCards = document.querySelectorAll('.payment-card');
+        paymentCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                createParticles(this);
+            });
+        });
+        
+        // Create particles on form focus
+        const formFields = document.querySelectorAll('.form-control, .form-select');
+        formFields.forEach(field => {
+            field.addEventListener('focus', function() {
+                createParticles(this.parentElement);
+            });
+        });
+    }
+    
+    // 14. Interactive Tutorial
+    function initializeTutorial() {
+        // Show tutorial after 3 seconds
+        setTimeout(() => {
+            showTutorial();
+        }, 3000);
+    }
+    
+    // Helper Functions for New Interactions
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="fas fa-${getNotificationIcon(type)}"></i>
+                <span>${message}</span>
+                <button class="notification-close">&times;</button>
+            </div>
+        `;
+        
+        const container = document.querySelector('.notification-container');
+        container.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+        
+        // Auto remove after 4 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 300);
+        }, 4000);
+        
+        // Close button
+        notification.querySelector('.notification-close').addEventListener('click', () => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 300);
+        });
+    }
+    
+    function getNotificationIcon(type) {
+        const icons = {
+            'info': 'info-circle',
+            'success': 'check-circle',
+            'warning': 'exclamation-triangle',
+            'error': 'times-circle'
+        };
+        return icons[type] || 'info-circle';
+    }
+    
+    function createParticles(element) {
+        const rect = element.getBoundingClientRect();
+        const particleCount = 8;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            // Random position around the element
+            const x = rect.left + Math.random() * rect.width;
+            const y = rect.top + Math.random() * rect.height;
+            
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            
+            // Random color
+            const colors = ['#667eea', '#764ba2', '#28a745', '#ffc107', '#dc3545'];
+            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            document.querySelector('.particle-container').appendChild(particle);
+            
+            // Animate particle
+            const animation = particle.animate([
+                { transform: 'scale(0) rotate(0deg)', opacity: 1 },
+                { transform: 'scale(1) rotate(180deg)', opacity: 0 }
+            ], {
+                duration: 1000,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            });
+            
+            animation.onfinish = () => {
+                particle.remove();
+            };
+        }
+    }
+    
+    function showTutorial() {
+        const tutorial = document.createElement('div');
+        tutorial.className = 'tutorial-overlay';
+        tutorial.innerHTML = `
+            <div class="tutorial-content">
+                <div class="tutorial-header">
+                    <h3><i class="fas fa-graduation-cap me-2"></i>Guide de Paiement</h3>
+                    <button class="tutorial-close">&times;</button>
+                </div>
+                <div class="tutorial-body">
+                    <div class="tutorial-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Remplissez vos informations</h4>
+                            <p>Complétez tous les champs requis avec vos coordonnées</p>
+                        </div>
+                    </div>
+                    <div class="tutorial-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Choisissez votre méthode de paiement</h4>
+                            <p>Cliquez sur la carte de paiement de votre choix</p>
+                        </div>
+                    </div>
+                    <div class="tutorial-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Confirmez votre commande</h4>
+                            <p>Vérifiez les détails et finalisez votre achat</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tutorial-footer">
+                    <button class="btn-tutorial-skip">Passer</button>
+                    <button class="btn-tutorial-start">Commencer</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(tutorial);
+        
+        // Close tutorial
+        tutorial.querySelector('.tutorial-close').addEventListener('click', () => {
+            tutorial.remove();
+        });
+        
+        tutorial.querySelector('.btn-tutorial-skip').addEventListener('click', () => {
+            tutorial.remove();
+        });
+        
+        tutorial.querySelector('.btn-tutorial-start').addEventListener('click', () => {
+            tutorial.remove();
+            // Highlight first form field
+            const firstField = document.querySelector('.form-control');
+            if (firstField) {
+                firstField.focus();
+                firstField.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.5)';
+                setTimeout(() => {
+                    firstField.style.boxShadow = '';
+                }, 3000);
+            }
+        });
+    }
+    
+    // Show bank transfer details
+    function showBankTransferDetails(amount) {
+        const modal = document.createElement('div');
+        modal.className = 'bank-payment-modal';
+        modal.innerHTML = `
+            <div class="modal-overlay">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-exchange-alt me-2"></i>Détails du Virement Bancaire</h3>
+                        <button class="modal-close">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="transfer-info">
+                            <div class="amount-display">
+                                <span class="amount-label">Montant à transférer :</span>
+                                <span class="amount-value">${amount}</span>
+                            </div>
+                            
+                            <div class="bank-details">
+                                <h4>Informations du compte :</h4>
+                                <div class="account-info">
+                                    <div class="info-row">
+                                        <span class="label">Banque :</span>
+                                        <span class="value">Attijariwafa Bank</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">Titulaire :</span>
+                                        <span class="value">Key Reports Analytics SARL</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">RIB :</span>
+                                        <span class="value">007 780 0000000000000000 00</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">IBAN :</span>
+                                        <span class="value">MA64 007 780 0000000000000000 00</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">SWIFT :</span>
+                                        <span class="value">BCMAMAMC</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="transfer-instructions">
+                                    <h5>Instructions :</h5>
+                                    <ol>
+                                        <li>Effectuez un virement du montant exact : <strong>${amount}</strong></li>
+                                        <li>Utilisez votre numéro de commande comme référence</li>
+                                        <li>Envoyez-nous le reçu par email après le virement</li>
+                                        <li>Votre commande sera traitée dans les 24h</li>
+                                    </ol>
+                                </div>
+                                
+                                <div class="copy-section">
+                                    <button class="btn-copy" onclick="copyToClipboard('MA64 007 780 0000000000000000 00')">
+                                        <i class="fas fa-copy me-2"></i>Copier l'IBAN
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel">Fermer</button>
+                        <button class="btn-confirm" onclick="confirmBankTransfer()">
+                            <i class="fas fa-check me-2"></i>
+                            J'ai effectué le virement
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Close modal events
+        modal.querySelector('.modal-close').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+        
+        modal.querySelector('.btn-cancel').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+        
+        modal.querySelector('.modal-overlay').addEventListener('click', (e) => {
+            if (e.target === modal.querySelector('.modal-overlay')) {
+                document.body.removeChild(modal);
+            }
+        });
+    }
+    
+    // Copy to clipboard function
+    window.copyToClipboard = function(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            // Show success message
+            const btn = event.target.closest('.btn-copy');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Copié !';
+            btn.style.background = '#28a745';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+            }, 2000);
+        });
+    }
+    
+    // Confirm bank transfer
+    window.confirmBankTransfer = function() {
+        // Close modal
+        const modal = document.querySelector('.bank-payment-modal');
+        if (modal) {
+            document.body.removeChild(modal);
+        }
+        
+        // Show success notification
+        showNotification('Virement bancaire confirmé ! Finalisation de la commande...', 'success');
+        
+        // Submit the form after a short delay
+        setTimeout(() => {
+            document.getElementById('checkout-form').submit();
+        }, 2000);
+    }
+    
+    // International phone number validation and formatting
+    const phoneInput = document.getElementById('contact_phone');
+    const countryCodeSelect = document.getElementById('phone_country_code');
+    
+    if (phoneInput && countryCodeSelect) {
+        // Update placeholder based on country code
+        function updatePlaceholder() {
+            const countryCode = countryCodeSelect.value;
+            switch(countryCode) {
+                case '+212':
+                    phoneInput.placeholder = '6XX XXX XXX';
+                    break;
+                case '+33':
+                    phoneInput.placeholder = 'X XX XX XX XX';
+                    break;
+                case '+1':
+                    phoneInput.placeholder = '(XXX) XXX-XXXX';
+                    break;
+                case '+44':
+                    phoneInput.placeholder = 'XXXX XXX XXX';
+                    break;
+                default:
+                    phoneInput.placeholder = '6XX XXX XXX';
+            }
+        }
+        
+        countryCodeSelect.addEventListener('change', updatePlaceholder);
+        updatePlaceholder(); // Initialize
+        
+        phoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            const countryCode = countryCodeSelect.value;
+            
+            // Format based on country code
+            if (countryCode === '+212') {
+                // Moroccan format: 6XX XXX XXX
+                if (value.startsWith('0')) {
+                    value = value.substring(1);
+                }
+                if (value.length >= 2) {
+                    value = value.substring(0, 1) + ' ' + value.substring(1, 4) + ' ' + value.substring(4, 7) + ' ' + value.substring(7, 10);
+                }
+            } else if (countryCode === '+33') {
+                // French format: X XX XX XX XX
+                if (value.length >= 1) {
+                    value = value.substring(0, 1) + ' ' + value.substring(1, 3) + ' ' + value.substring(3, 5) + ' ' + value.substring(5, 7) + ' ' + value.substring(7, 9);
+                }
+            } else if (countryCode === '+1') {
+                // US format: (XXX) XXX-XXXX
+                if (value.length >= 3) {
+                    value = '(' + value.substring(0, 3) + ') ' + value.substring(3, 6) + '-' + value.substring(6, 10);
+                } else if (value.length > 0) {
+                    value = '(' + value;
+                }
+            } else if (countryCode === '+44') {
+                // UK format: XXXX XXX XXX
+                if (value.length >= 4) {
+                    value = value.substring(0, 4) + ' ' + value.substring(4, 7) + ' ' + value.substring(7, 10);
+                }
+            }
+            
+            this.value = value.trim();
+        });
+        
+        phoneInput.addEventListener('blur', function() {
+            const value = this.value.replace(/\D/g, '');
+            const countryCode = countryCodeSelect.value;
+            let isValid = false;
+            let errorMessage = '';
+            
+            if (countryCode === '+212') {
+                // Moroccan validation
+                isValid = value.length === 9 && (value.startsWith('6') || value.startsWith('7'));
+                errorMessage = 'Veuillez entrer un numéro de téléphone marocain valide (+212 6XX XXX XXX)';
+            } else if (countryCode === '+33') {
+                // French validation
+                isValid = value.length === 9 && value.startsWith('6');
+                errorMessage = 'Veuillez entrer un numéro de téléphone français valide (+33 6XX XX XX XX)';
+            } else if (countryCode === '+1') {
+                // US validation
+                isValid = value.length === 10;
+                errorMessage = 'Veuillez entrer un numéro de téléphone américain valide (+1 (XXX) XXX-XXXX)';
+            } else if (countryCode === '+44') {
+                // UK validation
+                isValid = value.length === 10;
+                errorMessage = 'Veuillez entrer un numéro de téléphone britannique valide (+44 XXXX XXX XXX)';
+            }
+            
+            if (!isValid && value.length > 0) {
+                this.setCustomValidity(errorMessage);
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+        
+        // Update the hidden field with full phone number
+        function updateFullPhoneNumber() {
+            const countryCode = countryCodeSelect.value;
+            const phoneNumber = phoneInput.value.replace(/\D/g, '');
+            const fullNumber = countryCode + ' ' + phoneNumber;
+            
+            // Create or update hidden field for form submission
+            let hiddenField = document.getElementById('full_phone_number');
+            if (!hiddenField) {
+                hiddenField = document.createElement('input');
+                hiddenField.type = 'hidden';
+                hiddenField.id = 'full_phone_number';
+                hiddenField.name = 'full_phone_number';
+                phoneInput.parentNode.appendChild(hiddenField);
+            }
+            hiddenField.value = fullNumber;
+        }
+        
+        phoneInput.addEventListener('input', updateFullPhoneNumber);
+        countryCodeSelect.addEventListener('change', updateFullPhoneNumber);
+    }
+    
+    // Format card number
+    const cardNumberInput = document.getElementById('card_number');
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            if (formattedValue.length > 19) formattedValue = formattedValue.substr(0, 19);
+            this.value = formattedValue;
+            
+            // Auto-detect card type
+            if (value.startsWith('4')) {
+                document.getElementById('payment_card').value = 'visa';
+            } else if (value.startsWith('5')) {
+                document.getElementById('payment_card').value = 'mastercard';
+            }
+        });
+    }
+    
+    // Format expiry date
+    const cardExpiryInput = document.getElementById('card_expiry');
+    if (cardExpiryInput) {
+        cardExpiryInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            this.value = value;
+        });
+    }
+    
+    // CVV input
+    const cardCvvInput = document.getElementById('card_cvv');
+    if (cardCvvInput) {
+        cardCvvInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
+    }
+    
+    // Dynamic shipping cost calculation
+    const regionSelect = document.getElementById('shipping_state');
+    const shippingCostElement = document.getElementById('shipping-cost');
+    const totalElement = document.getElementById('total-price');
+    const deliveryTimeElement = document.getElementById('delivery-time');
+    
+    const shippingCosts = {
+        'Casablanca-Settat': 0,
+        'Rabat-Salé-Kénitra': 15,
+        'Fès-Meknès': 25,
+        'Marrakech-Safi': 30,
+        'Tanger-Tétouan-Al Hoceïma': 35,
+        'Oriental': 40,
+        'Béni Mellal-Khénifra': 30,
+        'Souss-Massa': 45,
+        'Guelmim-Oued Noun': 60,
+        'Laâyoune-Sakia El Hamra': 80,
+        'Dakhla-Oued Ed-Dahab': 100,
+        'Drâa-Tafilalet': 50,
+    };
+    
+    const deliveryTimes = {
+        'Casablanca-Settat': '1-2 jours',
+        'Rabat-Salé-Kénitra': '2-3 jours',
+        'Fès-Meknès': '3-4 jours',
+        'Marrakech-Safi': '3-5 jours',
+        'Tanger-Tétouan-Al Hoceïma': '4-5 jours',
+        'Oriental': '4-6 jours',
+        'Béni Mellal-Khénifra': '3-5 jours',
+        'Souss-Massa': '5-7 jours',
+        'Guelmim-Oued Noun': '7-10 jours',
+        'Laâyoune-Sakia El Hamra': '10-14 jours',
+        'Dakhla-Oued Ed-Dahab': '14-21 jours',
+        'Drâa-Tafilalet': '6-8 jours',
+    };
+    
+    function updateShippingCost() {
+        const selectedRegion = regionSelect.value;
+        const shippingCost = shippingCosts[selectedRegion] || 0;
+        const subtotal = parseFloat('{{ cart.total_price }}'.replace(',', ''));
+        
+        if (shippingCost === 0) {
+            shippingCostElement.textContent = 'Gratuit';
+            shippingCostElement.className = 'price-value free';
+        } else {
+            shippingCostElement.textContent = shippingCost + ' MAD';
+            shippingCostElement.className = 'price-value';
+        }
+        
+        const total = subtotal + shippingCost;
+        if (totalElement) {
+            totalElement.textContent = total.toFixed(2) + ' MAD';
+        }
+        
+        // Update delivery time
+        if (deliveryTimeElement) {
+            deliveryTimeElement.textContent = deliveryTimes[selectedRegion] || '5-7 jours';
+        }
+    }
+    
+    if (regionSelect) {
+        regionSelect.addEventListener('change', updateShippingCost);
+        // Initialize on page load
+        updateShippingCost();
+    }
+    
+    // Form submission
+    const checkoutForm = document.getElementById('checkout-form');
+    const placeOrderBtn = document.getElementById('place-order-btn');
+    
+    checkoutForm.addEventListener('submit', function(e) {
+        placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+        placeOrderBtn.disabled = true;
+    });
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Professional Checkout Container */
+.checkout-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Professional Header */
+.checkout-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 2rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.checkout-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.checkout-title h1 {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.security-badges .badge {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Progress Steps */
+.checkout-progress {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.step.active {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.step.completed {
+    opacity: 1;
+}
+
+.step-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.step.active .step-icon {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    box-shadow: 0 6px 20px rgba(30, 60, 114, 0.4);
+}
+
+.step.completed .step-icon {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.step-label {
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+/* Checkout Sections */
+.checkout-section {
+    background: white;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.checkout-section:hover {
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.section-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.section-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.section-title h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.section-title p {
+    margin: 0.5rem 0 0 0;
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+.section-content {
+    padding: 2rem;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.form-label i {
+    color: #667eea;
+    margin-right: 0.5rem;
+}
+
+.input-group-text {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+    color: #667eea;
+    font-weight: 600;
+}
+
+.input-group .form-select {
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group .form-select:focus {
+    border-color: #667eea;
+    box-shadow: none;
+}
+
+.input-group .form-control:first-of-type {
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Payment Methods Grid */
+.payment-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.payment-card {
+    position: relative;
+    border: 2px solid #e9ecef;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.payment-card:hover {
+    border-color: #667eea;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+}
+
+.payment-card.active {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+}
+
+.payment-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.payment-card-content {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+}
+
+.payment-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.payment-icon.cih { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); }
+.payment-icon.attijari { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); }
+.payment-icon.bmce { background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); }
+.payment-icon.transfer { background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); }
+.payment-icon.cards { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+.payment-icon.paypal { background: linear-gradient(135deg, #003087 0%, #0070ba 100%); }
+
+.payment-icon.cards {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.payment-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.payment-info p {
+    margin: 0 0 0.5rem 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.payment-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.payment-badge.free { background: #d4edda; color: #155724; }
+.payment-badge.secure { background: #cce5ff; color: #004085; }
+.payment-badge.instant { background: #fff3cd; color: #856404; }
+.payment-badge.international { background: #f8d7da; color: #721c24; }
+
+/* Payment Action Buttons */
+.payment-action {
+    margin-top: 1rem;
+}
+
+.btn-bank-payment {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-bank-payment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-bank-payment:active {
+    transform: translateY(0);
+}
+
+/* Bank Payment Modal */
+.bank-payment-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideIn 0.3s ease;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.payment-info {
+    text-align: center;
+}
+
+.amount-display {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.amount-label {
+    display: block;
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.amount-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #28a745;
+}
+
+.bank-info p {
+    color: #495057;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.security-features {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.security-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #28a745;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.security-item i {
+    font-size: 1.1rem;
+}
+
+.modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn-cancel, .btn-confirm {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-cancel {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #5a6268;
+}
+
+.btn-confirm {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* Payment Success Modal */
+.payment-success-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+.payment-success-modal .modal-content.success {
+    text-align: center;
+    padding: 2rem;
+}
+
+.success-actions {
+    margin-top: 1.5rem;
+}
+
+.success-icon {
+    font-size: 4rem;
+    color: #28a745;
+    margin-bottom: 1rem;
+}
+
+.payment-success-modal h3 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.payment-success-modal p {
+    color: #6c757d;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.btn-ok {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-ok:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Advanced Interactions CSS */
+
+/* 1. Form Field Animations */
+.field-focused {
+    position: relative;
+    z-index: 10;
+}
+
+.field-focused .form-control,
+.field-focused .form-select {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25) !important;
+}
+
+.field-filled .form-control,
+.field-filled .form-select {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(102, 126, 234, 0.3);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin-left: -10px;
+    margin-top: -10px;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.typing-indicator {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.typing-indicator::after {
+    content: '✏️';
+    font-size: 0.8rem;
+}
+
+/* 2. Payment Card Effects */
+.payment-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.payment-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.payment-card.selected {
+    border: 2px solid #28a745;
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+}
+
+.payment-card.selected::before {
+    content: '✓';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #28a745;
+    color: white;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    z-index: 10;
+}
+
+.payment-confirmation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(40, 167, 69, 0.9);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 20;
+    animation: confirmationPop 0.5s ease;
+}
+
+@keyframes confirmationPop {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+/* 3. Real-time Validation */
+.validation-message {
+    position: absolute;
+    bottom: -25px;
+    left: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.validation-message.valid {
+    color: #28a745;
+}
+
+.validation-message.invalid {
+    color: #dc3545;
+}
+
+/* 4. Interactive Progress Bar */
+.checkout-progress-bar {
+    margin-top: 2rem;
+    padding: 1rem 0;
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+}
+
+.progress-steps::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e9ecef;
+    z-index: 1;
+}
+
+.progress-steps .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 2;
+    background: white;
+    padding: 0 1rem;
+}
+
+.step-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e9ecef;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.step.active .step-icon {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transform: scale(1.1);
+}
+
+.step.completed .step-icon {
+    background: #28a745;
+    color: white;
+}
+
+.step-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6c757d;
+    transition: color 0.3s ease;
+}
+
+.step.active .step-label {
+    color: #667eea;
+}
+
+.step.completed .step-label {
+    color: #28a745;
+}
+
+/* 5. Smart Auto-fill */
+.smart-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.suggestion-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.suggestion-item:hover {
+    background: #f8f9fa;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+/* 6. Interactive Tooltips */
+.interactive-tooltip {
+    position: absolute;
+    background: #2c3e50;
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.interactive-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #2c3e50;
+}
+
+/* 7. Dynamic Price Calculator */
+.price-breakdown-tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    min-width: 200px;
+}
+
+.breakdown-content {
+    padding: 1rem;
+}
+
+.breakdown-content h4 {
+    margin-bottom: 0.75rem;
+    color: #2c3e50;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0;
+    font-size: 0.8rem;
+}
+
+.breakdown-item.total {
+    border-top: 1px solid #e9ecef;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    font-weight: 700;
+    color: #28a745;
+}
+
+/* 8. Security Indicators */
+.security-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 1rem;
+    z-index: 1000;
+    animation: slideInRight 0.5s ease;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.security-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #28a745;
+}
+
+.security-level {
+    margin-top: 0.5rem;
+}
+
+.security-bar {
+    width: 100px;
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.security-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    transition: width 0.3s ease;
+}
+
+.security-text {
+    font-size: 0.7rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+/* 9. Interactive Help System */
+.help-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.help-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.help-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+.help-modal .modal-content {
+    max-width: 600px;
+}
+
+.help-sections {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.help-section {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.help-section h4 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.help-section p {
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* 10. Gesture Controls */
+.gesture-hint {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.gesture-hint.show {
+    opacity: 1;
+}
+
+/* Responsive Design for Interactions */
+@media (max-width: 768px) {
+    .progress-steps {
+        gap: 1rem;
+    }
+    
+    .step-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+    
+    .step-label {
+        font-size: 0.7rem;
+    }
+    
+    .security-indicator {
+        bottom: 80px;
+        right: 10px;
+        padding: 0.75rem;
+    }
+    
+    .help-button {
+        bottom: 10px;
+        left: 10px;
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+    }
+    
+    .smart-suggestions {
+        max-height: 150px;
+    }
+    
+    .suggestion-item {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* 11. Real-time Notifications */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.notification {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    padding: 1rem;
+    min-width: 300px;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 4px solid #667eea;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification-info { border-left-color: #17a2b8; }
+.notification-success { border-left-color: #28a745; }
+.notification-warning { border-left-color: #ffc107; }
+.notification-error { border-left-color: #dc3545; }
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.notification-content i {
+    font-size: 1.2rem;
+}
+
+.notification-info .notification-content i { color: #17a2b8; }
+.notification-success .notification-content i { color: #28a745; }
+.notification-warning .notification-content i { color: #ffc107; }
+.notification-error .notification-content i { color: #dc3545; }
+
+.notification-content span {
+    flex: 1;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-close:hover {
+    color: #dc3545;
+}
+
+/* 12. Sound Effects (Visual Feedback) */
+.sound-wave {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid #667eea;
+    border-radius: 50%;
+    animation: soundWave 0.5s ease-out;
+    pointer-events: none;
+}
+
+@keyframes soundWave {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+}
+
+/* 13. Particle Effects */
+.particle-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+}
+
+/* 14. Interactive Tutorial */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.tutorial-content {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideIn 0.3s ease;
+}
+
+.tutorial-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tutorial-header h3 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.tutorial-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.tutorial-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.tutorial-body {
+    padding: 2rem;
+}
+
+.tutorial-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.tutorial-step:last-child {
+    margin-bottom: 0;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.step-content h4 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.step-content p {
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.tutorial-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn-tutorial-skip,
+.btn-tutorial-start {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-tutorial-skip {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-tutorial-skip:hover {
+    background: #5a6268;
+}
+
+.btn-tutorial-start {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.btn-tutorial-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* Enhanced Animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Interactive Elements */
+.interactive-element {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.interactive-element:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.interactive-element:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Loading States */
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Success States */
+.success-state {
+    animation: successPulse 0.6s ease;
+}
+
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); background: #d4edda; }
+    100% { transform: scale(1); }
+}
+
+/* Error States */
+.error-state {
+    animation: errorShake 0.5s ease;
+}
+
+@keyframes errorShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .notification {
+        min-width: 250px;
+        right: 10px;
+        top: 10px;
+    }
+    
+    .tutorial-content {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .tutorial-step {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .step-number {
+        align-self: center;
+    }
+    
+    .tutorial-footer {
+        flex-direction: column;
+    }
+    
+    .btn-tutorial-skip,
+    .btn-tutorial-start {
+        width: 100%;
+    }
+}
+
+/* Bank Transfer Details */
+.transfer-info {
+    text-align: left;
+}
+
+.bank-details h4 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.account-info {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row .label {
+    font-weight: 600;
+    color: #495057;
+    min-width: 100px;
+}
+
+.info-row .value {
+    font-weight: 700;
+    color: #2c3e50;
+    font-family: 'Courier New', monospace;
+    background: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+.transfer-instructions {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.transfer-instructions h5 {
+    color: #856404;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.transfer-instructions ol {
+    color: #856404;
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.transfer-instructions li {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.copy-section {
+    text-align: center;
+}
+
+.btn-copy {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-copy:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Card Details Form */
+.card-details-form {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-top: 1.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.form-section-header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-section-header h4 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.form-section-header p {
+    color: #6c757d;
+    margin: 0;
+}
+
+/* Order Summary */
+.order-summary {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+    position: sticky;
+    top: 2rem;
+}
+
+.summary-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.summary-header h3 {
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+}
+
+.summary-header p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.summary-content {
+    padding: 2rem;
+}
+
+.items-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.items-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 1.5rem;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.item-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image {
+    width: 100%;
+    height: 100%;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-name {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.item-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.price {
+    font-weight: 700;
+    color: #28a745;
+}
+
+/* Pricing Breakdown */
+.pricing-breakdown {
+    margin-bottom: 1.5rem;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.price-row.total {
+    border-bottom: none;
+    border-top: 2px solid #e9ecef;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.price-label {
+    color: #495057;
+}
+
+.price-value {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.price-value.free {
+    color: #28a745;
+}
+
+.price-divider {
+    height: 1px;
+    background: #e9ecef;
+    margin: 0.5rem 0;
+}
+
+/* Delivery Info */
+.delivery-info {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.delivery-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.delivery-item:last-child {
+    margin-bottom: 0;
+}
+
+.delivery-item i {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.delivery-item strong {
+    color: #2c3e50;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.delivery-item p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Order Actions */
+.order-actions {
+    margin-bottom: 1.5rem;
+}
+
+.btn-place-order {
+    width: 100%;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 1.25rem 2rem;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.btn-place-order:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+}
+
+.btn-place-order:active {
+    transform: translateY(0);
+}
+
+.btn-place-order small {
+    font-size: 0.8rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+/* Security Badges */
+.security-badges {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.security-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.security-badge i {
+    color: #28a745;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .checkout-header {
+        padding: 1.5rem 0;
+    }
+    
+    .checkout-title h1 {
+        font-size: 1.8rem;
+    }
+    
+    .progress-steps {
+        gap: 1rem;
+    }
+    
+    .step-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .section-header {
+        padding: 1.5rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .section-content {
+        padding: 1.5rem;
+    }
+    
+    .payment-methods-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .payment-card-content {
+        padding: 1rem;
+    }
+    
+    .payment-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .order-summary {
+        position: static;
+        margin-top: 2rem;
+    }
+    
+    .summary-content {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .checkout-container {
+        padding: 0;
+    }
+    
+    .container {
+        padding: 0 1rem;
+    }
+    
+    .section-header {
+        padding: 1rem;
+    }
+    
+    .section-content {
+        padding: 1rem;
+    }
+    
+    .summary-content {
+        padding: 1rem;
+    }
+    
+    .payment-card-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .security-badges {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+{% endblock %}
+
+

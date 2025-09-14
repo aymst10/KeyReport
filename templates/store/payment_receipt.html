@@ -1,0 +1,805 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reçu de Paiement - Key Reports Analytics{% endblock %}
+
+{% block content %}
+<div class="receipt-container">
+    <!-- Receipt Header -->
+    <div class="receipt-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="receipt-title">
+                        <h1 class="display-6 fw-bold text-white mb-2">
+                            <i class="fas fa-receipt me-3"></i>Reçu de Paiement
+                        </h1>
+                        <p class="text-white-50 mb-0">Confirmation de votre commande</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="receipt-status">
+                        <span class="badge bg-success">
+                            <i class="fas fa-check-circle me-1"></i>Paiement Réussi
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Receipt Card -->
+                <div class="receipt-card">
+                    <!-- Receipt Header -->
+                    <div class="receipt-card-header">
+                        <div class="company-info">
+                            <h2 class="company-name">Key Reports Analytics</h2>
+                            <p class="company-details">
+                                <i class="fas fa-map-marker-alt me-2"></i>Casablanca, Maroc<br>
+                                <i class="fas fa-phone me-2"></i>+212 5XX XXX XXX<br>
+                                <i class="fas fa-envelope me-2"></i>contact@keyreportsanalytics.com
+                            </p>
+                        </div>
+                        <div class="receipt-number">
+                            <h3>Reçu #<span id="receipt-number">KR-2025-001234</span></h3>
+                            <p class="receipt-date" id="receipt-date">10 Septembre 2025, 23:15</p>
+                        </div>
+                    </div>
+
+                    <!-- Customer Information -->
+                    <div class="receipt-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-user me-2"></i>Informations Client
+                        </h4>
+                        <div class="customer-info">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <span class="label">Nom :</span>
+                                        <span class="value" id="customer-name">Yassine Mousta</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Email :</span>
+                                        <span class="value" id="customer-email">yassinomousta2004@gmail.com</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <span class="label">Téléphone :</span>
+                                        <span class="value" id="customer-phone">+212 6 04 12 12 83</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">ID Client :</span>
+                                        <span class="value" id="customer-id">#CUST-001</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Information -->
+                    <div class="receipt-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-credit-card me-2"></i>Informations de Paiement
+                        </h4>
+                        <div class="payment-info">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <span class="label">Méthode :</span>
+                                        <span class="value payment-method" id="payment-method">CIH Bank</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Transaction ID :</span>
+                                        <span class="value" id="transaction-id">CIH-20250910-001234</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <span class="label">Statut :</span>
+                                        <span class="value status-success">✓ Paiement Réussi</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Date de Paiement :</span>
+                                        <span class="value" id="payment-date">10 Septembre 2025, 23:15</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Order Items -->
+                    <div class="receipt-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-shopping-bag me-2"></i>Articles Commandés
+                        </h4>
+                        <div class="order-items">
+                            <div class="items-header">
+                                <div class="item-col">Article</div>
+                                <div class="qty-col">Qté</div>
+                                <div class="price-col">Prix Unitaire</div>
+                                <div class="total-col">Total</div>
+                            </div>
+                            <div class="item-row" id="order-items">
+                                <!-- Items will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing Summary -->
+                    <div class="receipt-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-calculator me-2"></i>Résumé des Prix
+                        </h4>
+                        <div class="pricing-summary">
+                            <div class="price-row">
+                                <span class="label">Sous-total :</span>
+                                <span class="value" id="subtotal">159.00 MAD</span>
+                            </div>
+                            <div class="price-row">
+                                <span class="label">Livraison :</span>
+                                <span class="value" id="shipping">Gratuit</span>
+                            </div>
+                            <div class="price-row">
+                                <span class="label">Taxes :</span>
+                                <span class="value" id="taxes">0.00 MAD</span>
+                            </div>
+                            <div class="price-divider"></div>
+                            <div class="price-row total">
+                                <span class="label">Total Payé :</span>
+                                <span class="value" id="total-paid">159.00 MAD</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Information -->
+                    <div class="receipt-section">
+                        <h4 class="section-title">
+                            <i class="fas fa-truck me-2"></i>Informations de Livraison
+                        </h4>
+                        <div class="delivery-info">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <span class="label">Adresse :</span>
+                                        <span class="value" id="delivery-address">Mazola rue 6, Casablanca</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Région :</span>
+                                        <span class="value" id="delivery-region">Casablanca-Settat</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <span class="label">Délai de Livraison :</span>
+                                        <span class="value" id="delivery-time">1-2 jours ouvrables</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Numéro de Suivi :</span>
+                                        <span class="value" id="tracking-number">KR-TRACK-20250910-001234</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Receipt Footer -->
+                    <div class="receipt-footer">
+                        <div class="thank-you">
+                            <h3>Merci pour votre achat !</h3>
+                            <p>Votre commande a été traitée avec succès. Vous recevrez un email de confirmation avec les détails de livraison.</p>
+                        </div>
+                        <div class="receipt-actions">
+                            <button class="btn-action" onclick="printReceipt()">
+                                <i class="fas fa-print me-2"></i>Imprimer
+                            </button>
+                            <button class="btn-action" onclick="downloadReceipt()">
+                                <i class="fas fa-download me-2"></i>Télécharger PDF
+                            </button>
+                            <button class="btn-action" onclick="shareReceipt()">
+                                <i class="fas fa-share me-2"></i>Partager
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Steps -->
+                <div class="next-steps">
+                    <h4>Prochaines Étapes</h4>
+                    <div class="steps-grid">
+                        <div class="step-item">
+                            <div class="step-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="step-content">
+                                <h5>Paiement Confirmé</h5>
+                                <p>Votre paiement a été traité avec succès</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="step-content">
+                                <h5>Préparation</h5>
+                                <p>Votre commande est en cours de préparation</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-icon">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div class="step-content">
+                                <h5>Livraison</h5>
+                                <p>Expédition prévue dans les 24h</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-icon">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <div class="step-content">
+                                <h5>Réception</h5>
+                                <p>Livraison à votre adresse</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get data from URL parameters or localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderData = JSON.parse(localStorage.getItem('orderData') || '{}');
+    
+    // Populate receipt with data
+    populateReceipt(orderData);
+    
+    // Set current date and time
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    const timeStr = now.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    document.getElementById('receipt-date').textContent = `${dateStr}, ${timeStr}`;
+    document.getElementById('payment-date').textContent = `${dateStr}, ${timeStr}`;
+    
+    // Generate receipt number
+    const receiptNumber = `KR-${now.getFullYear()}-${String(Math.floor(Math.random() * 1000000)).padStart(6, '0')}`;
+    document.getElementById('receipt-number').textContent = receiptNumber;
+    
+    // Generate transaction ID
+    const transactionId = `CIH-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(Math.floor(Math.random() * 1000000)).padStart(6, '0')}`;
+    document.getElementById('transaction-id').textContent = transactionId;
+    
+    // Generate tracking number
+    const trackingNumber = `KR-TRACK-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(6, '0')}-${String(Math.floor(Math.random() * 1000000)).padStart(6, '0')}`;
+    document.getElementById('tracking-number').textContent = trackingNumber;
+});
+
+function populateReceipt(data) {
+    // Populate customer information
+    if (data.customerName) {
+        document.getElementById('customer-name').textContent = data.customerName;
+    }
+    if (data.customerEmail) {
+        document.getElementById('customer-email').textContent = data.customerEmail;
+    }
+    if (data.customerPhone) {
+        document.getElementById('customer-phone').textContent = data.customerPhone;
+    }
+    
+    // Populate payment method
+    if (data.paymentMethod) {
+        const paymentMethod = document.getElementById('payment-method');
+        paymentMethod.textContent = data.paymentMethod;
+        
+        // Update transaction ID based on payment method
+        const transactionId = document.getElementById('transaction-id');
+        const now = new Date();
+        const methodPrefix = data.paymentMethod.toUpperCase().replace(/\s+/g, '');
+        transactionId.textContent = `${methodPrefix}-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(Math.floor(Math.random() * 1000000)).padStart(6, '0')}`;
+    }
+    
+    // Populate order items
+    if (data.items && data.items.length > 0) {
+        const itemsContainer = document.getElementById('order-items');
+        itemsContainer.innerHTML = '';
+        
+        data.items.forEach(item => {
+            const itemRow = document.createElement('div');
+            itemRow.className = 'item-row';
+            itemRow.innerHTML = `
+                <div class="item-col">
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-sku">SKU: ${item.sku || 'N/A'}</div>
+                </div>
+                <div class="qty-col">${item.quantity}</div>
+                <div class="price-col">${item.price} MAD</div>
+                <div class="total-col">${item.total} MAD</div>
+            `;
+            itemsContainer.appendChild(itemRow);
+        });
+    }
+    
+    // Populate pricing
+    if (data.subtotal) {
+        document.getElementById('subtotal').textContent = data.subtotal + ' MAD';
+    }
+    if (data.shipping) {
+        document.getElementById('shipping').textContent = data.shipping;
+    }
+    if (data.taxes) {
+        document.getElementById('taxes').textContent = data.taxes + ' MAD';
+    }
+    if (data.total) {
+        document.getElementById('total-paid').textContent = data.total + ' MAD';
+    }
+    
+    // Populate delivery information
+    if (data.deliveryAddress) {
+        document.getElementById('delivery-address').textContent = data.deliveryAddress;
+    }
+    if (data.deliveryRegion) {
+        document.getElementById('delivery-region').textContent = data.deliveryRegion;
+    }
+    if (data.deliveryTime) {
+        document.getElementById('delivery-time').textContent = data.deliveryTime;
+    }
+}
+
+// Print receipt
+function printReceipt() {
+    window.print();
+}
+
+// Download receipt as PDF (simulated)
+function downloadReceipt() {
+    // In a real application, this would generate and download a PDF
+    alert('Fonctionnalité de téléchargement PDF en cours de développement.\n\nPour l\'instant, vous pouvez utiliser l\'impression pour sauvegarder le reçu.');
+}
+
+// Share receipt
+function shareReceipt() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Reçu de Paiement - Key Reports Analytics',
+            text: 'Voici le reçu de ma commande',
+            url: window.location.href
+        });
+    } else {
+        // Fallback: copy to clipboard
+        const receiptUrl = window.location.href;
+        navigator.clipboard.writeText(receiptUrl).then(() => {
+            alert('Lien du reçu copié dans le presse-papiers !');
+        });
+    }
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Receipt Container */
+.receipt-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Receipt Header */
+.receipt-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 2rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.receipt-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.receipt-title h1 {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.receipt-status .badge {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Receipt Card */
+.receipt-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.receipt-card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.company-name {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.company-details {
+    color: #6c757d;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.receipt-number h3 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.receipt-date {
+    color: #6c757d;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* Receipt Sections */
+.receipt-section {
+    padding: 2rem;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.receipt-section:last-child {
+    border-bottom: none;
+}
+
+.section-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* Customer Info */
+.customer-info .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.customer-info .info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item .label {
+    font-weight: 600;
+    color: #495057;
+    min-width: 120px;
+}
+
+.info-item .value {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+/* Payment Info */
+.payment-method {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+}
+
+.status-success {
+    color: #28a745;
+    font-weight: 700;
+}
+
+/* Order Items */
+.order-items {
+    background: #f8f9fa;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.items-header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    display: flex;
+    padding: 1rem;
+    font-weight: 700;
+}
+
+.item-col { flex: 2; }
+.qty-col { flex: 1; text-align: center; }
+.price-col { flex: 1; text-align: center; }
+.total-col { flex: 1; text-align: center; }
+
+.item-row {
+    display: flex;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    align-items: center;
+}
+
+.item-row:last-child {
+    border-bottom: none;
+}
+
+.item-name {
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.item-sku {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Pricing Summary */
+.pricing-summary {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.price-row:last-child {
+    border-bottom: none;
+}
+
+.price-row.total {
+    border-top: 2px solid #e9ecef;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.price-divider {
+    height: 1px;
+    background: #e9ecef;
+    margin: 0.5rem 0;
+}
+
+/* Delivery Info */
+.delivery-info .info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.delivery-info .info-item:last-child {
+    border-bottom: none;
+}
+
+/* Receipt Footer */
+.receipt-footer {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.thank-you h3 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.thank-you p {
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.receipt-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-action {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-action:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Next Steps */
+.next-steps {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.next-steps h4 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.step-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.step-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.step-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    margin: 0 auto 1rem;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.step-content h5 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.step-content p {
+    color: #6c757d;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Print Styles */
+@media print {
+    .receipt-container {
+        background: white !important;
+    }
+    
+    .receipt-header {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .receipt-actions {
+        display: none !important;
+    }
+    
+    .next-steps {
+        display: none !important;
+    }
+    
+    .receipt-card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .receipt-card-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .receipt-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-action {
+        width: 100%;
+        max-width: 200px;
+        justify-content: center;
+    }
+    
+    .steps-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .items-header,
+    .item-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .item-col,
+    .qty-col,
+    .price-col,
+    .total-col {
+        flex: none;
+        text-align: left;
+    }
+}
+</style>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Category, Product, Order, OrderItem, Cart, CartItem
+from django.urls import reverse
+from django.utils.safestring import mark_safe
+from .models import Category, Product, ProductImage, Order, OrderItem, Cart, CartItem, Payment, Wishlist, ProductReview
 
 
 @admin.register(Category)
@@ -19,13 +21,34 @@ class CategoryAdmin(admin.ModelAdmin):
     product_count.short_description = 'Products'
 
 
+@admin.register(ProductImage)
+class ProductImageAdmin(admin.ModelAdmin):
+    """Admin configuration for ProductImage model."""
+    
+    list_display = ('product', 'image_type', 'sort_order', 'is_active', 'image_preview', 'created_at')
+    list_filter = ('image_type', 'is_active', 'created_at')
+    search_fields = ('product__name', 'alt_text', 'caption')
+    list_editable = ('sort_order', 'is_active')
+    ordering = ('product', 'sort_order', 'created_at')
+    
+    def image_preview(self, obj):
+        """Display image preview in admin."""
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="max-height: 50px; max-width: 50px; object-fit: cover;" />',
+                obj.image.url
+            )
+        return "No Image"
+    image_preview.short_description = 'Preview'
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     """Admin configuration for Product model."""
     
     list_display = (
         'name', 'category', 'current_price', 'stock_quantity', 
-        'is_active', 'is_featured', 'condition', 'created_at'
+        'average_rating_display', 'total_reviews_display', 'is_active', 'is_featured', 'condition', 'created_at'
     )
     list_filter = (
         'category', 'is_active', 'is_featured', 'condition', 
@@ -62,11 +85,32 @@ class ProductAdmin(admin.ModelAdmin):
         """Display current price with sale indicator."""
         if obj.sale_price and obj.sale_price < obj.price:
             return format_html(
-                '<span style="text-decoration: line-through;">${}</span> <span style="color: red;">${}</span>',
+                '<span style="text-decoration: line-through;">{} MAD</span> <span style="color: red;">{} MAD</span>',
                 obj.price, obj.sale_price
             )
-        return f"${obj.price}"
+        return f"{obj.price} MAD"
     current_price.short_description = 'Current Price'
+    
+    def average_rating_display(self, obj):
+        """Display average rating with stars."""
+        rating = obj.average_rating
+        if rating > 0:
+            stars = '★' * int(rating) + '☆' * (5 - int(rating))
+            return format_html(
+                '<span style="color: #ffc107;">{}</span> <span style="font-size: 0.8em;">({})</span>',
+                stars, rating
+            )
+        return format_html('<span style="color: #ccc;">☆☆☆☆☆</span>')
+    average_rating_display.short_description = 'Rating'
+    
+    def total_reviews_display(self, obj):
+        """Display total reviews count with link."""
+        count = obj.total_reviews
+        if count > 0:
+            url = reverse('admin:store_productreview_changelist') + f'?product__id__exact={obj.id}'
+            return format_html('<a href="{}">{} reviews</a>', url, count)
+        return '0 reviews'
+    total_reviews_display.short_description = 'Reviews'
 
 
 class OrderItemInline(admin.TabularInline):
@@ -140,7 +184,7 @@ class CartAdmin(admin.ModelAdmin):
     
     def total_price(self, obj):
         """Display total price of cart."""
-        return f"${obj.total_price}"
+        return f"{obj.total_price} MAD"
     total_price.short_description = 'Total Price'
 
 
@@ -155,5 +199,96 @@ class CartItemAdmin(admin.ModelAdmin):
     
     def total_price(self, obj):
         """Display total price for cart item."""
-        return f"${obj.total_price}"
+        return f"{obj.total_price} MAD"
     total_price.short_description = 'Total Price'
+
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    """Admin configuration for Payment model."""
+    
+    list_display = (
+        'order', 'payment_method', 'amount', 'status', 
+        'transaction_id', 'created_at'
+    )
+    list_filter = ('payment_method', 'status', 'created_at')
+    search_fields = ('order__order_number', 'transaction_id', 'order__customer__email')
+    readonly_fields = ('created_at', 'processed_at')
+    list_editable = ('status',)
+    
+    fieldsets = (
+        (None, {
+            'fields': ('order', 'payment_method', 'amount', 'status')
+        }),
+        ('Transaction Details', {
+            'fields': ('transaction_id', 'processor_response')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'processed_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(Wishlist)
+class WishlistAdmin(admin.ModelAdmin):
+    """Admin configuration for Wishlist model."""
+    
+    list_display = ('user', 'product', 'added_at')
+    list_filter = ('added_at', 'product__category')
+    search_fields = ('user__email', 'product__name')
+    readonly_fields = ('added_at',)
+    list_select_related = ('user', 'product')
+
+
+@admin.register(ProductReview)
+class ProductReviewAdmin(admin.ModelAdmin):
+    """Admin configuration for ProductReview model."""
+    
+    list_display = (
+        'product', 'user', 'rating_display', 'title', 
+        'is_approved', 'is_verified_purchase', 'created_at'
+    )
+    list_filter = (
+        'rating', 'is_approved', 'is_verified_purchase', 
+        'product__category', 'created_at'
+    )
+    search_fields = ('product__name', 'user__email', 'title', 'comment')
+    readonly_fields = ('created_at', 'updated_at')
+    list_editable = ('is_approved',)
+    
+    fieldsets = (
+        (None, {
+            'fields': ('product', 'user', 'rating', 'title', 'comment')
+        }),
+        ('Status', {
+            'fields': ('is_approved', 'is_verified_purchase')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def rating_display(self, obj):
+        """Display rating with stars."""
+        stars = '★' * obj.rating + '☆' * (5 - obj.rating)
+        return format_html(
+            '<span style="color: #ffc107;">{}</span> <span style="font-size: 0.8em;">({}/5)</span>',
+            stars, obj.rating
+        )
+    rating_display.short_description = 'Rating'
+    
+    actions = ['approve_reviews', 'disapprove_reviews']
+    
+    def approve_reviews(self, request, queryset):
+        """Approve selected reviews."""
+        updated = queryset.update(is_approved=True)
+        self.message_user(request, f'{updated} reviews were approved.')
+    approve_reviews.short_description = 'Approve selected reviews'
+    
+    def disapprove_reviews(self, request, queryset):
+        """Disapprove selected reviews."""
+        updated = queryset.update(is_approved=False)
+        self.message_user(request, f'{updated} reviews were disapproved.')
+    disapprove_reviews.short_description = 'Disapprove selected reviews'

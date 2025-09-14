@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Support Tickets - Key Reports Analytics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 mb-0">
+                <i class="fas fa-headset me-2"></i>Support Tickets
+            </h1>
+            {% if user.is_authenticated %}
+                <a href="{% url 'support:ticket_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>New Ticket
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Filters -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select name="status" id="status" class="form-select">
+                            <option value="">All Statuses</option>
+                            <option value="open" {% if status_filter == 'open' %}selected{% endif %}>Open</option>
+                            <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>In Progress</option>
+                            <option value="waiting_customer" {% if status_filter == 'waiting_customer' %}selected{% endif %}>Waiting for Customer</option>
+                            <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>Resolved</option>
+                            <option value="closed" {% if status_filter == 'closed' %}selected{% endif %}>Closed</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="priority" class="form-label">Priority</label>
+                        <select name="priority" id="priority" class="form-select">
+                            <option value="">All Priorities</option>
+                            <option value="low" {% if priority_filter == 'low' %}selected{% endif %}>Low</option>
+                            <option value="medium" {% if priority_filter == 'medium' %}selected{% endif %}>Medium</option>
+                            <option value="high" {% if priority_filter == 'high' %}selected{% endif %}>High</option>
+                            <option value="urgent" {% if priority_filter == 'urgent' %}selected{% endif %}>Urgent</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn btn-outline-primary me-2">
+                            <i class="fas fa-filter me-1"></i>Filter
+                        </button>
+                        <a href="{% url 'support:ticket_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i>Clear
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tickets Table -->
+        <div class="card">
+            <div class="card-body">
+                {% if tickets %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ticket #</th>
+                                    <th>Title</th>
+                                    <th>Type</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Customer</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ticket in tickets %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ ticket.ticket_number }}</strong>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'support:ticket_detail' ticket.pk %}" class="text-decoration-none">
+                                            {{ ticket.title|truncatechars:50 }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ ticket.get_ticket_type_display }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ ticket.get_priority_display_class }}">
+                                            {{ ticket.get_priority_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ ticket.get_status_display_class }}">
+                                            {{ ticket.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if user.is_staff_member %}
+                                            {{ ticket.customer.get_full_name|default:ticket.customer.email }}
+                                        {% else %}
+                                            <span class="text-muted">You</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            {{ ticket.created_at|date:"M d, Y" }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{% url 'support:ticket_detail' ticket.pk %}" 
+                                               class="btn btn-outline-primary" 
+                                               title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if user.is_staff_member or ticket.customer == user %}
+                                                <a href="{% url 'support:ticket_update' ticket.pk %}" 
+                                                   class="btn btn-outline-secondary" 
+                                                   title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if tickets.has_other_pages %}
+                        <nav aria-label="Tickets pagination" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if tickets.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ tickets.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if priority_filter %}&priority={{ priority_filter }}{% endif %}">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                {% for num in tickets.paginator.page_range %}
+                                    {% if tickets.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ num }}</span>
+                                        </li>
+                                    {% elif num > tickets.number|add:'-3' and num < tickets.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if priority_filter %}&priority={{ priority_filter }}{% endif %}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if tickets.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ tickets.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if priority_filter %}&priority={{ priority_filter }}{% endif %}">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-headset fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No tickets found</h4>
+                        <p class="text-muted">
+                            {% if user.is_authenticated %}
+                                {% if status_filter or priority_filter %}
+                                    No tickets match your current filters.
+                                {% else %}
+                                    You haven't created any support tickets yet.
+                                {% endif %}
+                            {% else %}
+                                Please log in to view your support tickets.
+                            {% endif %}
+                        </p>
+                        {% if user.is_authenticated and not status_filter and not priority_filter %}
+                            <a href="{% url 'support:ticket_create' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Create Your First Ticket
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

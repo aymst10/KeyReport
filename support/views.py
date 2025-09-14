@@ -9,7 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 import os
 
-from .models import SupportTicket, ServiceRequest, Document
+from .models import SupportTicket, ServiceRequest, Document, TicketResponse
 from .forms import SupportTicketForm, ServiceRequestForm
 
 

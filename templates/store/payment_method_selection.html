@@ -1,0 +1,439 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sélection du Mode de Paiement - Key Reports Analytics{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-method-card {
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background: white;
+        margin-bottom: 20px;
+    }
+    
+    .payment-method-card:hover {
+        border-color: #007bff;
+        box-shadow: 0 8px 25px rgba(0,123,255,0.15);
+        transform: translateY(-2px);
+    }
+    
+    .payment-method-card.selected {
+        border-color: #007bff;
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+    }
+    
+    .payment-method-card.selected .payment-icon {
+        color: white;
+    }
+    
+    .payment-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #007bff;
+    }
+    
+    .payment-method-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    
+    .payment-method-description {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-bottom: 0;
+    }
+    
+    .order-summary {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        position: sticky;
+        top: 20px;
+    }
+    
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .summary-total {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #007bff;
+        border-top: 2px solid #007bff;
+        padding-top: 15px;
+        margin-top: 15px;
+    }
+    
+    .btn-continue {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        border-radius: 25px;
+        padding: 15px 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-continue:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(40,167,69,0.3);
+        color: white;
+    }
+    
+    .btn-continue:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .payment-categories {
+        margin-bottom: 30px;
+    }
+    
+     .category-title {
+         font-size: 1.4rem;
+         font-weight: 700;
+         color: #2c3e50;
+         margin-bottom: 20px;
+         padding-bottom: 10px;
+         border-bottom: 3px solid #007bff;
+     }
+     
+     .payment-logos {
+        display: flex;
+        justify-content: center;
+         align-items: center;
+         flex-wrap: wrap;
+         gap: 8px;
+     }
+     
+     .payment-logo {
+         max-width: 100%;
+         height: auto;
+         border-radius: 4px;
+         transition: transform 0.2s ease;
+     }
+     
+     .payment-logo:hover {
+         transform: scale(1.05);
+     }
+     
+     .payment-method-card.selected .payment-logo {
+         filter: brightness(0) invert(1);
+     }
+     
+     .payment-method-card.selected .wafacash-logo,
+     .payment-method-card.selected .cashplus-logo,
+     .payment-method-card.selected .barid-logo,
+     .payment-method-card.selected .cash-delivery-logo,
+     .payment-method-card.selected .bank-transfer-logo,
+     .payment-method-card.selected .apple-pay-logo,
+     .payment-method-card.selected .google-pay-logo,
+     .payment-method-card.selected .amex-logo,
+     .payment-method-card.selected .emv-logo {
+         background: rgba(255, 255, 255, 0.2) !important;
+         border: 2px solid rgba(255, 255, 255, 0.5);
+         color: white !important;
+     }
+     
+     .amex-logo, .emv-logo, .apple-pay-logo, .google-pay-logo {
+         transition: all 0.3s ease;
+     }
+     
+     .amex-logo:hover, .emv-logo:hover, .apple-pay-logo:hover, .google-pay-logo:hover {
+         transform: scale(1.05);
+         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">
+                        <i class="fas fa-credit-card me-2"></i>
+                        Choisissez votre Mode de Paiement
+                    </h2>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" id="paymentMethodForm">
+                        {% csrf_token %}
+                        
+                        <!-- Cartes Bancaires -->
+                        <div class="payment-categories">
+                            <h4 class="category-title">
+                                <i class="fas fa-credit-card me-2"></i>
+                                Cartes Bancaires
+                            </h4>
+                            <div class="row">
+                                 <div class="col-md-6">
+                                     <div class="payment-method-card p-4 text-center" data-method="credit_card">
+                                         <div class="payment-logos mb-3">
+                                             <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="payment-logo me-2" style="height: 30px;">
+                                             <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="payment-logo me-2" style="height: 30px;">
+                                             <div class="amex-logo" style="background: #006fcf; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; display: inline-block;">
+                                                 AMEX
+                                             </div>
+                                         </div>
+                                         <div class="payment-method-title">Carte de Crédit</div>
+                                         <div class="payment-method-description">Visa, Mastercard, American Express</div>
+                                         <input type="radio" name="payment_method" value="credit_card" class="d-none">
+                                     </div>
+                                 </div>
+                                 <div class="col-md-6">
+                                     <div class="payment-method-card p-4 text-center" data-method="debit_card">
+                                         <div class="payment-logos mb-3">
+                                             <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="payment-logo me-2" style="height: 30px;">
+                                             <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="payment-logo me-2" style="height: 30px;">
+                                             <div class="emv-logo" style="background: #1a1a1a; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; display: inline-block;">
+                                                 EMV
+                                             </div>
+                                         </div>
+                                         <div class="payment-method-title">Carte de Débit</div>
+                                         <div class="payment-method-description">Carte bancaire débit immédiat</div>
+                                         <input type="radio" name="payment_method" value="debit_card" class="d-none">
+                                     </div>
+                                 </div>
+                            </div>
+            </div>
+            
+                        <!-- Paiements Numériques -->
+                        <div class="payment-categories">
+                            <h4 class="category-title">
+                                <i class="fas fa-mobile-alt me-2"></i>
+                                Paiements Numériques
+                            </h4>
+                             <div class="row">
+                                 <div class="col-md-4">
+                                     <div class="payment-method-card p-4 text-center" data-method="paypal">
+                                         <div class="payment-logos mb-3">
+                                             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="payment-logo" style="height: 40px;">
+                                         </div>
+                                         <div class="payment-method-title">PayPal</div>
+                                         <div class="payment-method-description">Paiement sécurisé PayPal</div>
+                                         <input type="radio" name="payment_method" value="paypal" class="d-none">
+                                     </div>
+                                 </div>
+                                 <div class="col-md-4">
+                                     <div class="payment-method-card p-4 text-center" data-method="apple_pay">
+                                         <div class="payment-logos mb-3">
+                                             <div class="apple-pay-logo" style="background: #000; color: white; padding: 8px 16px; border-radius: 8px; font-weight: 500; font-size: 14px; display: inline-block; letter-spacing: 0.5px;">
+                                                 🍎 Pay
+                                             </div>
+                                         </div>
+                                         <div class="payment-method-title">Apple Pay</div>
+                                         <div class="payment-method-description">Paiement Apple sécurisé</div>
+                                         <input type="radio" name="payment_method" value="apple_pay" class="d-none">
+                                     </div>
+                                 </div>
+                                 <div class="col-md-4">
+                                     <div class="payment-method-card p-4 text-center" data-method="google_pay">
+                                         <div class="payment-logos mb-3">
+                                             <div class="google-pay-logo" style="background: linear-gradient(135deg, #4285f4 0%, #34a853 100%); color: white; padding: 8px 16px; border-radius: 8px; font-weight: 500; font-size: 14px; display: inline-block; letter-spacing: 0.5px;">
+                                                 G Pay
+                                             </div>
+                                         </div>
+                                         <div class="payment-method-title">Google Pay</div>
+                                         <div class="payment-method-description">Paiement Google sécurisé</div>
+                                         <input type="radio" name="payment_method" value="google_pay" class="d-none">
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                        
+                        <!-- Services Marocains -->
+                        <div class="payment-categories">
+                            <h4 class="category-title">
+                                <i class="fas fa-university me-2"></i>
+                                Services de Paiement Marocains
+                            </h4>
+                <div class="row">
+                                 <div class="col-md-4">
+                                     <div class="payment-method-card p-4 text-center" data-method="wafacash">
+                                         <div class="payment-logos mb-3">
+                                             <div class="wafacash-logo" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 2px 8px rgba(30, 60, 114, 0.3);">
+                                                 💳 WafaCash
+                                             </div>
+                                         </div>
+                                         <div class="payment-method-title">WafaCash</div>
+                                         <div class="payment-method-description">Service de paiement WafaCash</div>
+                                         <input type="radio" name="payment_method" value="wafacash" class="d-none">
+                                     </div>
+                                 </div>
+                                 <div class="col-md-4">
+                                     <div class="payment-method-card p-4 text-center" data-method="cashplus">
+                                         <div class="payment-logos mb-3">
+                                             <div class="cashplus-logo" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);">
+                                                 💸 CashPlus
+                                             </div>
+                                         </div>
+                                         <div class="payment-method-title">CashPlus</div>
+                                         <div class="payment-method-description">Service de paiement CashPlus</div>
+                                         <input type="radio" name="payment_method" value="cashplus" class="d-none">
+                                    </div>
+                                            </div>
+                                 <div class="col-md-4">
+                                     <div class="payment-method-card p-4 text-center" data-method="baridbanque">
+                                         <div class="payment-logos mb-3">
+                                             <div class="barid-logo" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 2px 8px rgba(44, 62, 80, 0.3);">
+                                                 🏛️ Barid Bank
+                                            </div>
+                                    </div>
+                                         <div class="payment-method-title">Barid Bank</div>
+                                         <div class="payment-method-description">Service postal marocain</div>
+                                         <input type="radio" name="payment_method" value="baridbanque" class="d-none">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Paiement à la Livraison -->
+                        <div class="payment-categories">
+                            <h4 class="category-title">
+                                <i class="fas fa-truck me-2"></i>
+                                Paiement à la Livraison
+                            </h4>
+                             <div class="row">
+                                 <div class="col-md-6">
+                                     <div class="payment-method-card p-4 text-center" data-method="cash_delivery">
+                                         <div class="payment-logos mb-3">
+                                             <div class="cash-delivery-logo" style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; padding: 15px 25px; border-radius: 50%; font-size: 24px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                                 💰
+                                             </div>
+                                         </div>
+                                         <div class="payment-method-title">Espèces à la Livraison</div>
+                                         <div class="payment-method-description">Payez en espèces lors de la livraison</div>
+                                         <input type="radio" name="payment_method" value="cash_delivery" class="d-none">
+                                     </div>
+                                 </div>
+                             </div>
+                </div>
+                
+                         <!-- Virements Bancaires -->
+                         <div class="payment-categories">
+                             <h4 class="category-title">
+                                 <i class="fas fa-exchange-alt me-2"></i>
+                                 Virements Bancaires
+                             </h4>
+                             <div class="row">
+                                 <div class="col-md-6">
+                                     <div class="payment-method-card p-4 text-center" data-method="bank_transfer">
+                                         <div class="payment-logos mb-3">
+                                             <div class="bank-transfer-logo" style="background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%); color: white; padding: 15px 25px; border-radius: 50%; font-size: 24px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                                 🏦
+                                             </div>
+                                         </div>
+                                         <div class="payment-method-title">Virement Bancaire</div>
+                                         <div class="payment-method-description">Virement bancaire classique</div>
+                                         <input type="radio" name="payment_method" value="bank_transfer" class="d-none">
+                        </div>
+                        </div>
+                        </div>
+                    </div>
+                    
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-continue" id="continueBtn" disabled>
+                                <i class="fas fa-arrow-right me-2"></i>
+                                Continuer vers le Paiement
+                    </button>
+                </div>
+            </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div class="order-summary">
+                <h4 class="mb-4">
+                    <i class="fas fa-shopping-cart me-2"></i>
+                    Résumé de la Commande
+                </h4>
+                
+                {% for item in cart_items %}
+                <div class="summary-item">
+                    <div>
+                        <strong>{{ item.product.name }}</strong>
+                        <br>
+                        <small class="text-muted">Quantité: {{ item.quantity }}</small>
+                </div>
+                    <div class="text-end">
+                        <strong>{{ item.total_price|floatformat:0 }} MAD</strong>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div class="summary-item">
+                    <div>Sous-total</div>
+                    <div>{{ cart_total|floatformat:0 }} MAD</div>
+                </div>
+                
+                <div class="summary-item">
+                    <div>Livraison</div>
+                    <div>Gratuite</div>
+                </div>
+                
+                <div class="summary-item">
+                    <div>Taxes</div>
+                    <div>0 MAD</div>
+                </div>
+                
+                <div class="summary-total">
+                    <div class="d-flex justify-content-between">
+                    <span>Total</span>
+                        <span>{{ cart_total|floatformat:0 }} MAD</span>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentCards = document.querySelectorAll('.payment-method-card');
+    const continueBtn = document.getElementById('continueBtn');
+    
+    paymentCards.forEach(card => {
+        card.addEventListener('click', function() {
+        // Remove selected class from all cards
+            paymentCards.forEach(c => c.classList.remove('selected'));
+        
+        // Add selected class to clicked card
+            this.classList.add('selected');
+        
+        // Check the radio button
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            // Enable continue button
+            continueBtn.disabled = false;
+        });
+    });
+    
+    // Form submission
+    document.getElementById('paymentMethodForm').addEventListener('submit', function(e) {
+        const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
+        if (!selectedMethod) {
+            e.preventDefault();
+            alert('Veuillez sélectionner un mode de paiement.');
+            }
+        });
+    });
+</script>
+{% endblock %}

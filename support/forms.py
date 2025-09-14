@@ -9,7 +9,7 @@ class SupportTicketForm(forms.ModelForm):
     class Meta:
         model = SupportTicket
         fields = [
-            'title', 'description', 'ticket_type', 'priority', 
+            'title', 'description', 'ticket_type', 'priority', 'status',
             'related_product'
         ]
         widgets = {
@@ -26,6 +26,9 @@ class SupportTicketForm(forms.ModelForm):
                 'class': 'form-control'
             }),
             'priority': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'status': forms.Select(attrs={
                 'class': 'form-control'
             }),
             'related_product': forms.Select(attrs={
@@ -46,7 +49,7 @@ class ServiceRequestForm(forms.ModelForm):
     class Meta:
         model = ServiceRequest
         fields = [
-            'service_type', 'title', 'description', 'service_address',
+            'service_type', 'title', 'description', 'status', 'service_address',
             'service_city', 'service_state', 'service_zip_code',
             'preferred_date', 'preferred_time'
         ]
@@ -62,6 +65,9 @@ class ServiceRequestForm(forms.ModelForm):
                 'class': 'form-control',
                 'rows': 5,
                 'placeholder': 'Please provide detailed information about the service you need...'
+            }),
+            'status': forms.Select(attrs={
+                'class': 'form-control'
             }),
             'service_address': forms.Textarea(attrs={
                 'class': 'form-control',

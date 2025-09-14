@@ -51,6 +51,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=20, blank=True, verbose_name=_('Phone Number'))
     company = models.CharField(max_length=100, blank=True, verbose_name=_('Company'))
     address = models.TextField(blank=True, verbose_name=_('Address'))
+    profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True, verbose_name=_('Profile Photo'))
     is_verified = models.BooleanField(default=False, verbose_name=_('Email Verified'))
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

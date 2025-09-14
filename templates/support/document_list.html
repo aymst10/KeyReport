@@ -1,0 +1,353 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Support Documents - Key Reports Analytics{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-file-alt me-2"></i>Support Documents
+                </h1>
+                <a href="#" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Upload Document
+                </a>
+            </div>
+
+            <!-- Search and Filter Bar -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" class="form-control" placeholder="Search documents...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select">
+                                <option value="">All Categories</option>
+                                <option value="user-guide">User Guides</option>
+                                <option value="api-docs">API Documentation</option>
+                                <option value="tutorials">Tutorials</option>
+                                <option value="faq">FAQ</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select">
+                                <option value="">All Formats</option>
+                                <option value="pdf">PDF</option>
+                                <option value="doc">Word</option>
+                                <option value="video">Video</option>
+                                <option value="html">HTML</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Grid -->
+            <div class="row">
+                <!-- Document Card 1 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 document-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="document-icon me-3">
+                                    <i class="fas fa-file-pdf text-danger"></i>
+                                </div>
+                                <div>
+                                    <h6 class="card-title mb-1">User Guide - Dashboard Setup</h6>
+                                    <small class="text-muted">PDF • 2.3 MB</small>
+                                </div>
+                            </div>
+                            <p class="card-text">Complete guide for setting up and configuring your analytics dashboard components.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-primary">User Guide</span>
+                                <small class="text-muted">Updated 2 days ago</small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-outline-primary btn-sm flex-fill">
+                                    <i class="fas fa-download me-1"></i>Download
+                                </a>
+                                <a href="#" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document Card 2 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 document-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="document-icon me-3">
+                                    <i class="fas fa-file-word text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="card-title mb-1">API Integration Tutorial</h6>
+                                    <small class="text-muted">Word • 1.8 MB</small>
+                                </div>
+                            </div>
+                            <p class="card-text">Step-by-step tutorial for integrating analytics components via REST API.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-success">Tutorial</span>
+                                <small class="text-muted">Updated 1 week ago</small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-outline-primary btn-sm flex-fill">
+                                    <i class="fas fa-download me-1"></i>Download
+                                </a>
+                                <a href="#" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document Card 3 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 document-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="document-icon me-3">
+                                    <i class="fas fa-play-circle text-warning"></i>
+                                </div>
+                                <div>
+                                    <h6 class="card-title mb-1">Video Tutorial - Chart Components</h6>
+                                    <small class="text-muted">MP4 • 45.2 MB</small>
+                                </div>
+                            </div>
+                            <p class="card-text">Video demonstration of advanced chart components and customization options.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-warning">Video</span>
+                                <small class="text-muted">Updated 3 days ago</small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-outline-primary btn-sm flex-fill">
+                                    <i class="fas fa-play me-1"></i>Watch
+                                </a>
+                                <a href="#" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document Card 4 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 document-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="document-icon me-3">
+                                    <i class="fas fa-file-code text-info"></i>
+                                </div>
+                                <div>
+                                    <h6 class="card-title mb-1">Developer Reference</h6>
+                                    <small class="text-muted">HTML • 0.5 MB</small>
+                                </div>
+                            </div>
+                            <p class="card-text">Complete developer reference for all analytics components and their properties.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-info">Reference</span>
+                                <small class="text-muted">Updated 5 days ago</small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-outline-primary btn-sm flex-fill">
+                                    <i class="fas fa-external-link-alt me-1"></i>View
+                                </a>
+                                <a href="#" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document Card 5 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 document-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="document-icon me-3">
+                                    <i class="fas fa-question-circle text-secondary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="card-title mb-1">Frequently Asked Questions</h6>
+                                    <small class="text-muted">PDF • 0.8 MB</small>
+                                </div>
+                            </div>
+                            <p class="card-text">Common questions and answers about analytics components and troubleshooting.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-secondary">FAQ</span>
+                                <small class="text-muted">Updated 1 week ago</small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-outline-primary btn-sm flex-fill">
+                                    <i class="fas fa-download me-1"></i>Download
+                                </a>
+                                <a href="#" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document Card 6 -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 document-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="document-icon me-3">
+                                    <i class="fas fa-file-alt text-success"></i>
+                                </div>
+                                <div>
+                                    <h6 class="card-title mb-1">Best Practices Guide</h6>
+                                    <small class="text-muted">PDF • 3.1 MB</small>
+                                </div>
+                            </div>
+                            <p class="card-text">Industry best practices for implementing analytics solutions and dashboards.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-success">Guide</span>
+                                <small class="text-muted">Updated 2 weeks ago</small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-outline-primary btn-sm flex-fill">
+                                    <i class="fas fa-download me-1"></i>Download
+                                </a>
+                                <a href="#" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Document navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.document-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.document-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #3498db;
+}
+
+.document-icon {
+    width: 50px;
+    height: 50px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.document-icon i {
+    font-size: 1.5rem;
+}
+
+.card-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 1rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.card-text {
+    color: #6c757d;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .col-md-4 {
+        margin-bottom: 1rem;
+    }
+    
+    .card-footer .d-flex {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-sm {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+

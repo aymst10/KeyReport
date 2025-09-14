@@ -1,0 +1,447 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirmation de Paiement - KeyReport{% endblock %}
+
+{% block extra_css %}
+<style>
+    .confirmation-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .confirmation-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .confirmation-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #4CAF50, #8BC34A, #4CAF50);
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+
+    .success-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #4CAF50, #8BC34A);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px;
+        animation: bounceIn 0.8s ease-out;
+    }
+
+    .success-icon i {
+        font-size: 40px;
+        color: white;
+    }
+
+    @keyframes bounceIn {
+        0% { transform: scale(0.3); opacity: 0; }
+        50% { transform: scale(1.05); }
+        70% { transform: scale(0.9); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .confirmation-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .confirmation-subtitle {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        margin-bottom: 30px;
+        animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    .order-summary {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 30px 0;
+        text-align: left;
+        animation: fadeInUp 0.8s ease-out 0.6s both;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .summary-row:last-child {
+        border-bottom: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #2c3e50;
+    }
+
+    .payment-method {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        animation: fadeInUp 0.8s ease-out 0.8s both;
+    }
+
+    .payment-method i {
+        font-size: 1.5rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        animation: fadeInUp 0.8s ease-out 1s both;
+    }
+
+    .btn-confirmation {
+        flex: 1;
+        padding: 15px 25px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: #f8f9fa;
+        color: #6c757d;
+        border: 2px solid #e9ecef;
+    }
+
+    .btn-secondary:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+        color: #6c757d;
+        text-decoration: none;
+    }
+
+    .loading-spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ffffff;
+        border-top: 2px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .progress-steps {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+        animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        color: #4CAF50;
+        font-weight: 600;
+    }
+
+    .step:not(:last-child)::after {
+        content: '→';
+        margin: 0 15px;
+        color: #4CAF50;
+        font-size: 1.2rem;
+    }
+
+    .step.completed {
+        color: #4CAF50;
+    }
+
+    .step.current {
+        color: #667eea;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .confetti {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1000;
+    }
+
+    .confetti-piece {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #4CAF50;
+        animation: confetti-fall 3s linear infinite;
+    }
+
+    @keyframes confetti-fall {
+        0% {
+            transform: translateY(-100vh) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(100vh) rotate(720deg);
+            opacity: 0;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .confirmation-card {
+            padding: 30px 20px;
+            margin: 10px;
+        }
+
+        .confirmation-title {
+            font-size: 2rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-confirmation {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <!-- Progress Steps -->
+        <div class="progress-steps">
+            <div class="step completed">Commande</div>
+            <div class="step completed">Paiement</div>
+            <div class="step current">Confirmation</div>
+        </div>
+
+        <!-- Success Icon -->
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+
+        <!-- Title and Subtitle -->
+        <h1 class="confirmation-title">Paiement Confirmé !</h1>
+        <p class="confirmation-subtitle">Votre commande a été traitée avec succès</p>
+
+        <!-- Payment Method -->
+        <div class="payment-method">
+            <i class="fas fa-credit-card"></i>
+            <span>Paiement via {{ order_data.paymentMethod|default:"Carte Bancaire" }}</span>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary">
+            <h3 style="margin-bottom: 20px; color: #2c3e50;">Résumé de la Commande</h3>
+            
+            <div class="summary-row">
+                <span>Nom du client:</span>
+                <span>{{ order_data.customerName|default:"Yassine Mousta" }}</span>
+            </div>
+            
+            <div class="summary-row">
+                <span>Email:</span>
+                <span>{{ order_data.customerEmail|default:"yassinomousta2004@gmail.com" }}</span>
+            </div>
+            
+            <div class="summary-row">
+                <span>Téléphone:</span>
+                <span>{{ order_data.customerPhone|default:"+212 6 04 12 12 83" }}</span>
+            </div>
+            
+            <div class="summary-row">
+                <span>Sous-total:</span>
+                <span>{{ order_data.subtotal|default:"159.00" }} MAD</span>
+            </div>
+            
+            <div class="summary-row">
+                <span>Livraison:</span>
+                <span>{{ order_data.shipping|default:"Gratuit" }}</span>
+            </div>
+            
+            <div class="summary-row">
+                <span>Total:</span>
+                <span style="font-size: 1.2rem; color: #4CAF50;">{{ order_data.total|default:"159.00" }} MAD</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{% url 'store:payment_receipt' %}" class="btn-confirmation btn-primary">
+                <i class="fas fa-receipt"></i>
+                Voir le Reçu
+            </a>
+            <a href="{% url 'store:home' %}" class="btn-confirmation btn-secondary">
+                <i class="fas fa-home"></i>
+                Retour à l'Accueil
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Confetti Animation -->
+<div class="confetti" id="confetti"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Create confetti animation
+    createConfetti();
+    
+    // Add success sound effect
+    playSuccessSound();
+    
+    // Auto-redirect to receipt after 5 seconds
+    setTimeout(() => {
+        window.location.href = "{% url 'store:payment_receipt' %}";
+    }, 5000);
+});
+
+function createConfetti() {
+    const confettiContainer = document.getElementById('confetti');
+    const colors = ['#4CAF50', '#8BC34A', '#FFC107', '#FF9800', '#E91E63', '#9C27B0'];
+    
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti-piece';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 3 + 's';
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        confettiContainer.appendChild(confetti);
+    }
+    
+    // Remove confetti after animation
+    setTimeout(() => {
+        confettiContainer.remove();
+    }, 5000);
+}
+
+function playSuccessSound() {
+    // Create a simple success sound using Web Audio API
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+        oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+        oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+    } catch (e) {
+        console.log('Audio not supported');
+    }
+}
+
+// Add loading state to buttons
+document.querySelectorAll('.btn-confirmation').forEach(button => {
+    button.addEventListener('click', function(e) {
+        const originalText = this.innerHTML;
+        this.innerHTML = '<div class="loading-spinner"></div> Traitement...';
+        this.style.pointerEvents = 'none';
+        
+        // Reset after navigation
+        setTimeout(() => {
+            this.innerHTML = originalText;
+            this.style.pointerEvents = 'auto';
+        }, 2000);
+    });
+});
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

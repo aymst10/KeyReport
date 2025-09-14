@@ -1,0 +1,687 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Finaliser le Paiement - Key Reports Analytics{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 0;
+    }
+    
+    .payment-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+    
+    .payment-header {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+        position: relative;
+    }
+    
+    .payment-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+    }
+    
+    .payment-method-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 12px 20px;
+        border-radius: 25px;
+        margin-bottom: 15px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .payment-method-icon {
+        font-size: 1.5rem;
+    }
+    
+    .payment-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .payment-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin: 10px 0 0 0;
+    }
+    
+    .payment-body {
+        padding: 40px;
+    }
+    
+    .form-section {
+        margin-bottom: 30px;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .section-title::before {
+        content: '';
+        width: 4px;
+        height: 20px;
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border-radius: 2px;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 15px 20px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+    }
+    
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+        background: white;
+        transform: translateY(-2px);
+    }
+    
+    .card-input-group {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 15px;
+    }
+    
+    .btn-pay {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        padding: 18px 50px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        border-radius: 15px;
+        color: white;
+        transition: all 0.3s ease;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-pay::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+    
+    .btn-pay:hover::before {
+        left: 100%;
+    }
+    
+    .btn-pay:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
+    }
+    
+    .btn-pay:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .order-summary-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        position: sticky;
+        top: 20px;
+    }
+    
+    .summary-header {
+        text-align: center;
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f8f9fa;
+    }
+    
+    .summary-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin: 0;
+    }
+    
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+    
+    .order-item:last-child {
+        border-bottom: none;
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: #007bff;
+        background: #f8f9fa;
+        margin: 0 -30px -30px -30px;
+        padding: 20px 30px;
+        border-radius: 0 0 20px 20px;
+    }
+    
+    .product-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .product-image {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 2px solid #e9ecef;
+    }
+    
+    .product-details h6 {
+        margin: 0;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .product-details small {
+        color: #6c757d;
+    }
+    
+    .security-badge {
+        background: linear-gradient(135deg, #e7f3ff 0%, #b3d9ff 100%);
+        border: 1px solid #007bff;
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 30px;
+        text-align: center;
+    }
+    
+    .security-badge h6 {
+        color: #007bff;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+    
+    .security-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+    
+    .security-feature {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: #007bff;
+    }
+    
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    
+    .loading-content {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #007bff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .back-button {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 12px 25px;
+        border-radius: 25px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+    
+    .back-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.5);
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+        .payment-container {
+            padding: 20px 0;
+        }
+        
+        .payment-body {
+            padding: 25px;
+        }
+        
+        .card-input-group {
+            grid-template-columns: 1fr;
+        }
+        
+        .order-summary-card {
+            position: static;
+            margin-top: 30px;
+        }
+        
+        .payment-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="payment-card">
+                    <div class="payment-header">
+                        <a href="{% url 'store:payment_method_selection_order' order_id=order.id %}" class="back-button">
+                            <i class="fas fa-arrow-left me-2"></i> Retour
+                        </a>
+                        
+                        <div class="payment-method-badge">
+                            <i class="{{ method_details.icon }} payment-method-icon"></i>
+                            <span>{{ method_details.name }}</span>
+                        </div>
+                        
+                        <h1 class="payment-title">Finaliser le Paiement</h1>
+                        <p class="payment-subtitle">{{ method_details.description }}</p>
+                    </div>
+                    
+                    <div class="payment-body">
+                        <form method="post" id="payment-form">
+                            {% csrf_token %}
+                            
+                            {% if payment_method == 'cash_delivery' %}
+                                <!-- Paiement à la livraison -->
+                                <div class="form-section">
+                                    <div class="alert alert-info" style="background: linear-gradient(135deg, #e7f3ff 0%, #b3d9ff 100%); border: 1px solid #007bff; border-radius: 15px; padding: 25px;">
+                                        <div class="text-center">
+                                            <i class="fas fa-truck fa-3x text-primary mb-3"></i>
+                                            <h5 class="text-primary mb-3">Paiement à la Livraison</h5>
+                                            <p class="mb-0">Vous paierez en espèces lorsque votre commande sera livrée. Aucune information supplémentaire requise.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            {% elif payment_method == 'credit_card' or payment_method == 'debit_card' or payment_method == 'visa' or payment_method == 'mastercard' %}
+                                <!-- Paiement par carte -->
+                                <div class="form-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-credit-card"></i>
+                                        Informations de la Carte
+                                    </h3>
+                                    
+                                    {% if card_form %}
+                                        <div class="form-group">
+                                            <label class="form-label">Numéro de Carte</label>
+                                            {{ card_form.card_number }}
+                                            {% if card_form.card_number.errors %}
+                                                <div class="text-danger">{{ card_form.card_number.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label class="form-label">Nom du Titulaire</label>
+                                            {{ card_form.cardholder_name }}
+                                            {% if card_form.cardholder_name.errors %}
+                                                <div class="text-danger">{{ card_form.cardholder_name.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label class="form-label">Date d'Expiration</label>
+                                            <div class="card-input-group">
+                                                {{ card_form.expiry_date }}
+                                                {{ card_form.cvv }}
+                                            </div>
+                                            {% if card_form.expiry_date.errors %}
+                                                <div class="text-danger">{{ card_form.expiry_date.errors.0 }}</div>
+                                            {% endif %}
+                                            {% if card_form.cvv.errors %}
+                                                <div class="text-danger">{{ card_form.cvv.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                            {% elif payment_method == 'paypal' or payment_method == 'apple_pay' or payment_method == 'google_pay' %}
+                                <!-- Paiements numériques -->
+                                <div class="form-section">
+                                    <div class="alert alert-success" style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border: 1px solid #28a745; border-radius: 15px; padding: 25px;">
+                                        <div class="text-center">
+                                            <i class="fas fa-mobile-alt fa-3x text-success mb-3"></i>
+                                            <h5 class="text-success mb-3">Paiement {{ method_details.name }}</h5>
+                                            <p class="mb-0">Vous serez redirigé vers {{ method_details.name }} pour finaliser votre paiement de manière sécurisée.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            {% elif payment_method == 'wafacash' or payment_method == 'cashplus' or payment_method == 'baridbanque' %}
+                                <!-- Services marocains -->
+                                <div class="form-section">
+                                    <div class="alert alert-warning" style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border: 1px solid #ffc107; border-radius: 15px; padding: 25px;">
+                                        <div class="text-center">
+                                            <i class="fas fa-university fa-3x text-warning mb-3"></i>
+                                            <h5 class="text-warning mb-3">Paiement {{ method_details.name }}</h5>
+                                            <p class="mb-0">Vous serez redirigé vers le service {{ method_details.name }} pour effectuer votre paiement.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            {% elif payment_method == 'bank_transfer' %}
+                                <!-- Virement bancaire -->
+                                <div class="form-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-university"></i>
+                                        Informations de Virement
+                                    </h3>
+                                    
+                                    {% if bank_form %}
+                                        <div class="form-group">
+                                            <label class="form-label">Nom du Titulaire du Compte</label>
+                                            {{ bank_form.account_holder }}
+                                            {% if bank_form.account_holder.errors %}
+                                                <div class="text-danger">{{ bank_form.account_holder.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label class="form-label">Numéro de Référence (Optionnel)</label>
+                                            {{ bank_form.reference_number }}
+                                            {% if bank_form.reference_number.errors %}
+                                                <div class="text-danger">{{ bank_form.reference_number.errors.0 }}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="alert alert-info">
+                                        <h6><i class="fas fa-info-circle me-2"></i>Instructions de Virement</h6>
+                                        <p class="mb-0">Effectuez un virement bancaire de <strong>{{ order.total_amount }} MAD</strong> vers notre compte. Votre commande sera traitée dès réception du virement.</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Confirmation -->
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-check-circle"></i>
+                                    Confirmation
+                                </h3>
+                                
+                                {% if confirmation_form %}
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            {{ confirmation_form.terms_accepted }}
+                                            <label class="form-check-label" for="{{ confirmation_form.terms_accepted.id_for_label }}">
+                                                J'accepte les <a href="#" target="_blank">Conditions Générales</a> et la <a href="#" target="_blank">Politique de Confidentialité</a>
+                                            </label>
+                                        </div>
+                                        {% if confirmation_form.terms_accepted.errors %}
+                                            <div class="text-danger">{{ confirmation_form.terms_accepted.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            {{ confirmation_form.newsletter_subscription }}
+                                            <label class="form-check-label" for="{{ confirmation_form.newsletter_subscription.id_for_label }}">
+                                                S'abonner à notre newsletter pour les mises à jour et offres spéciales
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <button type="submit" class="btn btn-pay" id="pay-button">
+                                <i class="fas fa-credit-card me-2"></i>
+                                Payer {{ order.total_amount }} MAD
+                            </button>
+                        </form>
+                        
+                        <div class="security-badge">
+                            <h6><i class="fas fa-shield-alt me-2"></i>Votre paiement est sécurisé</h6>
+                            <div class="security-features">
+                                <div class="security-feature">
+                                    <i class="fas fa-lock"></i>
+                                    <span>Chiffrement SSL 256-bit</span>
+                                </div>
+                                <div class="security-feature">
+                                    <i class="fas fa-user-shield"></i>
+                                    <span>Données protégées</span>
+                                </div>
+                                <div class="security-feature">
+                                    <i class="fas fa-certificate"></i>
+                                    <span>Certification PCI DSS</span>
+                                </div>
+                                <div class="security-feature">
+                                    <i class="fas fa-eye"></i>
+                                    <span>Surveillance 24/7</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="order-summary-card">
+                    <div class="summary-header">
+                        <h4 class="summary-title">
+                            <i class="fas fa-receipt me-2"></i>
+                            Résumé de la Commande
+                        </h4>
+                        <p class="text-muted mb-0">Commande #{{ order.order_number }}</p>
+                    </div>
+                    
+                    {% for item in order.items.all %}
+                    <div class="order-item">
+                        <div class="product-info">
+                            {% if item.product.main_image %}
+                                <img src="{{ item.product.main_image.url }}" alt="{{ item.product.name }}" class="product-image">
+                            {% else %}
+                                <div class="product-image bg-light d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-image text-muted"></i>
+                                </div>
+                            {% endif %}
+                            <div class="product-details">
+                                <h6>{{ item.product.name }}</h6>
+                                <small>Quantité: {{ item.quantity }}</small>
+                            </div>
+                        </div>
+                        <span class="fw-bold">{{ item.total_price }} MAD</span>
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="order-item">
+                        <span>Sous-total</span>
+                        <span>{{ order.subtotal }} MAD</span>
+                    </div>
+                    
+                    {% if order.shipping_cost > 0 %}
+                    <div class="order-item">
+                        <span>Livraison</span>
+                        <span>{{ order.shipping_cost }} MAD</span>
+                    </div>
+                    {% else %}
+                    <div class="order-item">
+                        <span>Livraison</span>
+                        <span class="text-success">Gratuite</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if order.tax_amount > 0 %}
+                    <div class="order-item">
+                        <span>Taxes</span>
+                        <span>{{ order.tax_amount }} MAD</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="order-item">
+                        <span>Total</span>
+                        <span>{{ order.total_amount }} MAD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loading-content">
+        <div class="spinner"></div>
+        <h5>Traitement de votre paiement...</h5>
+        <p class="text-muted">Veuillez patienter, ne fermez pas cette page.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('payment-form').addEventListener('submit', function(e) {
+    // Show loading overlay
+    document.getElementById('loading-overlay').style.display = 'flex';
+    
+    // Disable form
+    const formElements = this.querySelectorAll('input, button, select, textarea');
+    formElements.forEach(element => {
+        element.disabled = true;
+    });
+});
+
+// Card number formatting
+const cardNumberInput = document.querySelector('input[name="card_number"]');
+if (cardNumberInput) {
+    cardNumberInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+        e.target.value = formattedValue;
+    });
+}
+
+// CVV formatting
+const cvvInput = document.querySelector('input[name="cvv"]');
+if (cvvInput) {
+    cvvInput.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^0-9]/gi, '');
+    });
+}
+
+// Expiry date formatting (MM/AA)
+const expiryInput = document.querySelector('input[name="expiry_date"]');
+if (expiryInput) {
+    expiryInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+        if (value.length >= 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        }
+        e.target.value = value;
+    });
+    
+    // Validate expiry date
+    expiryInput.addEventListener('blur', function(e) {
+        const value = e.target.value;
+        if (value.length === 5) {
+            const [month, year] = value.split('/');
+            const monthNum = parseInt(month);
+            const yearNum = parseInt('20' + year);
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth() + 1;
+            
+            if (monthNum < 1 || monthNum > 12) {
+                e.target.setCustomValidity('Mois invalide (01-12)');
+            } else if (yearNum < currentYear || (yearNum === currentYear && monthNum < currentMonth)) {
+                e.target.setCustomValidity('Date d\'expiration dépassée');
+            } else {
+                e.target.setCustomValidity('');
+            }
+        }
+    });
+}
+
+// Form validation
+document.getElementById('payment-form').addEventListener('submit', function(e) {
+    const termsCheckbox = document.querySelector('input[name="terms_accepted"]');
+    if (termsCheckbox && !termsCheckbox.checked) {
+        e.preventDefault();
+        alert('Veuillez accepter les conditions générales pour continuer.');
+        return false;
+    }
+});
+</script>
+{% endblock %}

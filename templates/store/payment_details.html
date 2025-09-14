@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Détails de Paiement {{ account_info.name }} - Key Reports Analytics{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .payment-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px 15px 0 0;
+        padding: 2rem;
+        text-align: center;
+    }
+    .account-info {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+    .account-number {
+        font-family: 'Courier New', monospace;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 2px dashed #3498db;
+        text-align: center;
+        margin: 1rem 0;
+    }
+    .instruction-step {
+        background: white;
+        border-left: 4px solid #3498db;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        border-radius: 0 8px 8px 0;
+    }
+    .order-summary {
+        background: #e8f5e8;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+    .copy-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    .copy-btn:hover {
+        background: #2980b9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card payment-card">
+                <div class="payment-header">
+                    <i class="fas fa-mobile-alt fa-3x mb-3"></i>
+                    <h2>Paiement {{ account_info.name }}</h2>
+                    <p class="mb-0">Effectuez votre paiement en suivant les instructions ci-dessous</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <!-- Résumé de la commande -->
+                    <div class="order-summary">
+                        <h5 class="mb-3">
+                            <i class="fas fa-receipt me-2"></i>Résumé de votre commande
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Numéro de commande:</strong><br>
+                                <span class="text-primary">{{ order.order_number }}</span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Montant à payer:</strong><br>
+                                <span class="text-success fw-bold fs-4">{{ order.total_amount|floatformat:0 }} MAD</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-12">
+                                <strong>Articles commandés:</strong>
+                                <ul class="list-unstyled mt-2">
+                                    {% for item in order.items.all %}
+                                    <li class="d-flex justify-content-between">
+                                        <span>{{ item.product_name }} (x{{ item.quantity }})</span>
+                                        <span>{{ item.total_price|floatformat:0 }} MAD</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informations de compte -->
+                    <div class="account-info">
+                        <h5 class="mb-3">
+                            <i class="fas fa-university me-2"></i>Informations de compte {{ account_info.name }}
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Nom du compte:</strong><br>
+                                {{ account_info.account_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Numéro de compte:</strong><br>
+                                <div class="account-number" id="accountNumber">
+                                    {{ account_info.account_number }}
+                                    <button class="copy-btn ms-2" onclick="copyAccountNumber()">
+                                        <i class="fas fa-copy"></i> Copier
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instructions de paiement -->
+                    <div class="mt-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-list-ol me-2"></i>Instructions de paiement
+                        </h5>
+                        {% for instruction in account_info.instructions %}
+                        <div class="instruction-step">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            {{ instruction }}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Important -->
+                    <div class="alert alert-warning mt-4">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>Important:</h6>
+                        <ul class="mb-0">
+                            <li>Payez exactement le montant indiqué: <strong>{{ order.total_amount|floatformat:0 }} MAD</strong></li>
+                            <li>Mentionnez votre numéro de commande: <strong>{{ order.order_number }}</strong></li>
+                            <li>Conservez le reçu de votre paiement</li>
+                            <li>Votre commande sera traitée après confirmation du paiement</li>
+                        </ul>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{% url 'store:order_detail' order.id %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Retour à la commande
+                        </a>
+                        <button class="btn btn-success" onclick="markAsPaid()">
+                            <i class="fas fa-check me-2"></i>J'ai effectué le paiement
+                        </button>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="text-center mt-4">
+                        <small class="text-muted">
+                            Besoin d'aide ? Contactez-nous au 
+                            <strong>+212 5XX XXX XXX</strong> ou 
+                            <a href="mailto:contact@keyreport.ma">contact@keyreport.ma</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyAccountNumber() {
+    const accountNumber = document.getElementById('accountNumber').textContent.trim();
+    // Remove the "Copier" button text and get just the number
+    const number = accountNumber.replace('Copier', '').trim();
+    
+    navigator.clipboard.writeText(number).then(function() {
+        // Show success message
+        const button = document.querySelector('.copy-btn');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copié!';
+        button.style.background = '#27ae60';
+        
+        setTimeout(function() {
+            button.innerHTML = originalText;
+            button.style.background = '#3498db';
+        }, 2000);
+    }).catch(function(err) {
+        console.error('Erreur lors de la copie: ', err);
+        alert('Erreur lors de la copie. Veuillez copier manuellement: ' + number);
+    });
+}
+
+function markAsPaid() {
+    if (confirm('Avez-vous bien effectué le paiement de {{ order.total_amount|floatformat:0 }} MAD vers le compte {{ account_info.account_number }} ?')) {
+        // Here you would typically send an AJAX request to mark the payment as completed
+        // For now, we'll just show a message
+        alert('Merci ! Votre paiement sera vérifié sous 24h. Vous recevrez un email de confirmation.');
+        
+        // Redirect to order detail
+        window.location.href = "{% url 'store:order_detail' order.id %}";
+    }
+}
+
+// Auto-refresh page every 5 minutes to check for payment status updates
+setTimeout(function() {
+    location.reload();
+}, 300000); // 5 minutes
+</script>
+{% endblock %}
+

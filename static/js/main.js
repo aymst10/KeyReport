@@ -293,9 +293,9 @@ function goToPage(page) {
 
 // Utility functions
 function formatCurrency(amount) {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('fr-MA', {
         style: 'currency',
-        currency: 'USD'
+        currency: 'MAD'
     }).format(amount);
 }
 

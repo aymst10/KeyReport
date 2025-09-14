@@ -1,0 +1,56 @@
+{% comment %}
+Reusable contact information template with clickable phone and email links
+Usage: {% include 'partials/contact_info.html' with email=user.email phone=user.phone %}
+{% endcomment %}
+
+<div class="contact-info">
+    {% if email %}
+        <div class="mb-2">
+            <strong>Email:</strong><br>
+            <a href="mailto:{{ email }}" class="contact-link">
+                <i class="fas fa-envelope me-2 text-primary"></i>{{ email }}
+            </a>
+        </div>
+    {% endif %}
+    
+    {% if phone %}
+        <div class="mb-2">
+            <strong>Phone:</strong><br>
+            <a href="tel:{{ phone }}" class="contact-link">
+                <i class="fas fa-phone me-2 text-success"></i>{{ phone }}
+            </a>
+        </div>
+    {% endif %}
+    
+    {% if address %}
+        <div class="mb-2">
+            <strong>Address:</strong><br>
+            <a href="https://maps.google.com/?q={{ address|urlencode }}" target="_blank" class="contact-link">
+                <i class="fas fa-map-marker-alt me-2 text-warning"></i>{{ address }}
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

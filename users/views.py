@@ -20,7 +20,8 @@ import string
 
 from .forms import (
     CustomUserCreationForm, CustomAuthenticationForm, CustomPasswordResetForm,
-    CustomSetPasswordForm, UserProfileForm, UserUpdateForm, EmailVerificationForm
+    CustomSetPasswordForm, UserProfileForm, UserUpdateForm, EmailVerificationForm,
+    AvatarUploadForm
 )
 from .models import CustomUser, UserProfile
 
@@ -225,13 +226,38 @@ def profile(request):
     profile, created = UserProfile.objects.get_or_create(user=user)
     
     if request.method == 'POST':
+        # Handle profile photo removal
+        if 'remove_avatar' in request.POST:
+            if user.profile_photo:
+                user.profile_photo.delete()
+                user.profile_photo = None
+                user.save()
+                messages.success(request, 'Photo de profil supprimée avec succès!')
+            return redirect('users:profile')
+        
+        # Handle profile photo update
+        if 'update_avatar' in request.POST:
+            if 'profile_photo' in request.FILES:
+                # Delete old photo if exists
+                if user.profile_photo:
+                    user.profile_photo.delete()
+                
+                # Save new photo
+                user.profile_photo = request.FILES['profile_photo']
+                user.save()
+                messages.success(request, 'Photo de profil mise à jour avec succès!')
+            else:
+                messages.error(request, 'Veuillez sélectionner une photo.')
+            return redirect('users:profile')
+        
+        # Handle regular profile update
         user_form = UserUpdateForm(request.POST, instance=user)
         profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
         
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(request, 'Profile updated successfully!')
+            messages.success(request, 'Profil mis à jour avec succès!')
             return redirect('users:profile')
     else:
         user_form = UserUpdateForm(instance=user)

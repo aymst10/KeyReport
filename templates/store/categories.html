@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Catégories - IT Store{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <div class="container">
+        <!-- Header Section -->
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold text-primary mb-3">
+                    <i class="fas fa-th-large me-3"></i>Nos Catégories
+                </h1>
+                <p class="lead text-muted">
+                    Découvrez notre gamme complète de solutions IT professionnelles
+                </p>
+                <div class="border-bottom border-primary mx-auto" style="width: 100px; height: 3px;"></div>
+            </div>
+        </div>
+
+        <!-- Categories Grid -->
+        <div class="row g-4">
+            {% for category in categories %}
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="category-card h-100">
+                    <div class="card border-0 shadow-lg h-100 category-hover">
+                        <!-- Category Image -->
+                        <div class="category-image-container position-relative overflow-hidden">
+                            <a href="{% url 'store:category_detail' category.slug %}" class="text-decoration-none">
+                                {% if category.image %}
+                                    <img src="{{ category.image.url }}" 
+                                         alt="{{ category.name }}" 
+                                         class="card-img-top category-image">
+                                {% else %}
+                                    <div class="category-placeholder d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-folder fa-3x text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <!-- Overlay -->
+                                <div class="category-overlay d-flex align-items-center justify-content-center">
+                                    <div class="text-center text-white">
+                                        <i class="fas fa-arrow-right fa-2x mb-2"></i>
+                                        <p class="mb-0 fw-bold">Découvrir</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        
+                        <!-- Card Body -->
+                        <div class="card-body text-center p-4">
+                            <h5 class="card-title fw-bold text-dark mb-3">
+                                <a href="{% url 'store:category_detail' category.slug %}" class="text-decoration-none text-dark">
+                                    {{ category.name }}
+                                </a>
+                            </h5>
+                            
+                            {% if category.description %}
+                            <p class="card-text text-muted mb-4">
+                                {{ category.description|truncatewords:15 }}
+                            </p>
+                            {% endif %}
+                            
+                            <!-- Product Count -->
+                            <div class="mb-3">
+                                <span class="badge bg-primary fs-6 px-3 py-2">
+                                    <i class="fas fa-box me-1"></i>
+                                    {{ category.products.count }} produit{{ category.products.count|pluralize }}
+                                </span>
+                            </div>
+                            
+                            <!-- Action Button -->
+                            <a href="{% url 'store:product_list' %}?category={{ category.slug }}" 
+                               class="btn btn-outline-primary btn-lg px-4 py-2">
+                                <i class="fas fa-eye me-2"></i>Voir les produits
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-folder-open fa-4x text-muted mb-4"></i>
+                    <h3 class="text-muted">Aucune catégorie disponible</h3>
+                    <p class="text-muted">Les catégories seront bientôt disponibles.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Call to Action -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="bg-primary text-white rounded-4 p-5 text-center">
+                    <h3 class="fw-bold mb-3">
+                        <i class="fas fa-rocket me-2"></i>Besoin d'aide pour choisir ?
+                    </h3>
+                    <p class="lead mb-4">
+                        Notre équipe d'experts est là pour vous accompagner dans le choix de vos solutions IT.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="{% url 'store:contact' %}" class="btn btn-light btn-lg px-4">
+                            <i class="fas fa-phone me-2"></i>Nous contacter
+                        </a>
+                        <a href="{% url 'store:product_list' %}" class="btn btn-outline-light btn-lg px-4">
+                            <i class="fas fa-th-large me-2"></i>Tous les produits
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.category-card {
+    transition: all 0.3s ease;
+}
+
+.category-hover {
+    transition: all 0.3s ease;
+    border-radius: 20px !important;
+    overflow: hidden;
+}
+
+.category-hover:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+}
+
+.category-image-container {
+    height: 250px;
+    border-radius: 20px 20px 0 0;
+}
+
+.category-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.category-hover:hover .category-image {
+    transform: scale(1.1);
+}
+
+.category-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.category-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 123, 255, 0.9);
+    opacity: 0;
+    transition: all 0.3s ease;
+    border-radius: 20px 20px 0 0;
+}
+
+.category-hover:hover .category-overlay {
+    opacity: 1;
+}
+
+.card-body {
+    background: #fff;
+    border-radius: 0 0 20px 20px;
+}
+
+.badge {
+    border-radius: 25px;
+}
+
+.btn {
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+}
+
+.border-bottom {
+    background: linear-gradient(90deg, #007bff, #0056b3);
+}
+
+@media (max-width: 768px) {
+    .category-image-container {
+        height: 200px;
+    }
+    
+    .display-4 {
+        font-size: 2.5rem;
+    }
+}
+</style>
+{% endblock %}

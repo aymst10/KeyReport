@@ -227,22 +227,46 @@ class UserProfileForm(forms.ModelForm):
     
     class Meta:
         model = UserProfile
-        fields = ['bio', 'avatar', 'date_of_birth', 'preferences']
+        fields = ['bio', 'date_of_birth', 'preferences']  # Removed avatar from main form
         widgets = {
             'bio': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
-                'placeholder': 'Tell us about yourself...'
-            }),
-            'avatar': forms.FileInput(attrs={
-                'class': 'form-control',
-                'accept': 'image/*'
+                'placeholder': 'Parlez-nous de vous...'
             }),
             'date_of_birth': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
             }),
         }
+
+
+class AvatarUploadForm(forms.ModelForm):
+    """Form for uploading user avatar."""
+    
+    class Meta:
+        model = UserProfile
+        fields = ['avatar']
+        widgets = {
+            'avatar': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            }),
+        }
+    
+    def clean_avatar(self):
+        avatar = self.cleaned_data.get('avatar')
+        if avatar:
+            # Check file size (5MB max)
+            if avatar.size > 5 * 1024 * 1024:
+                raise forms.ValidationError('La taille du fichier ne doit pas dépasser 5MB.')
+            
+            # Check file type
+            allowed_types = ['image/jpeg', 'image/png', 'image/gif']
+            if avatar.content_type not in allowed_types:
+                raise forms.ValidationError('Format de fichier non supporté. Utilisez JPG, PNG ou GIF.')
+        
+        return avatar
 
 
 class UserUpdateForm(forms.ModelForm):

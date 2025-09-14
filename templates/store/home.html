@@ -1,401 +1,995 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}IT Store - Dashboard{% endblock %}
+{% block title %}Key Reports Analytics - Dashboard{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <!-- Left Sidebar -->
-    <div class="sidebar">
-        <!-- User Profile Section -->
-        <div class="user-profile">
-            <div class="profile-picture">
-                {% if user.is_authenticated %}
-                    <i class="fas fa-user fa-2x"></i>
-                {% else %}
-                    <i class="fas fa-user-circle fa-2x"></i>
-                {% endif %}
-            </div>
-            <div class="user-info">
-                {% if user.is_authenticated %}
-                    <h6 class="user-name">{{ user.get_full_name|default:user.email }}</h6>
-                    <div class="user-status">
-                        <span class="status-item">3/6</span>
-                        <span class="status-item">4/5</span>
-                        <span class="status-item">Active</span>
-                    </div>
-                {% else %}
-                    <h6 class="user-name">Guest User</h6>
-                    <div class="user-status">
-                        <span class="status-item">Please Login</span>
-                    </div>
-                {% endif %}
+<div class="modern-dashboard">
+    <!-- Floating Toggle Button -->
+    <button class="floating-toggle" onclick="toggleFloatingSidebar()" onmousedown="createRipple(event)">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeFloatingSidebar()"></div>
+
+    <!-- Modern Floating Sidebar -->
+    <aside class="modern-sidebar" id="floatingSidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <i class="fas fa-chart-line"></i>
+                <span>Key Reports</span>
             </div>
         </div>
-
-        <!-- Navigation Menu -->
+        
+        <!-- Navigation -->
         <nav class="sidebar-nav">
-            <ul class="nav-list">
-                <li class="nav-item active">
-                    <a href="{% url 'store:home' %}" class="nav-link">
-                        <i class="fas fa-th-large"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'store:product_list' %}" class="nav-link">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span>Products</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'support:ticket_list' %}" class="nav-link">
-                        <i class="fas fa-headset"></i>
-                        <span>Support</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'support:service_list' %}" class="nav-link">
-                        <i class="fas fa-tools"></i>
-                        <span>Services</span>
-                    </a>
-                </li>
-                {% if user.is_authenticated %}
-                <li class="nav-item">
-                    <a href="{% url 'users:dashboard' %}" class="nav-link">
-                        <i class="fas fa-user-cog"></i>
-                        <span>My Account</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'support:document_list' %}" class="nav-link">
-                        <i class="fas fa-file-alt"></i>
-                        <span>Documents</span>
-                    </a>
-                </li>
-                {% endif %}
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-
-    <!-- Main Content Area -->
-    <div class="main-content">
-        <!-- Top Header -->
-        <div class="top-header">
-            <div class="header-left">
-                <h1 class="page-title">
-                    <i class="fas fa-laptop-code me-3"></i>
-                    IT Store Dashboard
-                </h1>
-                <p class="page-subtitle">Manage your IT materials and technical support</p>
-            </div>
-            <div class="header-right">
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search products, services...">
-                </div>
-                {% if user.is_authenticated %}
-                <div class="user-actions">
-                    <a href="{% url 'users:profile' %}" class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-user me-2"></i>Profile
-                    </a>
-                    <a href="{% url 'users:logout' %}" class="btn btn-outline-danger btn-sm">
-                        <i class="fas fa-sign-out-alt me-2"></i>Logout
-                    </a>
-                </div>
-                {% else %}
-                <div class="auth-actions">
-                    <a href="{% url 'users:login' %}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-sign-in-alt me-2"></i>Login
-                    </a>
-                    <a href="{% url 'users:signup' %}" class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-user-plus me-2"></i>Sign Up
-                    </a>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Project Overview Cards -->
-        <div class="overview-section">
-            <div class="section-header">
-                <h3>System Overview</h3>
-                <div class="action-buttons">
-                    <button class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus me-2"></i>New Project
-                    </button>
-                    <button class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-download me-2"></i>Export
-                    </button>
-                </div>
+            <div class="nav-section">
+                <h6 class="nav-title">Main Menu</h6>
+                <ul class="nav-menu">
+                    <li class="nav-item active">
+                        <a href="{% url 'store:home' %}" class="nav-link" data-tooltip="Dashboard">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'store:product_list' %}" class="nav-link" data-tooltip="Components">
+                            <i class="fas fa-cube"></i>
+                            <span>Components</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'support:ticket_list' %}" class="nav-link" data-tooltip="Support">
+                            <i class="fas fa-ticket-alt"></i>
+                            <span>Support</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'support:service_list' %}" class="nav-link" data-tooltip="Services">
+                            <i class="fas fa-tools"></i>
+                            <span>Services</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
             
-            <div class="overview-cards">
-                <div class="overview-card">
-                    <div class="card-icon">
-                        <i class="fas fa-shopping-cart"></i>
+            {% if user.is_authenticated %}
+            <div class="nav-section">
+                <h6 class="nav-title">User Account</h6>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="{% url 'users:dashboard' %}" class="nav-link">
+                            <i class="fas fa-user-cog"></i>
+                            <span>My Account</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'store:cart' %}" class="nav-link">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Cart</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'store:order_list' %}" class="nav-link">
+                            <i class="fas fa-list"></i>
+                            <span>My Orders</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            {% endif %}
+        </nav>
+        
+        <!-- User Profile Section -->
+        <div class="user-section">
+            {% if user.is_authenticated %}
+                <div class="user-details">
+                    <div class="user-avatar">
+                        {{ user.get_full_name|default:user.email|first|upper }}
                     </div>
-                    <div class="card-content">
-                        <h4>Products Available</h4>
-                        <p class="card-value">156</p>
-                        <p class="card-subtitle">IT Materials & Equipment</p>
+                    <div class="user-info">
+                        <h4>{{ user.get_full_name|default:user.email }}</h4>
+                        <p>Administrator</p>
                     </div>
                 </div>
+            {% else %}
+                <div class="user-details">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="user-info">
+                        <h4>Welcome Guest!</h4>
+                        <p><a href="{% url 'users:login' %}" class="login-link">Please Login</a></p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="page-header">
+            <div class="header-content">
+                <div class="page-title-section">
+                    <h1>Dashboard</h1>
+                    <p>Manage your analytics components and business intelligence solutions</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search components, tickets, services...">
+                    </div>
+                    <a href="{% url 'store:product_list' %}" class="btn-primary">
+                        <i class="fas fa-plus"></i>
+                        View Products
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <a href="{% url 'store:product_list' %}" class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>17</h3>
+                        <p>IT Components Available</p>
+                        <span class="stat-trend positive">
+                            <i class="fas fa-arrow-up"></i> +25%
+                        </span>
+                    </div>
+                </a>
                 
-                <div class="overview-card">
-                    <div class="card-icon">
+                <a href="{% url 'support:ticket_list' %}" class="stat-card">
+                    <div class="stat-icon">
                         <i class="fas fa-headset"></i>
                     </div>
-                    <div class="card-content">
-                        <h4>Active Tickets</h4>
-                        <p class="card-value">23</p>
-                        <p class="card-subtitle">Support Requests</p>
+                    <div class="stat-content">
+                        <h3>23</h3>
+                        <p>Active Tickets</p>
+                        <span class="stat-trend negative">
+                            <i class="fas fa-arrow-down"></i> -5%
+                        </span>
                     </div>
-                </div>
+                </a>
                 
-                <div class="overview-card">
-                    <div class="card-icon">
+                <a href="{% url 'support:service_list' %}" class="stat-card">
+                    <div class="stat-icon">
                         <i class="fas fa-tools"></i>
                     </div>
-                    <div class="card-content">
-                        <h4>Services</h4>
-                        <p class="card-value">8</p>
-                        <p class="card-subtitle>Technical Support</p>
+                    <div class="stat-content">
+                        <h3>8</h3>
+                        <p>Active Services</p>
+                        <span class="stat-trend positive">
+                            <i class="fas fa-arrow-up"></i> +8%
+                        </span>
                     </div>
-                </div>
+                </a>
                 
-                <div class="overview-card">
-                    <div class="card-icon">
+                <a href="{% url 'users:dashboard' %}" class="stat-card">
+                    <div class="stat-icon">
                         <i class="fas fa-users"></i>
                     </div>
-                    <div class="card-content">
-                        <h4>Customers</h4>
-                        <p class="card-value">89</p>
-                        <p class="card-subtitle">Registered Users</p>
+                    <div class="stat-content">
+                        <h3>89</h3>
+                        <p>Total Customers</p>
+                        <span class="stat-trend positive">
+                            <i class="fas fa-arrow-up"></i> +15%
+                        </span>
                     </div>
-                </div>
+                </a>
             </div>
-        </div>
+        </section>
 
-        <!-- Main Dashboard Content -->
-        <div class="dashboard-content">
-            <div class="content-left">
-                <!-- Recent Activities -->
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-clock me-2"></i>Recent Activities</h5>
-                        <a href="#" class="btn btn-outline-primary btn-sm">View All</a>
-                    </div>
-                    <div class="card-body">
-                        <div class="activity-list">
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fas fa-shopping-cart text-primary"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h6>New Order Placed</h6>
-                                    <p>Security camera system ordered by TechCorp</p>
-                                    <small class="text-muted">2 hours ago</small>
-                                </div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fas fa-ticket-alt text-success"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h6>Support Ticket Resolved</h6>
-                                    <p>Network configuration issue fixed</p>
-                                    <small class="text-muted">4 hours ago</small>
-                                </div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fas fa-tools text-warning"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h6>Service Request</h6>
-                                    <p>Maintenance scheduled for next week</p>
-                                    <small class="text-muted">1 day ago</small>
+        <!-- Top Rated Products -->
+        {% if top_rated_products %}
+        <section class="top-rated-section">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-star me-2 text-warning"></i>Top Rated Components</h5>
+                    <a href="{% url 'store:product_list' %}" class="view-all">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for product in top_rated_products %}
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="product-mini-card">
+                                {% if product.main_image %}
+                                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="mini-product-image">
+                                {% else %}
+                                    <div class="mini-product-image bg-light d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-image text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="mini-product-info">
+                                    <h6 class="mini-product-title">
+                                        <a href="{% url 'store:product_detail' product.slug %}">{{ product.name|truncatechars:30 }}</a>
+                                    </h6>
+                                    <div class="mini-product-rating">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= product.avg_rating %}
+                                                <i class="fas fa-star text-warning" style="font-size: 0.7rem;"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-muted" style="font-size: 0.7rem;"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <small class="text-muted ms-1">({{ product.review_count }})</small>
+                                    </div>
+                                    <div class="mini-product-price">
+                                        {% if product.sale_price %}
+                                            <span class="text-danger fw-bold">{{ product.sale_price|floatformat:0 }} MAD</span>
+                                        {% else %}
+                                            <span class="fw-bold">{{ product.price|floatformat:0 }} MAD</span>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
                 </div>
+            </div>
+        </section>
+        {% endif %}
 
-                <!-- Quick Actions -->
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+        <!-- User Recommendations -->
+        {% if user_recommendations %}
+        <section class="user-recommendations-section">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-magic me-2 text-primary"></i>Recommended for You</h5>
+                    <a href="{% url 'store:product_list' %}" class="view-all">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for product in user_recommendations %}
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <div class="product-mini-card">
+                                {% if product.main_image %}
+                                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="mini-product-image">
+                                {% else %}
+                                    <div class="mini-product-image bg-light d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-image text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="mini-product-info">
+                                    <h6 class="mini-product-title">
+                                        <a href="{% url 'store:product_detail' product.slug %}">{{ product.name|truncatechars:30 }}</a>
+                                    </h6>
+                                    <div class="mini-product-rating">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= product.avg_rating %}
+                                                <i class="fas fa-star text-warning" style="font-size: 0.7rem;"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-muted" style="font-size: 0.7rem;"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <small class="text-muted ms-1">({{ product.review_count }})</small>
+                                    </div>
+                                    <div class="mini-product-price">
+                                        {% if product.sale_price %}
+                                            <span class="text-danger fw-bold">{{ product.sale_price|floatformat:0 }} MAD</span>
+                                        {% else %}
+                                            <span class="fw-bold">{{ product.price|floatformat:0 }} MAD</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
-                    <div class="card-body">
-                        <div class="quick-actions">
-                            <a href="{% url 'store:product_list' %}" class="action-btn">
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-grid">
+            <!-- Recent Activities -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-clock"></i> Recent Activities</h5>
+                    <a href="{% url 'support:ticket_list' %}" class="view-all">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="activity-list">
+                        <a href="{% url 'store:order_list' %}" class="activity-item">
+                            <div class="activity-icon success">
                                 <i class="fas fa-shopping-cart"></i>
-                                <span>Shop Products</span>
-                            </a>
-                            <a href="{% url 'support:ticket_list' %}" class="action-btn">
-                                <i class="fas fa-headset"></i>
-                                <span>Get Support</span>
-                            </a>
-                            <a href="{% url 'support:service_list' %}" class="action-btn">
+                            </div>
+                            <div class="activity-content">
+                                <h6>New Order Placed</h6>
+                                <p>Dashboard Widget Suite ordered by DataCorp</p>
+                                <span class="activity-time">2 hours ago</span>
+                            </div>
+                        </a>
+                        
+                        <a href="{% url 'support:ticket_list' %}" class="activity-item">
+                            <div class="activity-icon info">
+                                <i class="fas fa-ticket-alt"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h6>Support Ticket Resolved</h6>
+                                <p>Network configuration issue fixed</p>
+                                <span class="activity-time">4 hours ago</span>
+                            </div>
+                        </a>
+                        
+                        <a href="{% url 'support:service_list' %}" class="activity-item">
+                            <div class="activity-icon warning">
                                 <i class="fas fa-tools"></i>
-                                <span>Request Service</span>
-                            </a>
-                            {% if user.is_authenticated %}
-                            <a href="{% url 'users:profile' %}" class="action-btn">
-                                <i class="fas fa-user-edit"></i>
-                                <span>Edit Profile</span>
-                            </a>
-                            {% endif %}
+                            </div>
+                            <div class="activity-content">
+                                <h6>Service Request</h6>
+                                <p>Maintenance scheduled for next week</p>
+                                <span class="activity-time">1 day ago</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-bolt"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="actions-grid">
+                        <a href="{% url 'store:product_list' %}" class="action-item">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Browse Components</span>
+                        </a>
+                        <a href="{% url 'support:ticket_list' %}" class="action-item">
+                            <i class="fas fa-headset"></i>
+                            <span>Get Support</span>
+                        </a>
+                        <a href="{% url 'support:service_list' %}" class="action-item">
+                            <i class="fas fa-tools"></i>
+                            <span>Request Service</span>
+                        </a>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'users:profile' %}" class="action-item">
+                            <i class="fas fa-user-edit"></i>
+                            <span>Edit Profile</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-chart-bar"></i> Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="summary-list">
+                        <div class="summary-item">
+                            <span class="summary-label">Total Orders</span>
+                            <span class="summary-value">1,247</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Revenue</span>
+                            <span class="summary-value">156,750 Dirham</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Support Tickets</span>
+                            <span class="summary-value">156</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Products Sold</span>
+                            <span class="summary-value">892</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="content-right">
-                <!-- Summary Stats -->
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-chart-bar me-2"></i>Summary</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="summary-stats">
-                            <div class="stat-item">
-                                <span class="stat-label">Total Orders</span>
-                                <span class="stat-value">1,247</span>
+            <!-- Pricing Strategy -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-tags"></i> Pricing Strategy</h5>
+                </div>
+                <div class="card-body">
+                    <div class="pricing-strategy">
+                        <a href="{% url 'store:product_list' %}?price_min=199&price_max=699" class="strategy-item entry-level">
+                            <div class="strategy-header">
+                                <i class="fas fa-seedling"></i>
+                                <span>Entry Level</span>
                             </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Revenue</span>
-                                <span class="stat-value">$45,892</span>
+                            <div class="strategy-price">199-699 MAD</div>
+                            <div class="strategy-target">Small Business & Office</div>
+                            <div class="strategy-count">4 Products</div>
+                        </a>
+                        
+                        <a href="{% url 'store:product_list' %}?price_min=699&price_max=1899" class="strategy-item mid-level">
+                            <div class="strategy-header">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Mid Level</span>
                             </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Support Tickets</span>
-                                <span class="stat-value">156</span>
+                            <div class="strategy-price">699-1899 MAD</div>
+                            <div class="strategy-target">Growing Companies</div>
+                            <div class="strategy-count">7 Products</div>
+                        </a>
+                        
+                        <a href="{% url 'store:product_list' %}?price_min=1899&price_max=3299" class="strategy-item pro-level">
+                            <div class="strategy-header">
+                                <i class="fas fa-crown"></i>
+                                <span>Professional</span>
                             </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Products Sold</span>
-                                <span class="stat-value">892</span>
-                            </div>
-                        </div>
+                            <div class="strategy-price">1899-3299 MAD</div>
+                            <div class="strategy-target">Enterprises & Data Centers</div>
+                            <div class="strategy-count">6 Products</div>
+                        </a>
                     </div>
                 </div>
+            </div>
 
-                <!-- Recent Orders -->
-                <div class="dashboard-card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-list me-2"></i>Recent Orders</h5>
-                        <a href="#" class="btn btn-outline-primary btn-sm">View All</a>
-                    </div>
-                    <div class="card-body">
-                        <div class="order-list">
-                            <div class="order-item">
-                                <div class="order-info">
-                                    <h6>Security Camera System</h6>
-                                    <p class="text-muted">Order #DC-2024-1403</p>
-                                </div>
-                                <div class="order-status">
-                                    <span class="badge bg-success">Completed</span>
-                                </div>
+            <!-- Recent Orders -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-list"></i> Recent Orders</h5>
+                    <a href="{% url 'store:order_list' %}" class="view-all">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="orders-list">
+                        <a href="{% url 'store:order_list' %}" class="order-item">
+                            <div class="order-info">
+                                <h6>Dashboard Widget Suite</h6>
+                                <p>Order #DC-2024-1403</p>
                             </div>
-                            
-                            <div class="order-item">
-                                <div class="order-info">
-                                    <h6>Network Scanner</h6>
-                                    <p class="text-muted">Order #BAR-TH-172</p>
-                                </div>
-                                <div class="order-status">
-                                    <span class="badge bg-warning">Processing</span>
-                                </div>
+                            <span class="order-status completed">Completed</span>
+                        </a>
+                        
+                        <a href="{% url 'store:order_list' %}" class="order-item">
+                            <div class="order-info">
+                                <h6>Advanced Chart Component</h6>
+                                <p>Order #BAR-TH-172</p>
                             </div>
-                            
-                            <div class="order-item">
-                                <div class="order-info">
-                                    <h6>Thermostat Programmable</h6>
-                                    <p class="text-muted">Order #BAR-TH-108</p>
-                                </div>
-                                <div class="order-status">
-                                    <span class="badge bg-info">Shipped</span>
-                                </div>
+                            <span class="order-status processing">Processing</span>
+                        </a>
+                        
+                        <a href="{% url 'store:order_list' %}" class="order-item">
+                            <div class="order-info">
+                                <h6>Business Intelligence Platform</h6>
+                                <p>Order #BAR-TH-108</p>
                             </div>
-                        </div>
+                            <span class="order-status shipped">Shipped</span>
+                        </a>
+                        
+                        <a href="{% url 'store:order_list' %}" class="order-item">
+                            <div class="order-info">
+                                <h6>Data Visualization Kit</h6>
+                                <p>Order #VIZ-2024-089</p>
+                            </div>
+                            <span class="order-status completed">Completed</span>
+                        </a>
+                        
+                        <a href="{% url 'store:order_list' %}" class="order-item">
+                            <div class="order-info">
+                                <h6>Analytics Dashboard Pro</h6>
+                                <p>Order #ANL-2024-156</p>
+                            </div>
+                            <span class="order-status pending">Pending</span>
+                        </a>
+                        
+                        <a href="{% url 'store:order_list' %}" class="order-item">
+                            <div class="order-info">
+                                <h6>Report Generator Suite</h6>
+                                <p>Order #RPT-2024-203</p>
+                            </div>
+                            <span class="order-status completed">Completed</span>
+                        </a>
+                        
+                        <a href="{% url 'store:order_list' %}" class="order-item">
+                            <div class="order-info">
+                                <h6>KPI Monitoring System</h6>
+                                <p>Order #KPI-2024-067</p>
+                            </div>
+                            <span class="order-status processing">Processing</span>
+                        </a>
+                        
+                        <a href="{% url 'store:order_list' %}" class="order-item">
+                            <div class="order-info">
+                                <h6>Real-time Analytics Engine</h6>
+                                <p>Order #RTA-2024-134</p>
+                            </div>
+                            <span class="order-status shipped">Shipped</span>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 </div>
 {% endblock %}
 
 {% block extra_css %}
 <style>
-.dashboard-container {
+/* Modern Dashboard Styles */
+.modern-dashboard {
     display: flex;
     min-height: 100vh;
-    background-color: #f8f9fa;
+    background: #f8fafc;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Sidebar Styles */
-.sidebar {
-    width: 280px;
-    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-    color: white;
-    padding: 20px 0;
+/* Modern Floating Sidebar */
+.modern-sidebar {
+    width: 320px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(25px) saturate(180%);
+    color: #1e293b;
     position: fixed;
-    height: 100vh;
+    height: calc(100vh - 40px);
+    top: 20px;
+    left: -380px;
+    z-index: 1000;
+    border-radius: 24px;
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
     overflow-y: auto;
+    overflow-x: hidden;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transform: translateX(0) scale(0.95);
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
 }
 
-.user-profile {
-    padding: 20px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    margin-bottom: 20px;
+/* Ensure all text is visible */
+.modern-sidebar {
+    color: #1e293b;
 }
 
-.profile-picture {
-    width: 80px;
-    height: 80px;
-    background: rgba(255,255,255,0.1);
+.modern-sidebar * {
+    color: inherit;
+}
+
+/* Override for navigation elements */
+.modern-sidebar .nav-link,
+.modern-sidebar .nav-link *,
+.modern-sidebar .nav-title {
+    color: #1e293b !important;
+}
+
+/* Force visibility for all navigation text */
+.modern-sidebar .nav-link span,
+.modern-sidebar .nav-link i,
+.modern-sidebar .nav-title {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Ensure navigation items have proper contrast */
+.modern-sidebar .nav-link {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Sidebar open state */
+.modern-sidebar.open {
+    left: 20px;
+    transform: translateX(0) scale(1);
+    opacity: 1;
+}
+
+/* Sidebar overlay */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px) saturate(150%);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Sidebar header */
+.sidebar-header {
+    padding: 30px 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 24px 24px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    pointer-events: none;
+}
+
+.sidebar-header .brand {
+    display: flex;
+    align-items: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header .brand i {
+    margin-right: 12px;
+    font-size: 1.6rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Floating toggle button */
+.floating-toggle {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
     border-radius: 50%;
+    color: white;
+    font-size: 1.6rem;
+    cursor: pointer;
+    z-index: 1001;
+    box-shadow: 
+        0 10px 30px rgba(102, 126, 234, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 15px;
+    position: relative;
+    overflow: hidden;
 }
 
-.user-name {
-    margin: 0;
-    font-size: 1.1rem;
+/* Toggle button when sidebar is open */
+.floating-toggle.sidebar-open {
+    left: 340px;
+    transform: scale(0.9);
+    opacity: 0.8;
+}
+
+.floating-toggle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.floating-toggle:hover {
+    transform: scale(1.15) rotate(5deg);
+    box-shadow: 
+        0 15px 40px rgba(102, 126, 234, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.floating-toggle:hover::before {
+    opacity: 1;
+}
+
+.floating-toggle:active {
+    transform: scale(1.05) rotate(0deg);
+    transition: all 0.1s ease;
+}
+
+.floating-toggle i {
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.floating-toggle:hover i {
+    transform: scale(1.1);
+}
+
+/* Ripple effect */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Navigation */
+.sidebar-nav {
+    padding: 25px 0;
+    position: relative;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.nav-title {
+    padding: 0 25px 15px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #374151 !important;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.nav-title::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 25px;
+    right: 25px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.3) 0%, transparent 100%);
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 16px 25px;
+    color: #1e293b !important;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    margin: 3px 15px;
+    border-radius: 16px;
+    font-weight: 600;
+    overflow: hidden;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 16px;
+}
+
+.nav-link:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #4f46e5;
+    transform: translateX(8px);
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+}
+
+.nav-link:hover::before {
+    opacity: 1;
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 
+        0 6px 20px rgba(102, 126, 234, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: translateX(5px);
+}
+
+.nav-link.active::before {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    opacity: 1;
+}
+
+.nav-link i {
+    width: 22px;
+    margin-right: 14px;
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 2;
+    color: #1e293b !important;
+}
+
+.nav-link:hover i {
+    transform: scale(1.1);
+}
+
+.nav-link.active i {
+    transform: scale(1.05);
+}
+
+.nav-link span {
+    position: relative;
+    z-index: 2;
+    color: #1e293b !important;
     font-weight: 600;
 }
 
-.user-status {
+/* User section */
+.user-section {
+    padding: 25px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin-top: auto;
+    background: linear-gradient(180deg, transparent 0%, rgba(102, 126, 234, 0.02) 100%);
+    flex-shrink: 0;
+}
+
+.user-details {
     display: flex;
+    align-items: center;
+    padding: 18px;
+    background: rgba(102, 126, 234, 0.06);
+    border-radius: 16px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.user-details::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 16px;
+}
+
+.user-details:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+    border-color: rgba(102, 126, 234, 0.2);
+}
+
+.user-details:hover::before {
+    opacity: 1;
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
+    color: white;
+    font-weight: 700;
+    margin-right: 14px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
 }
 
-.status-item {
-    background: rgba(255,255,255,0.1);
-    padding: 4px 8px;
-    border-radius: 12px;
+.user-details:hover .user-avatar {
+    transform: scale(1.05);
+}
+
+.user-info {
+    position: relative;
+    z-index: 1;
+}
+
+.user-info h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b !important;
+    line-height: 1.3;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.user-info p {
+    margin: 0;
     font-size: 0.8rem;
+    color: #475569 !important;
+    font-weight: 600;
 }
 
-.sidebar-nav {
-    padding: 0 20px;
+.user-info a {
+    color: #4f46e5;
+    text-decoration: none;
+    font-weight: 600;
 }
 
-.nav-list {
+.user-info a:hover {
+    color: #3730a3;
+    text-decoration: underline;
+}
+
+/* Main content adjustments */
+.main-content {
+    margin-left: 0;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+/* Dashboard content */
+.dashboard-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+
+/* Enhanced visual effects */
+.modern-sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(102, 126, 234, 0.02) 0%, transparent 50%, rgba(118, 75, 162, 0.02) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Ensure text visibility */
+.sidebar-nav,
+.user-section {
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar-nav *,
+.user-section * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Navigation sections */
+.nav-section {
+    margin-bottom: 20px;
+}
+
+.nav-section:last-child {
+    margin-bottom: 0;
+}
+
+.nav-menu {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -405,190 +999,533 @@
     margin-bottom: 5px;
 }
 
+.nav-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Smooth scrollbar */
+.modern-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modern-sidebar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+}
+
+.modern-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.3);
+    border-radius: 3px;
+}
+
+.modern-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.5);
+}
+
+/* Loading animation for nav items */
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.nav-link.animate-in {
+    animation: slideInFromLeft 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .modern-sidebar {
+        width: 100%;
+        height: 100vh;
+        top: 0;
+        left: -100%;
+        border-radius: 0;
+        transform: translateX(0) scale(1);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .modern-sidebar.open {
+        left: 0;
+        transform: translateX(0) scale(1);
+    }
+    
+    .floating-toggle {
+        top: 20px;
+        left: 20px;
+        width: 56px;
+        height: 56px;
+        font-size: 1.4rem;
+    }
+    
+    .floating-toggle.sidebar-open {
+        left: 20px;
+        transform: scale(0.9);
+        opacity: 0.8;
+    }
+    
+    .main-content {
+        padding: 15px;
+    }
+    
+    .sidebar-header {
+        padding: 25px 20px;
+    }
+    
+    .nav-link {
+        padding: 14px 20px;
+        margin: 2px 10px;
+    }
+    
+    .sidebar-nav {
+        flex: 1;
+        overflow-y: auto;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .modern-sidebar {
+        background: rgba(255, 255, 255, 1);
+        border: 2px solid #000;
+    }
+    
+    .nav-link {
+        border: 1px solid transparent;
+    }
+    
+    .nav-link:hover {
+        border-color: #667eea;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .modern-sidebar,
+    .sidebar-overlay,
+    .floating-toggle,
+    .nav-link,
+    .user-details {
+        transition: none;
+    }
+    
+    .nav-link.animate-in {
+        animation: none;
+    }
+}
+
+.modern-sidebar.collapsed .nav-link::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    margin-left: 10px;
+}
+
+.modern-sidebar.collapsed .nav-link:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+.sidebar-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.sidebar-text {
+    transition: all 0.3s ease;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.brand i {
+    font-size: 1.5rem;
+    color: #60a5fa;
+}
+
+.user-section {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.user-avatar.guest {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+}
+
+.user-details h6 {
+    margin: 0 0 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.user-role {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.login-link {
+    color: #60a5fa;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.login-link:hover {
+    color: #93c5fd;
+}
+
+.sidebar-nav {
+    padding: 20px 0;
+}
+
+.nav-section {
+    margin-bottom: 24px;
+}
+
+.nav-title {
+    padding: 0 20px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin: 2px 0;
+}
+
 .nav-link {
     display: flex;
     align-items: center;
-    padding: 12px 15px;
-    color: rgba(255,255,255,0.8);
+    gap: 12px;
+    padding: 12px 20px;
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    border-radius: 8px;
+    transition: all 0.3s ease;
+    border-radius: 0 8px 8px 0;
+    margin-right: 8px;
+    position: relative;
+}
+
+.nav-link span {
     transition: all 0.3s ease;
 }
 
 .nav-link:hover {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     color: white;
-    transform: translateX(5px);
+    transform: translateX(4px);
 }
 
 .nav-link.active {
-    background: #3498db;
+    background: linear-gradient(90deg, #60a5fa, #3b82f6);
     color: white;
+    box-shadow: 0 2px 8px rgba(96, 165, 250, 0.3);
 }
 
 .nav-link i {
-    width: 20px;
-    margin-right: 12px;
+    width: 18px;
+    font-size: 0.9rem;
 }
 
-/* Main Content Styles */
+/* Main Content */
 .main-content {
     flex: 1;
     margin-left: 280px;
-    padding: 20px;
+    padding: 24px;
+    min-height: 100vh;
+    padding-bottom: 120px;
+    transition: margin-left 0.3s ease;
 }
 
-.top-header {
+/* Main content when sidebar is collapsed */
+.sidebar-collapsed .main-content {
+    margin-left: 70px;
+}
+
+.page-header {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-.page-title {
+.page-title-section h1 {
+    margin: 0 0 8px;
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.page-title-section p {
     margin: 0;
-    color: #2c3e50;
-    font-size: 1.8rem;
+    color: #64748b;
+    font-size: 0.95rem;
 }
 
-.page-subtitle {
-    margin: 5px 0 0;
-    color: #7f8c8d;
-}
-
-.header-right {
+.header-actions {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
 }
 
-.search-bar {
+.search-container {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.search-bar input {
-    padding: 10px 15px 10px 40px;
-    border: 1px solid #ddd;
-    border-radius: 25px;
+.search-container i {
+    position: absolute;
+    left: 16px;
+    color: #94a3b8;
+}
+
+.search-container input {
+    padding: 12px 16px 12px 44px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
     width: 300px;
     outline: none;
+    font-size: 0.9rem;
+    background: #f8fafc;
+    transition: all 0.2s ease;
 }
 
-.search-bar i {
-    position: absolute;
-    left: 15px;
-    color: #7f8c8d;
+.search-container input:focus {
+    border-color: #60a5fa;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
 }
 
-/* Overview Section */
-.overview-section {
-    margin-bottom: 30px;
-}
-
-.section-header {
+.btn-primary {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    gap: 8px;
 }
 
-.section-header h3 {
-    margin: 0;
-    color: #2c3e50;
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
 }
 
-.overview-cards {
+/* Stats Section */
+.stats-section {
+    margin-bottom: 24px;
+}
+
+.stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
 }
 
-.overview-card {
+.stat-card {
     background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
-    transition: transform 0.3s ease;
+    border-radius: 16px;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
 }
 
-.overview-card:hover {
-    transform: translateY(-5px);
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.05), transparent);
+    transition: left 0.6s ease;
 }
 
-.card-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    border-radius: 12px;
+.stat-card:hover::before {
+    left: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #60a5fa;
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 20px;
+    margin-bottom: 16px;
 }
 
-.card-icon i {
-    font-size: 1.5rem;
+.stat-icon i {
+    font-size: 1.25rem;
     color: white;
 }
 
-.card-content h4 {
-    margin: 0 0 5px;
+.stat-content h3 {
+    margin: 0 0 8px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.stat-content p {
+    margin: 0 0 12px;
+    color: #64748b;
     font-size: 0.9rem;
-    color: #7f8c8d;
     font-weight: 500;
 }
 
-.card-value {
-    margin: 0 0 5px;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #2c3e50;
-}
-
-.card-subtitle {
-    margin: 0;
+.stat-trend {
     font-size: 0.8rem;
-    color: #95a5a6;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
-/* Dashboard Content */
-.dashboard-content {
+.stat-trend.positive {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.stat-trend.negative {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 20px;
+    gap: 24px;
 }
 
 .dashboard-card {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
 }
 
 .card-header {
-    padding: 20px 20px 15px;
-    border-bottom: 1px solid #eee;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e2e8f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: #f8fafc;
 }
 
 .card-header h5 {
     margin: 0;
-    color: #2c3e50;
+    color: #1e293b;
     font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.view-all {
+    color: #60a5fa;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.view-all:hover {
+    color: #3b82f6;
 }
 
 .card-body {
-    padding: 20px;
+    padding: 24px;
 }
 
 /* Activity List */
@@ -601,116 +1538,224 @@
 .activity-item {
     display: flex;
     align-items: flex-start;
-    gap: 15px;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    transition: background 0.2s ease;
+}
+
+.activity-item:hover {
+    background: #f8fafc;
 }
 
 .activity-icon {
     width: 40px;
     height: 40px;
-    background: #f8f9fa;
-    border-radius: 8px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
 
+.activity-icon.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.activity-icon.info {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.activity-icon.warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
 .activity-content h6 {
-    margin: 0 0 5px;
+    margin: 0 0 6px;
     font-size: 0.9rem;
-    color: #2c3e50;
+    font-weight: 600;
+    color: #1e293b;
 }
 
 .activity-content p {
-    margin: 0 0 5px;
+    margin: 0 0 8px;
     font-size: 0.85rem;
-    color: #7f8c8d;
+    color: #64748b;
+    line-height: 1.4;
 }
 
-.activity-content small {
+.activity-time {
     font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 500;
 }
 
-/* Quick Actions */
-.quick-actions {
+/* Actions Grid */
+.actions-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    gap: 16px;
 }
 
-.action-btn {
+.action-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
+    background: #f8fafc;
+    border-radius: 12px;
     text-decoration: none;
-    color: #2c3e50;
-    transition: all 0.3s ease;
+    color: #1e293b;
+    transition: all 0.2s ease;
     text-align: center;
+    border: 1px solid #e2e8f0;
 }
 
-.action-btn:hover {
-    background: #e9ecef;
+.action-item:hover {
+    background: #f1f5f9;
     transform: translateY(-2px);
-    color: #2c3e50;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.action-btn i {
+.action-item i {
     font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #3498db;
+    margin-bottom: 12px;
+    color: #60a5fa;
 }
 
-.action-btn span {
+.action-item span {
     font-size: 0.85rem;
     font-weight: 500;
 }
 
-/* Summary Stats */
-.summary-stats {
+/* Summary List */
+.summary-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 16px;
 }
 
-.stat-item {
+.summary-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #eee;
+    padding: 16px 0;
+    border-bottom: 1px solid #e2e8f0;
 }
 
-.stat-item:last-child {
+.summary-item:last-child {
     border-bottom: none;
 }
 
-.stat-label {
-    color: #7f8c8d;
+.summary-label {
+    color: #64748b;
     font-size: 0.9rem;
+    font-weight: 500;
 }
 
-.stat-value {
+.summary-value {
     font-weight: 700;
-    color: #2c3e50;
+    color: #1e293b;
+    font-size: 1rem;
+}
+
+/* Pricing Strategy Styles */
+.pricing-strategy {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.strategy-item {
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.strategy-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: inherit;
+}
+
+.strategy-item.entry-level {
+    background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+    border-color: #22c55e;
+}
+
+.strategy-item.mid-level {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-color: #eab308;
+}
+
+.strategy-item.pro-level {
+    background: linear-gradient(135deg, #fecaca, #fca5a5);
+    border-color: #ef4444;
+}
+
+.strategy-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.strategy-header i {
     font-size: 1.1rem;
 }
 
-/* Order List */
-.order-list {
+.strategy-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.strategy-target {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 4px;
+}
+
+.strategy-count {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* Orders List */
+.orders-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 16px;
 }
 
 .order-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #eee;
+    padding: 16px 0;
+    border-bottom: 1px solid #e2e8f0;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+.order-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+    text-decoration: none;
+    color: inherit;
 }
 
 .order-item:last-child {
@@ -718,57 +1763,709 @@
 }
 
 .order-info h6 {
-    margin: 0 0 5px;
+    margin: 0 0 6px;
     font-size: 0.9rem;
-    color: #2c3e50;
+    font-weight: 600;
+    color: #1e293b;
 }
 
 .order-info p {
     margin: 0;
     font-size: 0.8rem;
-    color: #7f8c8d;
+    color: #64748b;
 }
 
-.badge {
-    padding: 4px 8px;
-    border-radius: 12px;
+.order-status {
+    padding: 6px 12px;
+    border-radius: 20px;
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.order-status.completed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.order-status.processing {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.order-status.shipped {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.order-status.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* Mini Product Cards */
+.product-mini-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.product-mini-card:hover {
+    background: #f1f5f9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    color: inherit;
+}
+
+.mini-product-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.mini-product-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.mini-product-title {
+    margin: 0 0 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1e293b;
+    line-height: 1.3;
+}
+
+.mini-product-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.mini-product-title a:hover {
+    color: #60a5fa;
+}
+
+.mini-product-rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.mini-product-price {
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-    .dashboard-content {
+    .dashboard-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
 }
 
 @media (max-width: 768px) {
-    .sidebar {
+    .modern-sidebar {
         transform: translateX(-100%);
         transition: transform 0.3s ease;
+        width: 280px !important; /* Force full width on mobile */
+        z-index: 1001;
+        height: 100vh;
+        top: 0;
+    }
+    
+    .modern-sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .modern-sidebar.collapsed {
+        width: 280px !important; /* Don't collapse on mobile */
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+    }
+    
+    .sidebar-collapsed .main-content {
+        margin-left: 0 !important;
+    }
+    
+    .mobile-menu-toggle {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #1e293b;
+        margin-right: 12px;
+        padding: 8px;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+    }
+    
+    .mobile-menu-toggle:hover {
+        background-color: #f1f5f9;
+    }
+    
+    .page-title-section {
+        display: flex;
+        align-items: center;
     }
     
     .main-content {
         margin-left: 0;
+        margin-top: 80px; /* Commence après la navbar */
+        padding: 16px;
+        width: 100%;
+        min-height: calc(100vh - 80px); /* Hauteur moins la navbar */
     }
     
-    .overview-cards {
-        grid-template-columns: 1fr;
-    }
-    
-    .quick-actions {
-        grid-template-columns: 1fr;
-    }
-    
-    .header-right {
+    .header-content {
         flex-direction: column;
-        gap: 10px;
+        gap: 16px;
+        align-items: stretch;
     }
     
-    .search-bar input {
-        width: 250px;
+    .search-container input {
+        width: 100%;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pricing-strategy {
+        gap: 12px;
+    }
+    
+    .strategy-item {
+        padding: 12px;
+    }
+    
+    .strategy-price {
+        font-size: 1.1rem;
+    }
+    
+    .page-header {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .page-title-section h1 {
+        font-size: 1.5rem;
+    }
+    
+    .btn-primary {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .stat-card {
+        padding: 16px;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .dashboard-card {
+        margin-bottom: 16px;
+    }
+    
+    .card-header {
+        padding: 16px;
+    }
+    
+    .card-body {
+        padding: 16px;
+    }
+    
+    .activity-item {
+        padding: 12px;
+    }
+    
+    .order-item {
+        padding: 12px 0;
+    }
+    
+    .summary-item {
+        padding: 12px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 12px;
+    }
+    
+    .page-header {
+        padding: 12px;
+    }
+    
+    .page-title-section h1 {
+        font-size: 1.25rem;
+    }
+    
+    .page-title-section p {
+        font-size: 0.85rem;
+    }
+    
+    .stats-grid {
+        gap: 12px;
+    }
+    
+    .stat-card {
+        padding: 12px;
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.25rem;
+    }
+    
+    .strategy-item {
+        padding: 10px;
+    }
+    
+    .strategy-price {
+        font-size: 1rem;
+    }
+    
+    .strategy-target {
+        font-size: 0.8rem;
+    }
+    
+    .strategy-count {
+        font-size: 0.75rem;
+    }
+    
+    .card-header {
+        padding: 12px;
+    }
+    
+    .card-body {
+        padding: 12px;
+    }
+    
+    .activity-item {
+        padding: 10px;
+    }
+    
+    .activity-icon {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .activity-content h6 {
+        font-size: 0.85rem;
+    }
+    
+    .activity-content p {
+        font-size: 0.8rem;
+    }
+    
+    .order-item {
+        padding: 10px 0;
+    }
+    
+    .order-info h6 {
+        font-size: 0.85rem;
+    }
+    
+    .order-info p {
+        font-size: 0.75rem;
+    }
+    
+    .order-status {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+    
+    .summary-item {
+        padding: 10px 0;
+    }
+    
+    .summary-label {
+        font-size: 0.85rem;
+    }
+    
+    .summary-value {
+        font-size: 0.9rem;
     }
 }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Floating Sidebar Functions
+let sidebarState = {
+    isOpen: false,
+    isAnimating: false,
+    touchStartX: 0,
+    touchStartY: 0
+};
+
+function toggleFloatingSidebar() {
+    if (sidebarState.isAnimating) return;
+    
+    const sidebar = document.getElementById('floatingSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const toggle = document.querySelector('.floating-toggle');
+    
+    sidebarState.isAnimating = true;
+    sidebarState.isOpen = !sidebarState.isOpen;
+    
+    if (sidebarState.isOpen) {
+        // Opening animation
+        sidebar.classList.add('open');
+        overlay.classList.add('active');
+        toggle.classList.add('sidebar-open');
+        toggle.style.transform = 'scale(1.1) rotate(90deg)';
+        document.body.style.overflow = 'hidden';
+        
+        // Add entrance animation to nav items
+        const navLinks = sidebar.querySelectorAll('.nav-link');
+        navLinks.forEach((link, index) => {
+            link.style.opacity = '0';
+            link.style.transform = 'translateX(-20px)';
+            setTimeout(() => {
+                link.style.transition = 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)';
+                link.style.opacity = '1';
+                link.style.transform = 'translateX(0)';
+            }, 100 + (index * 50));
+        });
+    } else {
+        // Closing animation
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        toggle.classList.remove('sidebar-open');
+        toggle.style.transform = 'scale(1) rotate(0deg)';
+        document.body.style.overflow = '';
+    }
+    
+    setTimeout(() => {
+        sidebarState.isAnimating = false;
+    }, 500);
+}
+
+function closeFloatingSidebar() {
+    if (sidebarState.isOpen && !sidebarState.isAnimating) {
+        toggleFloatingSidebar();
+    }
+}
+
+// Enhanced keyboard navigation
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && sidebarState.isOpen) {
+        closeFloatingSidebar();
+    }
+    
+    // Arrow key navigation when sidebar is open
+    if (sidebarState.isOpen && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+        e.preventDefault();
+        const navLinks = document.querySelectorAll('.nav-link');
+        const activeLink = document.querySelector('.nav-link:focus');
+        let currentIndex = Array.from(navLinks).indexOf(activeLink);
+        
+        if (e.key === 'ArrowDown') {
+            currentIndex = (currentIndex + 1) % navLinks.length;
+        } else {
+            currentIndex = currentIndex <= 0 ? navLinks.length - 1 : currentIndex - 1;
+        }
+        
+        navLinks[currentIndex].focus();
+    }
+});
+
+// Touch gesture support
+let touchStartTime = 0;
+document.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 1) {
+        sidebarState.touchStartX = e.touches[0].clientX;
+        sidebarState.touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+    }
+}, { passive: true });
+
+document.addEventListener('touchend', function(e) {
+    if (e.changedTouches.length === 1) {
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        const touchDuration = Date.now() - touchStartTime;
+        
+        const deltaX = touchEndX - sidebarState.touchStartX;
+        const deltaY = touchEndY - sidebarState.touchStartY;
+        
+        // Swipe right to open (from left edge)
+        if (sidebarState.touchStartX < 50 && deltaX > 100 && Math.abs(deltaY) < 100 && touchDuration < 300) {
+            if (!sidebarState.isOpen) {
+                toggleFloatingSidebar();
+            }
+        }
+        
+        // Swipe left to close
+        if (sidebarState.isOpen && deltaX < -100 && Math.abs(deltaY) < 100 && touchDuration < 300) {
+            closeFloatingSidebar();
+        }
+    }
+}, { passive: true });
+
+// Add ripple effect to toggle button
+function createRipple(event) {
+    const button = event.currentTarget;
+    const ripple = document.createElement('span');
+    const rect = button.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = event.clientX - rect.left - size / 2;
+    const y = event.clientY - rect.top - size / 2;
+    
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+    ripple.classList.add('ripple');
+    
+    button.appendChild(ripple);
+    
+    setTimeout(() => {
+        ripple.remove();
+    }, 600);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Home page JavaScript loaded successfully!');
+    
+    // Initialize sidebar state
+    const sidebar = document.getElementById('floatingSidebar');
+    const toggle = document.querySelector('.floating-toggle');
+    
+    // Add focus management
+    toggle.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleFloatingSidebar();
+        }
+    });
+    
+    // Add focus trap when sidebar is open
+    function trapFocus(element) {
+        const focusableElements = element.querySelectorAll(
+            'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
+        );
+        const firstFocusableElement = focusableElements[0];
+        const lastFocusableElement = focusableElements[focusableElements.length - 1];
+        
+        element.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                if (e.shiftKey) {
+                    if (document.activeElement === firstFocusableElement) {
+                        lastFocusableElement.focus();
+                        e.preventDefault();
+                    }
+                } else {
+                    if (document.activeElement === lastFocusableElement) {
+                        firstFocusableElement.focus();
+                        e.preventDefault();
+                    }
+                }
+            }
+        });
+    }
+    
+    // Apply focus trap when sidebar opens
+    const originalToggle = toggleFloatingSidebar;
+    window.toggleFloatingSidebar = function() {
+        originalToggle();
+        if (sidebarState.isOpen) {
+            setTimeout(() => {
+                const firstNavLink = sidebar.querySelector('.nav-link');
+                if (firstNavLink) {
+                    firstNavLink.focus();
+                }
+                trapFocus(sidebar);
+            }, 100);
+        }
+    };
+    
+    // Add click feedback to stat cards
+    const statCards = document.querySelectorAll('.stat-card');
+    console.log('Found stat cards:', statCards.length);
+    
+    statCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            console.log('Stat card clicked:', this.href);
+            // Add visual feedback
+            this.style.transform = 'scale(0.98)';
+            this.style.transition = 'transform 0.1s ease';
+            
+            // Reset after animation
+            setTimeout(() => {
+                this.style.transform = '';
+                this.style.transition = '';
+            }, 100);
+            
+            // Don't prevent default behavior - let the link work normally
+        });
+    });
+    
+    // Add loading state for navigation
+    const navLinks = document.querySelectorAll('.nav-link');
+    console.log('Found nav links:', navLinks.length);
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            console.log('Nav link clicked:', this.href);
+            // Close sidebar when navigating
+            closeFloatingSidebar();
+            
+            // Add loading indicator
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            this.style.pointerEvents = 'none';
+            
+            // Reset after navigation (this will happen automatically on page load)
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.style.pointerEvents = '';
+            }, 2000);
+            
+            // Don't prevent default behavior - let the link work normally
+        });
+    });
+    
+    // Add hover effects for action items
+    const actionItems = document.querySelectorAll('.action-item');
+    actionItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+        });
+    });
+    
+    // Add search functionality
+    const searchInput = document.querySelector('.search-container input');
+    if (searchInput) {
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+        });
+        
+        searchInput.addEventListener('blur', function() {
+            this.parentElement.style.transform = '';
+        });
+        
+        // Add search functionality
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    window.location.href = `{% url 'store:product_list' %}?q=${encodeURIComponent(query)}`;
+                }
+            }
+        });
+    }
+    
+    // Add interactive product cards
+    const productCards = document.querySelectorAll('.product-mini-card');
+    productCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px)';
+            this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+            this.style.boxShadow = '';
+        });
+        
+        card.addEventListener('click', function(e) {
+            const link = this.querySelector('a');
+            if (link && !e.target.closest('a')) {
+                // Only redirect if the click wasn't on a link
+                window.location.href = link.href;
+            }
+        });
+    });
+    
+    // Add interactive dashboard cards
+    const dashboardCards = document.querySelectorAll('.dashboard-card');
+    dashboardCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 6px 20px rgba(0,0,0,0.1)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+            this.style.boxShadow = '';
+        });
+    });
+    
+    // Add interactive order items
+    const orderItems = document.querySelectorAll('.order-item');
+    orderItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = '#f8f9fa';
+            this.style.transform = 'translateX(5px)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.backgroundColor = '';
+            this.style.transform = '';
+        });
+    });
+});
+
+// Global function for mobile sidebar toggle
+function toggleMobileSidebar() {
+    const sidebar = document.querySelector('.modern-sidebar');
+    sidebar.classList.toggle('mobile-open');
+}
+
+// Global function for desktop sidebar toggle
+function toggleSidebar() {
+    const sidebar = document.querySelector('.modern-sidebar');
+    const body = document.body;
+    
+    sidebar.classList.toggle('collapsed');
+    body.classList.toggle('sidebar-collapsed');
+    
+    // Save state to localStorage
+    const isCollapsed = sidebar.classList.contains('collapsed');
+    localStorage.setItem('sidebarCollapsed', isCollapsed);
+}
+
+// Initialize sidebar state from localStorage
+document.addEventListener('DOMContentLoaded', function() {
+    const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    if (isCollapsed) {
+        const sidebar = document.querySelector('.modern-sidebar');
+        const body = document.body;
+        sidebar.classList.add('collapsed');
+        body.classList.add('sidebar-collapsed');
+    }
+});
+</script>
 {% endblock %}

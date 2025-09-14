@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load delivery_tags %}
+
+{% block title %}My Orders - Key Reports Analytics{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 mb-0">
+                <i class="fas fa-receipt me-2"></i>My Orders
+            </h1>
+            <p class="text-muted mb-0">View and track your analytics component orders</p>
+        </div>
+    </div>
+
+    {% if orders %}
+        <div class="row">
+            <div class="col-12">
+                {% for order in orders %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <h5 class="mb-0">Order {{ order.order_number }}</h5>
+                                    <small class="text-muted">Placed on {{ order.created_at|date:"F d, Y" }}</small>
+                                </div>
+                                <div class="col-md-6 text-md-end">
+                                    <span class="badge bg-{{ order.get_status_display_class }} me-2">
+                                        {{ order.get_status_display }}
+                                    </span>
+                                    <span class="badge bg-{{ order.get_payment_status_display_class }}">
+                                        {{ order.get_payment_status_display }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- Order Items Preview -->
+                                <div class="col-md-8">
+                                    <h6 class="mb-3">Items ({{ order.items.count }})</h6>
+                                    <div class="order-items-preview">
+                                        {% for item in order.items.all|slice:":3" %}
+                                            <div class="d-flex align-items-center mb-2">
+                                                {% if item.product.main_image %}
+                                                    <img src="{{ item.product.main_image.url }}" 
+                                                         class="rounded me-2" 
+                                                         alt="{{ item.product_name }}"
+                                                         style="width: 40px; height: 40px; object-fit: cover;">
+                                                {% else %}
+                                                    <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center" 
+                                                         style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-image text-muted"></i>
+                                                    </div>
+                                                {% endif %}
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-bold small">{{ item.product_name|truncatechars:40 }}</div>
+                                                    <div class="text-muted small">Qty: {{ item.quantity }} × {{ item.unit_price }} MAD</div>
+                                                </div>
+                                                <div class="fw-bold">{{ item.total_price }} MAD</div>
+                                            </div>
+                                        {% endfor %}
+                                        {% if order.items.count > 3 %}
+                                            <div class="text-muted small">
+                                                ... and {{ order.items.count|add:"-3" }} more item{{ order.items.count|add:"-3"|pluralize }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Order Summary -->
+                                <div class="col-md-4">
+                                    <h6 class="mb-3">Order Summary</h6>
+                                    <div class="order-summary">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="small">Subtotal:</span>
+                                            <span class="small">{{ order.subtotal }} MAD</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="small">Shipping:</span>
+                                            <span class="small">
+                                                {% if order.shipping_cost > 0 %}
+                                                    {{ order.shipping_cost }} MAD
+                                                {% else %}
+                                                    <span class="text-success">Free</span>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="small">Tax:</span>
+                                            <span class="small">{{ order.tax_amount }} MAD</span>
+                                        </div>
+                                        <hr class="my-2">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="fw-bold">Total:</span>
+                                            <span class="fw-bold text-primary">{{ order.total_amount }} MAD</span>
+                                        </div>
+                                        
+                                        <!-- Delivery Information -->
+                                        <div class="mt-3">
+                                            {% if order.delivered_at and order.status == 'delivered' %}
+                                            <div class="p-2 bg-success bg-opacity-10 rounded">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                                        <div>
+                                                            <div class="small fw-bold text-success">Livré</div>
+                                                            <div class="small text-muted">{{ order.delivered_at|date:"d/m/Y à H:i" }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <span class="badge bg-success">Terminé</span>
+                                                </div>
+                                            </div>
+                                            {% elif order.shipped_at %}
+                                            <div class="p-2 bg-info bg-opacity-10 rounded">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-shipping-fast text-info me-2"></i>
+                                                        <div>
+                                                            <div class="small fw-bold text-info">Expédié</div>
+                                                            <div class="small text-muted">{{ order.shipped_at|date:"d/m/Y à H:i" }}</div>
+                                                        </div>
+                                                    </div>
+                                                    {% if order.delivered_at %}
+                                                        {% with days=order.delivered_at|days_until_delivery %}
+                                                            <span class="badge {{ order.delivered_at|delivery_status_class:order.status }}">
+                                                                {% if days == 0 %}
+                                                                    Aujourd'hui
+                                                                {% elif days == 1 %}
+                                                                    Demain
+                                                                {% else %}
+                                                                    {{ days }}j
+                                                                {% endif %}
+                                                            </span>
+                                                        {% endwith %}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            {% else %}
+                                            <div class="p-2 bg-warning bg-opacity-10 rounded">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fas fa-clock text-warning me-2"></i>
+                                                        <div>
+                                                            <div class="small fw-bold text-warning">{{ order.delivered_at|delivery_status_text:order.status }}</div>
+                                                            {% if order.delivered_at %}
+                                                                <div class="small text-muted">Prévu: {{ order.delivered_at|date:"d/m/Y" }}</div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    {% if order.delivered_at %}
+                                                        {% with days=order.delivered_at|days_until_delivery %}
+                                                            <span class="badge {{ order.delivered_at|delivery_status_class:order.status }}">
+                                                                {% if days == 0 %}
+                                                                    Aujourd'hui
+                                                                {% elif days == 1 %}
+                                                                    Demain
+                                                                {% else %}
+                                                                    {{ days }}j
+                                                                {% endif %}
+                                                            </span>
+                                                        {% endwith %}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Payment Method -->
+                                    <div class="mt-3">
+                                        <h6 class="small mb-2">Payment Method</h6>
+                                        {% for payment in order.payments.all %}
+                                            <div class="small text-muted">
+                                                {% if payment.payment_method == 'cash' %}
+                                                    <i class="fas fa-money-bill-wave text-success me-1"></i>Cash
+                                                {% elif payment.payment_method == 'visa' %}
+                                                    <i class="fab fa-cc-visa text-primary me-1"></i>Visa
+                                                {% elif payment.payment_method == 'mastercard' %}
+                                                    <i class="fab fa-cc-mastercard text-warning me-1"></i>Mastercard
+                                                {% elif payment.payment_method == 'apple_pay' %}
+                                                    <i class="fab fa-apple-pay text-dark me-1"></i>Apple Pay
+                                                {% endif %}
+                                                {{ payment.get_payment_method_display }}
+                                                {% if payment.card_last_four %}
+                                                    ending in {{ payment.card_last_four }}
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="text-muted small">
+                                    Last updated: {{ order.updated_at|date:"M d, Y g:i A" }}
+                                </div>
+                                <div>
+                                    <a href="{% url 'store:order_detail' order.pk %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View Details
+                                    </a>
+                                    {% if order.status == 'pending' %}
+                                        <button class="btn btn-outline-danger btn-sm ms-2" disabled>
+                                            <i class="fas fa-times me-1"></i>Cancel Order
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <!-- No Orders -->
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-receipt fa-4x text-muted mb-4"></i>
+                    <h3 class="text-muted mb-3">No orders yet</h3>
+                    <p class="text-muted mb-4">
+                        You haven't placed any orders yet. Start shopping for analytics components!
+                    </p>
+                    <a href="{% url 'store:product_list' %}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-chart-bar me-2"></i>Browse Components
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.order-items-preview {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.order-summary {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+}
+
+@media (max-width: 768px) {
+    .card-header .row {
+        text-align: center;
+    }
+    
+    .card-header .col-md-6:last-child {
+        margin-top: 0.5rem;
+    }
+    
+    .card-footer .d-flex {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .card-footer .btn {
+        margin-top: 0.5rem;
+    }
+}
+</style>
+{% endblock %}

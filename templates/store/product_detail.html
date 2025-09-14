@@ -1,0 +1,480 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Key Reports Analytics{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'store:home' %}">
+                    <i class="fas fa-home me-1"></i>Home
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'store:product_list' %}">Components</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'store:category_detail' product.category.slug %}">{{ product.category.name }}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Product Images -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-body p-0">
+                    <!-- Main Image -->
+                    <div class="position-relative">
+                        {% if product.get_gallery_images %}
+                            <img src="{{ product.get_gallery_images.first.image.url }}" 
+                                 class="img-fluid w-100" 
+                                 alt="{{ product.name }}"
+                                 id="main-product-image"
+                                 style="height: 400px; object-fit: cover; cursor: pointer;"
+                                 data-bs-toggle="modal" 
+                                 data-bs-target="#imageModal">
+                        {% elif product.main_image %}
+                            <img src="{{ product.main_image.url }}" 
+                                 class="img-fluid w-100" 
+                                 alt="{{ product.name }}"
+                                 id="main-product-image"
+                                 style="height: 400px; object-fit: cover; cursor: pointer;"
+                                 data-bs-toggle="modal" 
+                                 data-bs-target="#imageModal">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center" 
+                                 style="height: 400px;">
+                                <i class="fas fa-image fa-4x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Badges -->
+                        <div class="position-absolute top-0 start-0 m-3">
+                            {% if product.is_featured %}
+                                <span class="badge bg-warning fs-6">Featured</span>
+                            {% endif %}
+                            {% if product.sale_price %}
+                                <span class="badge bg-danger fs-6">Sale</span>
+                            {% endif %}
+                            {% if not product.is_in_stock %}
+                                <span class="badge bg-secondary fs-6">Out of Stock</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Zoom Icon -->
+                            <div class="position-absolute top-0 end-0 m-3">
+                            <button class="btn btn-light btn-sm" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#imageModal"
+                                    title="Voir la galerie">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                            </button>
+                            </div>
+                    </div>
+                    
+                    <!-- Image Gallery Thumbnails -->
+                    {% if product.get_gallery_images %}
+                    <div class="p-3">
+                        <h6 class="mb-2"><i class="fas fa-images me-2"></i>Galerie d'images</h6>
+                        <div class="row g-2">
+                            {% for image in product.get_gallery_images %}
+                            <div class="col-3">
+                                <div class="position-relative">
+                                    <img src="{{ image.image.url }}" 
+                                         class="img-fluid rounded cursor-pointer" 
+                                         alt="{{ image.alt_text }}"
+                                         style="height: 80px; object-fit: cover; border: 2px solid transparent;"
+                                         onclick="changeMainImage('{{ image.image.url }}')"
+                                         onmouseover="this.style.borderColor='#007bff'"
+                                         onmouseout="this.style.borderColor='transparent'"
+                                         title="{{ image.caption }}">
+                                    <small class="position-absolute bottom-0 start-0 bg-dark text-white px-1 rounded" 
+                                           style="font-size: 0.7rem;">
+                                        {{ image.get_image_type_display }}
+                                    </small>
+                            </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h1 class="h3 mb-3">{{ product.name }}</h1>
+                    
+                    <!-- Rating -->
+                    {% if product.avg_rating %}
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= product.avg_rating %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                    <i class="far fa-star text-muted"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <span class="ms-2 text-muted">({{ product.review_count }} avis)</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Price -->
+                    <div class="mb-4">
+                        {% if product.sale_price %}
+                            <h3 class="text-danger mb-1">{{ product.sale_price }} MAD</h3>
+                            <small class="text-muted text-decoration-line-through">{{ product.price }} MAD</small>
+                            <span class="badge bg-success ms-2">-{{ product.discount_percentage }}%</span>
+                        {% else %}
+                            <h3 class="mb-1">{{ product.price }} MAD</h3>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <p class="text-muted">{{ product.description|truncatewords:30 }}</p>
+                    </div>
+                    
+                    <!-- Product Info -->
+                    <div class="mb-4">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <strong>SKU:</strong><br>
+                                <span class="text-muted">{{ product.sku }}</span>
+                            </div>
+                            <div class="col-6">
+                                <strong>Marque:</strong><br>
+                                <span class="text-muted">{{ product.brand|default:"N/A" }}</span>
+                            </div>
+                            <div class="col-6">
+                                <strong>Modèle:</strong><br>
+                                <span class="text-muted">{{ product.model|default:"N/A" }}</span>
+                            </div>
+                            <div class="col-6">
+                                <strong>État:</strong><br>
+                                <span class="text-muted">{{ product.get_condition_display }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stock Status -->
+                    <div class="mb-4">
+                        {% if product.is_in_stock %}
+                            <span class="badge bg-success fs-6">
+                                <i class="fas fa-check me-1"></i>En stock ({{ product.stock_quantity }})
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger fs-6">
+                                <i class="fas fa-times me-1"></i>Rupture de stock
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="d-grid gap-2">
+                    {% if product.is_in_stock %}
+                            <form method="post" action="{% url 'store:add_to_cart' product.id %}">
+                            {% csrf_token %}
+                                <div class="row g-2 mb-3">
+                                    <div class="col-4">
+                                        <input type="number" name="quantity" value="1" min="1" max="{{ product.stock_quantity }}" 
+                                               class="form-control" id="quantity">
+                                </div>
+                                    <div class="col-8">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-cart-plus me-2"></i>Ajouter au panier
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    {% endif %}
+                    
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <button class="btn btn-outline-secondary w-100" data-product-id="{{ product.id }}" onclick="toggleWishlist(this.dataset.productId)">
+                                    <i class="fas fa-heart me-2"></i>Wishlist
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-outline-info w-100" onclick="shareProduct()">
+                                    <i class="fas fa-share me-2"></i>Partager
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Details Tabs -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="description-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#description" type="button" role="tab">
+                                <i class="fas fa-info-circle me-2"></i>Description
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="specifications-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#specifications" type="button" role="tab">
+                                <i class="fas fa-cogs me-2"></i>Spécifications
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#reviews" type="button" role="tab">
+                                <i class="fas fa-star me-2"></i>Avis ({{ product.review_count }})
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content mt-4" id="productTabsContent">
+                        <div class="tab-pane fade show active" id="description" role="tabpanel">
+                            <p>{{ product.description }}</p>
+                        </div>
+
+                        <div class="tab-pane fade" id="specifications" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-borderless">
+                                            <tr>
+                                            <td><strong>SKU:</strong></td>
+                                            <td>{{ product.sku }}</td>
+                                            </tr>
+                                            <tr>
+                                            <td><strong>Marque:</strong></td>
+                                            <td>{{ product.brand|default:"N/A" }}</td>
+                                            </tr>
+                                            <tr>
+                                            <td><strong>Modèle:</strong></td>
+                                            <td>{{ product.model|default:"N/A" }}</td>
+                                            </tr>
+                                        <tr>
+                                            <td><strong>État:</strong></td>
+                                            <td>{{ product.get_condition_display }}</td>
+                                                </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table class="table table-borderless">
+                                            <tr>
+                                            <td><strong>Garantie:</strong></td>
+                                            <td>{{ product.warranty_months }} mois</td>
+                                            </tr>
+                                                <tr>
+                                            <td><strong>Stock:</strong></td>
+                                            <td>{{ product.stock_quantity }} unités</td>
+                                                </tr>
+                                                <tr>
+                                            <td><strong>Catégorie:</strong></td>
+                                            <td>{{ product.category.name }}</td>
+                                                </tr>
+                                            <tr>
+                                            <td><strong>Date d'ajout:</strong></td>
+                                            <td>{{ product.created_at|date:"d/m/Y" }}</td>
+                                            </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="reviews" role="tabpanel">
+                                        <div class="text-center py-4">
+                                <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                                <h5>Aucun avis pour le moment</h5>
+                                <p class="text-muted">Soyez le premier à laisser un avis sur ce produit!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                                    </div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">{{ product.name }} - Galerie d'images</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+            <div class="modal-body">
+                {% if product.get_gallery_images %}
+                <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for image in product.get_gallery_images %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ image.alt_text }}" style="max-height: 600px; object-fit: contain;">
+                            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-75 rounded">
+                                <h5>{{ image.get_image_type_display }}</h5>
+                                <p>{{ image.caption }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                    {% if product.get_gallery_images.count > 1 %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                                                {% endif %}
+                </div>
+                                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-image fa-4x text-muted mb-3"></i>
+                    <h5>Aucune image disponible</h5>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function changeMainImage(imageUrl) {
+    document.getElementById('main-product-image').src = imageUrl;
+}
+
+function toggleWishlist(productId) {
+    fetch(`/wishlist/toggle/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({
+            'product_id': productId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.added) {
+                showNotification('Ajouté à la wishlist!', 'success');
+            } else {
+                showNotification('Retiré de la wishlist!', 'info');
+            }
+        } else {
+            showNotification(data.message || 'Erreur!', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Erreur!', 'error');
+    });
+}
+
+function shareProduct() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ product.name }}',
+            text: 'Découvrez ce produit sur Key Reports Analytics',
+            url: window.location.href
+        });
+    } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            showNotification('Lien copié dans le presse-papiers!', 'success');
+        });
+    }
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 3000);
+}
+
+// Add CSRF token to page
+document.addEventListener('DOMContentLoaded', function() {
+    if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
+        const meta = document.createElement('meta');
+        meta.name = 'csrfmiddlewaretoken';
+        meta.content = '{{ csrf_token }}';
+        document.head.appendChild(meta);
+    }
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.cursor-pointer {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cursor-pointer:hover {
+    transform: scale(1.05);
+}
+
+.nav-tabs .nav-link {
+    color: #6c757d;
+    border: none;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: #007bff;
+    border-bottom-color: #007bff;
+    background: none;
+}
+
+.nav-tabs .nav-link:hover {
+    border-bottom-color: #007bff;
+    color: #007bff;
+}
+
+.carousel-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    max-width: 80%;
+}
+
+#imageModal .modal-dialog {
+    max-width: 90vw;
+}
+
+#imageModal .modal-body {
+    padding: 0;
+}
+</style>
+{% endblock %}

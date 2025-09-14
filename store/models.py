@@ -31,6 +31,40 @@ class Category(models.Model):
         return reverse('store:category_detail', kwargs={'slug': self.slug})
 
 
+class ProductImage(models.Model):
+    """Model for multiple product images."""
+    
+    IMAGE_TYPE_CHOICES = [
+        ('main', _('Main Image')),
+        ('front', _('Front View')),
+        ('back', _('Back View')),
+        ('side', _('Side View')),
+        ('top', _('Top View')),
+        ('bottom', _('Bottom View')),
+        ('detail', _('Detail View')),
+        ('reference', _('Reference/Serial')),
+        ('package', _('Package')),
+        ('accessories', _('Accessories')),
+    ]
+    
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='images', verbose_name=_('Product'))
+    image = models.ImageField(upload_to='products/gallery/', verbose_name=_('Image'))
+    image_type = models.CharField(max_length=20, choices=IMAGE_TYPE_CHOICES, default='detail', verbose_name=_('Image Type'))
+    alt_text = models.CharField(max_length=200, blank=True, verbose_name=_('Alt Text'))
+    caption = models.CharField(max_length=300, blank=True, verbose_name=_('Caption'))
+    sort_order = models.PositiveIntegerField(default=0, verbose_name=_('Sort Order'))
+    is_active = models.BooleanField(default=True, verbose_name=_('Active'))
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = _('Product Image')
+        verbose_name_plural = _('Product Images')
+        ordering = ['sort_order', 'created_at']
+    
+    def __str__(self):
+        return f"{self.product.name} - {self.get_image_type_display()}"
+
+
 class Product(models.Model):
     """Product model for IT materials."""
     
@@ -86,6 +120,19 @@ class Product(models.Model):
     def __str__(self):
         return self.name
     
+    def save(self, *args, **kwargs):
+        """Generate slug automatically if empty."""
+        if not self.slug:
+            from django.utils.text import slugify
+            self.slug = slugify(self.name)
+            # Ensure uniqueness
+            original_slug = self.slug
+            counter = 1
+            while Product.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
+        super().save(*args, **kwargs)
+    
     def get_absolute_url(self):
         from django.urls import reverse
         return reverse('store:product_detail', kwargs={'slug': self.slug})
@@ -112,6 +159,23 @@ class Product(models.Model):
         """Check if product stock is low."""
         return self.stock_quantity <= self.min_stock_level
     
+    def get_gallery_images(self):
+        """Get all active gallery images for this product, prioritizing realistic images."""
+        # Prioriser les images réalistes, puis les autres
+        realistic_images = self.images.filter(image_type='realistic', is_active=True).order_by('created_at')
+        other_images = self.images.filter(is_active=True).exclude(image_type='realistic').order_by('sort_order', 'created_at')
+        
+        # Combiner en mettant les images réalistes en premier
+        from django.db.models import QuerySet
+        combined = QuerySet(model=self.images.model)
+        combined._result_cache = list(realistic_images) + list(other_images)
+        return combined
+    
+    def get_main_gallery_image(self):
+        """Get the main gallery image or fallback to main_image."""
+        main_gallery = self.images.filter(image_type='main', is_active=True).first()
+        return main_gallery.image if main_gallery else self.main_image
+    
     def reduce_stock(self, quantity):
         """Reduce stock quantity."""
         if self.stock_quantity >= quantity:
@@ -119,6 +183,99 @@ class Product(models.Model):
             self.save()
             return True
         return False
+    
+    @property
+    def average_rating(self):
+        """Calculate average rating from reviews."""
+        from django.db.models import Avg
+        avg_rating = self.reviews.filter(is_approved=True).aggregate(
+            avg_rating=Avg('rating')
+        )['avg_rating']
+        return round(avg_rating, 1) if avg_rating else 0
+    
+    @property
+    def total_reviews(self):
+        """Get total number of approved reviews."""
+        return self.reviews.filter(is_approved=True).count()
+    
+    @property
+    def rating_distribution(self):
+        """Get rating distribution for the product."""
+        from django.db.models import Count
+        distribution = {}
+        for rating in range(1, 6):
+            count = self.reviews.filter(is_approved=True, rating=rating).count()
+            distribution[rating] = count
+        return distribution
+    
+    def get_recommended_products(self, limit=4):
+        """Get recommended products based on category and ratings."""
+        from django.db.models import Q, Avg
+        
+        # Get products from the same category with good ratings
+        recommended = Product.objects.filter(
+            category=self.category,
+            is_active=True
+        ).exclude(id=self.id).annotate(
+            avg_rating=Avg('reviews__rating')
+        ).filter(
+            avg_rating__gte=3.0  # Only recommend products with 3+ star average
+        ).order_by('-avg_rating', '-created_at')[:limit]
+        
+        # If not enough products in same category, add popular products
+        if recommended.count() < limit:
+            popular_products = Product.objects.filter(
+                is_active=True,
+                is_featured=True
+            ).exclude(
+                Q(id=self.id) | Q(id__in=[p.id for p in recommended])
+            ).annotate(
+                avg_rating=Avg('reviews__rating')
+            ).order_by('-avg_rating', '-created_at')[:limit - recommended.count()]
+            
+            recommended = list(recommended) + list(popular_products)
+        
+        return recommended[:limit]
+    
+    def get_related_products(self, limit=4):
+        """Get related products based on category and brand."""
+        related = Product.objects.filter(
+            is_active=True
+        ).exclude(id=self.id)
+        
+        # First try same category and brand
+        if self.brand:
+            same_brand = related.filter(
+                category=self.category,
+                brand=self.brand
+            )[:limit]
+            if same_brand.exists():
+                return same_brand
+        
+        # Then try same category
+        same_category = related.filter(category=self.category)[:limit]
+        if same_category.exists():
+            return same_category
+        
+        # Finally, return featured products
+        return related.filter(is_featured=True)[:limit]
+    
+    def get_customers_also_bought(self, limit=4):
+        """Get products that customers who bought this also bought."""
+        from django.db.models import Count, Avg
+        
+        # Get products that were bought together with this product
+        # This is a simplified version - in a real app you'd analyze order patterns
+        also_bought = Product.objects.filter(
+            is_active=True
+        ).exclude(id=self.id).annotate(
+            purchase_count=Count('orderitem'),
+            avg_rating=Avg('reviews__rating')
+        ).filter(
+            purchase_count__gt=0
+        ).order_by('-purchase_count', '-avg_rating')[:limit]
+        
+        return also_bought
 
 
 class Order(models.Model):
@@ -168,6 +325,9 @@ class Order(models.Model):
     # Notes
     customer_notes = models.TextField(blank=True, verbose_name=_('Customer Notes'))
     staff_notes = models.TextField(blank=True, verbose_name=_('Staff Notes'))
+    
+    # Delivery code for cash on delivery
+    delivery_code = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Delivery Code'))
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
@@ -288,3 +448,134 @@ class CartItem(models.Model):
     def total_price(self):
         """Calculate total price for this item."""
         return self.quantity * self.product.current_price
+
+
+class Payment(models.Model):
+    """Payment model for order transactions."""
+    
+    PAYMENT_METHOD_CHOICES = [
+        # Cartes bancaires
+        ('credit_card', _('Credit Card')),
+        ('debit_card', _('Debit Card')),
+        ('visa', _('Visa')),
+        ('mastercard', _('Mastercard')),
+        
+        # Paiements numériques
+        ('paypal', _('PayPal')),
+        ('apple_pay', _('Apple Pay')),
+        ('google_pay', _('Google Pay')),
+        
+        # Paiement à la livraison
+        ('cash_delivery', _('Cash on Delivery')),
+        
+        # Services de paiement marocains
+        ('wafacash', _('WafaCash')),
+        ('cashplus', _('CashPlus')),
+        ('baridbanque', _('Barid Bank')),
+        
+        # Virements bancaires
+        ('bank_transfer', _('Bank Transfer')),
+    ]
+    
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', _('Pending')),
+        ('processing', _('Processing')),
+        ('completed', _('Completed')),
+        ('failed', _('Failed')),
+        ('refunded', _('Refunded')),
+    ]
+    
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='payments', verbose_name=_('Order'))
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, verbose_name=_('Payment Method'))
+    status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending', verbose_name=_('Status'))
+    
+    amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Amount'))
+    transaction_id = models.CharField(max_length=100, blank=True, verbose_name=_('Transaction ID'))
+    
+    # Card details (for card payments) - should be encrypted in production
+    card_last_four = models.CharField(max_length=4, blank=True, verbose_name=_('Card Last 4 Digits'))
+    card_brand = models.CharField(max_length=20, blank=True, verbose_name=_('Card Brand'))
+    
+    # Payment processor details
+    processor_response = models.JSONField(default=dict, blank=True, verbose_name=_('Processor Response'))
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    processed_at = models.DateTimeField(blank=True, null=True, verbose_name=_('Processed At'))
+    
+    class Meta:
+        verbose_name = _('Payment')
+        verbose_name_plural = _('Payments')
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Payment {self.id} - {self.order.order_number} - {self.get_payment_method_display()}"
+    
+    def get_status_display_class(self):
+        """Get Bootstrap class for status display."""
+        status_classes = {
+            'pending': 'warning',
+            'processing': 'info',
+            'completed': 'success',
+            'failed': 'danger',
+            'refunded': 'secondary',
+        }
+        return status_classes.get(self.status, 'secondary')
+
+
+class Wishlist(models.Model):
+    """Wishlist model for users to save favorite products."""
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlist', verbose_name=_('User'))
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=_('Product'))
+    added_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Added At'))
+    
+    class Meta:
+        verbose_name = _('Wishlist Item')
+        verbose_name_plural = _('Wishlist Items')
+        unique_together = ['user', 'product']
+        ordering = ['-added_at']
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.product.name}"
+
+
+class ProductReview(models.Model):
+    """Product review and rating model."""
+    
+    RATING_CHOICES = [
+        (1, '1 Star'),
+        (2, '2 Stars'),
+        (3, '3 Stars'),
+        (4, '4 Stars'),
+        (5, '5 Stars'),
+    ]
+    
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews', verbose_name=_('Product'))
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews', verbose_name=_('User'))
+    
+    rating = models.PositiveIntegerField(choices=RATING_CHOICES, verbose_name=_('Rating'))
+    title = models.CharField(max_length=200, verbose_name=_('Review Title'))
+    comment = models.TextField(verbose_name=_('Review Comment'))
+    
+    # Review status
+    is_approved = models.BooleanField(default=True, verbose_name=_('Approved'))
+    is_verified_purchase = models.BooleanField(default=False, verbose_name=_('Verified Purchase'))
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created At'))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_('Updated At'))
+    
+    class Meta:
+        verbose_name = _('Product Review')
+        verbose_name_plural = _('Product Reviews')
+        unique_together = ['product', 'user']  # One review per user per product
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.product.name} - {self.rating} stars"
+    
+    @property
+    def rating_display(self):
+        """Return rating as stars display."""
+        return '★' * self.rating + '☆' * (5 - self.rating)

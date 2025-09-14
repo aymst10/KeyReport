@@ -179,7 +179,11 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <small class="text-muted">Email</small>
-                        <div class="fw-bold">{{ user.email }}</div>
+                        <div class="fw-bold">
+                            <a href="mailto:{{ user.email }}" class="text-decoration-none contact-link">
+                                <i class="fas fa-envelope me-2 text-primary"></i>{{ user.email }}
+                            </a>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <small class="text-muted">Full Name</small>
@@ -191,7 +195,15 @@
                     </div>
                     <div class="mb-3">
                         <small class="text-muted">Phone</small>
-                        <div class="fw-bold">{{ user.phone|default:"Not provided" }}</div>
+                        <div class="fw-bold">
+                            {% if user.phone %}
+                                <a href="tel:{{ user.phone }}" class="text-decoration-none contact-link">
+                                    <i class="fas fa-phone me-2 text-success"></i>{{ user.phone }}
+                                </a>
+                            {% else %}
+                                <span class="text-muted">Not provided</span>
+                            {% endif %}
+                        </div>
                     </div>
                     <div class="mb-3">
                         <small class="text-muted">Company</small>

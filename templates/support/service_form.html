@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-tools text-primary me-2"></i>
+                            {{ title }}
+                        </h1>
+                        <p class="page-subtitle text-muted">Request technical support or maintenance service</p>
+                    </div>
+                    <div class="page-actions">
+                        <a href="{% url 'support:service_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>
+                            Back to Services
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Form Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-tools me-2"></i>
+                        Service Request Form
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.title.id_for_label }}" class="form-label">
+                                        <i class="fas fa-heading me-1"></i>
+                                        Service Title *
+                                    </label>
+                                    {{ form.title }}
+                                    {% if form.title.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.title.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.service_type.id_for_label }}" class="form-label">
+                                        <i class="fas fa-cogs me-1"></i>
+                                        Service Type *
+                                    </label>
+                                    {{ form.service_type }}
+                                    {% if form.service_type.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.service_type.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.priority.id_for_label }}" class="form-label">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                        Priority *
+                                    </label>
+                                    {{ form.priority }}
+                                    {% if form.priority.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.priority.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.related_product.id_for_label }}" class="form-label">
+                                        <i class="fas fa-box me-1"></i>
+                                        Related Product
+                                    </label>
+                                    {{ form.related_product }}
+                                    {% if form.related_product.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.related_product.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                <i class="fas fa-align-left me-1"></i>
+                                Description *
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.description.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.scheduled_date.id_for_label }}" class="form-label">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        Preferred Date
+                                    </label>
+                                    {{ form.scheduled_date }}
+                                    {% if form.scheduled_date.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.scheduled_date.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.contact_phone.id_for_label }}" class="form-label">
+                                        <i class="fas fa-phone me-1"></i>
+                                        Contact Phone
+                                    </label>
+                                    {{ form.contact_phone }}
+                                    {% if form.contact_phone.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.contact_phone.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.notes.id_for_label }}" class="form-label">
+                                <i class="fas fa-sticky-note me-1"></i>
+                                Additional Notes
+                            </label>
+                            {{ form.notes }}
+                            {% if form.notes.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.notes.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'support:service_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>
+                                {% if service %}Update Service{% else %}Create Service Request{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.page-subtitle {
+    margin: 0.5rem 0 0 0;
+    opacity: 0.9;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+
+.card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        padding: 1.5rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .page-actions {
+        margin-top: 1rem;
+    }
+    
+    .page-actions .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+
+
+
+
+
+

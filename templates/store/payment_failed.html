@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment Failed - KeyReport{% endblock %}
+
+{% block extra_css %}
+<style>
+    .error-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        text-align: center;
+        margin: 40px 0;
+    }
+    
+    .error-icon {
+        font-size: 4rem;
+        color: #dc3545;
+        margin-bottom: 20px;
+    }
+    
+    .error-title {
+        color: #dc3545;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    
+    .error-message {
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+    }
+    
+    .payment-details {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 30px 0;
+        text-align: left;
+    }
+    
+    .payment-detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .payment-detail-row:last-child {
+        border-bottom: none;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        border: none;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        color: white;
+        transition: all 0.3s ease;
+        margin: 10px;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+    }
+    
+    .btn-outline-danger {
+        border: 2px solid #dc3545;
+        color: #dc3545;
+        background: transparent;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        margin: 10px;
+    }
+    
+    .btn-outline-danger:hover {
+        background: #dc3545;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline-secondary {
+        border: 2px solid #6c757d;
+        color: #6c757d;
+        background: transparent;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        margin: 10px;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: #6c757d;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .troubleshooting {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 30px 0;
+        text-align: left;
+    }
+    
+    .troubleshooting h5 {
+        color: #856404;
+        margin-bottom: 15px;
+    }
+    
+    .troubleshooting ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+    
+    .troubleshooting li {
+        color: #856404;
+        margin-bottom: 8px;
+    }
+    
+    .support-info {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 30px 0;
+    }
+    
+    .support-info h5 {
+        color: #0c5460;
+        margin-bottom: 15px;
+    }
+    
+    .support-info p {
+        color: #0c5460;
+        margin-bottom: 10px;
+    }
+    
+    .support-info a {
+        color: #0c5460;
+        text-decoration: underline;
+    }
+    
+    .support-info a:hover {
+        color: #007bff;
+    }
+    
+    @media (max-width: 768px) {
+        .error-container {
+            padding: 30px 20px;
+        }
+        
+        .error-icon {
+            font-size: 3rem;
+        }
+        
+        .error-title {
+            font-size: 1.5rem;
+        }
+        
+        .btn-primary, .btn-outline-danger, .btn-outline-secondary {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="error-container">
+                <div class="error-icon">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                
+                <h1 class="error-title">Payment Failed</h1>
+                
+                <p class="error-message">
+                    We're sorry, but your payment could not be processed at this time. 
+                    Your order has been saved and you can try again or choose a different payment method.
+                </p>
+                
+                <div class="payment-details">
+                    <h5 class="mb-3">
+                        <i class="fas fa-receipt me-2"></i>
+                        Payment Details
+                    </h5>
+                    
+                    <div class="payment-detail-row">
+                        <span>Order Number:</span>
+                        <span class="fw-bold">#{{ order.id }}</span>
+                    </div>
+                    
+                    <div class="payment-detail-row">
+                        <span>Payment Method:</span>
+                        <span>{{ payment.get_payment_method_display }}</span>
+                    </div>
+                    
+                    <div class="payment-detail-row">
+                        <span>Amount:</span>
+                        <span>{{ payment.amount }} MAD</span>
+                    </div>
+                    
+                    <div class="payment-detail-row">
+                        <span>Payment Status:</span>
+                        <span class="badge bg-danger">{{ payment.get_status_display }}</span>
+                    </div>
+                    
+                    <div class="payment-detail-row">
+                        <span>Attempted Date:</span>
+                        <span>{{ payment.created_at|date:"M d, Y H:i" }}</span>
+                    </div>
+                </div>
+                
+                <div class="troubleshooting">
+                    <h5><i class="fas fa-tools me-2"></i>Common Solutions</h5>
+                    <ul>
+                        <li>Check that your card details are correct</li>
+                        <li>Ensure you have sufficient funds in your account</li>
+                        <li>Verify your billing address matches your card</li>
+                        <li>Try using a different payment method</li>
+                        <li>Contact your bank if the issue persists</li>
+                    </ul>
+                </div>
+                
+                <div class="support-info">
+                    {% include 'partials/support_contact.html' %}
+                </div>
+                
+                <div class="mt-4">
+                    <a href="{% url 'store:payment_method_selection' order.id %}" class="btn btn-primary">
+                        <i class="fas fa-credit-card me-2"></i>
+                        Try Again
+                    </a>
+                    
+                    <a href="{% url 'store:order_detail' order.id %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-eye me-2"></i>
+                        View Order
+                    </a>
+                    
+                    <a href="{% url 'store:home' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-home me-2"></i>
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-redirect to payment method selection after 15 seconds
+    setTimeout(function() {
+        if (confirm('Would you like to try the payment again?')) {
+            window.location.href = "{% url 'store:payment_method_selection' order.id %}";
+        }
+    }, 15000);
+    
+    // Track payment failure for analytics
+    document.addEventListener('DOMContentLoaded', function() {
+        // You can add analytics tracking here
+        console.log('Payment failed for order:', {{ order.id }});
+    });
+</script>
+{% endblock %}
+
