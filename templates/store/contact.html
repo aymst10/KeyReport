@@ -1,165 +1,221 @@
-{% extends 'base.html' %}
+{% extends 'base_modern.html' %}
 {% load static %}
 
-{% block title %}Contact Us - KeyReport IT Solutions{% endblock %}
+{% block title %}Contact - Key Analytics Report{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-12">
-            <div class="text-center mb-5">
-                <h1 class="display-4 fw-bold text-primary">Contact Us</h1>
-                <p class="lead text-muted">Get in touch with our IT experts</p>
+<!-- Modern Contact Page -->
+<div class="contact-page">
+    <!-- Hero Section -->
+    <div class="contact-hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-envelope me-2"></i>
+                    <span>Contactez-nous</span>
+                </div>
+                <h1 class="hero-title">
+                    Nous Contacter
+                    <span class="gradient-text">Support Expert</span>
+                </h1>
+                <p class="hero-description">
+                    Notre équipe d'experts IT est là pour vous accompagner. 
+                    Contactez-nous pour toute question, demande de support ou information sur nos services.
+                </p>
             </div>
         </div>
     </div>
 
-    <div class="row g-4">
-        <!-- Contact Information -->
-        <div class="col-lg-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="card-title mb-0">
-                        <i class="fas fa-info-circle me-2"></i>Contact Information
-                    </h3>
+    <!-- Contact Methods -->
+    <div class="contact-methods">
+        <div class="container">
+            <div class="methods-grid">
+                <div class="method-card">
+                    <div class="method-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="method-content">
+                        <h3 class="method-title">Email</h3>
+                        <p class="method-description">contact@keyreport.ma</p>
+                        <a href="mailto:contact@keyreport.ma" class="method-link">
+                            <span>Envoyer un email</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="contact-item mb-4">
-                        <div class="d-flex align-items-center">
-                            <div class="contact-icon bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Email</h5>
-                                <p class="text-muted mb-0">contact@keyreport.ma</p>
-                            </div>
-                        </div>
+                
+                <div class="method-card">
+                    <div class="method-icon">
+                        <i class="fas fa-phone"></i>
                     </div>
-
-                    <div class="contact-item mb-4">
-                        <div class="d-flex align-items-center">
-                            <div class="contact-icon bg-success text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                                <i class="fas fa-phone"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Phone</h5>
-                                <p class="text-muted mb-0">+212 5XX XXX XXX</p>
-                            </div>
-                        </div>
+                    <div class="method-content">
+                        <h3 class="method-title">Téléphone</h3>
+                        <p class="method-description">+212 6 04 12 12 83</p>
+                        <a href="tel:+212604121283" class="method-link">
+                            <span>Appeler maintenant</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
                     </div>
-
-                    <div class="contact-item mb-4">
-                        <div class="d-flex align-items-center">
-                            <div class="contact-icon bg-warning text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Address</h5>
-                                <p class="text-muted mb-0">123 Avenue Mohammed V<br>Casablanca 20000, Morocco</p>
-                            </div>
-                        </div>
+                </div>
+                
+                <div class="method-card">
+                    <div class="method-icon">
+                        <i class="fas fa-map-marker-alt"></i>
                     </div>
-
-                    <div class="contact-item">
-                        <div class="d-flex align-items-center">
-                            <div class="contact-icon bg-info text-white rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                                <i class="fas fa-building"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-1">Company</h5>
-                                <p class="text-muted mb-0">KeyReport IT Solutions</p>
-                            </div>
-                        </div>
+                    <div class="method-content">
+                        <h3 class="method-title">Adresse</h3>
+                        <p class="method-description">Mazola rue 6, Casablanca</p>
+                        <a href="#" class="method-link">
+                            <span>Voir sur la carte</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Contact Form -->
-        <div class="col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="card-title mb-0">
-                        <i class="fas fa-paper-plane me-2"></i>Send us a Message
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <form method="post" action="{% url 'store:contact_demo' %}">
+    <!-- Main Contact Section -->
+    <div class="contact-main">
+        <div class="container">
+            <div class="contact-layout">
+                <!-- Contact Form -->
+                <div class="contact-form-section">
+                    <div class="form-header">
+                        <h2 class="form-title">Envoyez-nous un message</h2>
+                        <p class="form-subtitle">Remplissez le formulaire ci-dessous et nous vous répondrons dans les plus brefs délais.</p>
+                    </div>
+                    
+                    <form method="post" action="{% url 'store:contact_demo' %}" class="contact-form">
                         {% csrf_token %}
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="name" class="form-label">Full Name *</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Nom complet *</label>
+                                <input type="text" class="form-input" id="name" name="name" required>
                             </div>
-                            <div class="col-md-6">
-                                <label for="email" class="form-label">Email Address *</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+                            
+                            <div class="form-group">
+                                <label for="email" class="form-label">Adresse email *</label>
+                                <input type="email" class="form-input" id="email" name="email" required>
                             </div>
-                            <div class="col-md-6">
-                                <label for="phone" class="form-label">Phone Number</label>
-                                <input type="tel" class="form-control" id="phone" name="phone">
+                            
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Numéro de téléphone</label>
+                                <input type="tel" class="form-input" id="phone" name="phone">
                             </div>
-                            <div class="col-md-6">
-                                <label for="subject" class="form-label">Subject *</label>
+                            
+                            <div class="form-group">
+                                <label for="subject" class="form-label">Sujet *</label>
                                 <select class="form-select" id="subject" name="subject" required>
-                                    <option value="">Choose a subject</option>
-                                    <option value="general">General Inquiry</option>
-                                    <option value="support">Technical Support</option>
-                                    <option value="sales">Sales Question</option>
-                                    <option value="service">Service Request</option>
-                                    <option value="partnership">Partnership</option>
+                                    <option value="">Choisir un sujet</option>
+                                    <option value="general">Demande générale</option>
+                                    <option value="support">Support technique</option>
+                                    <option value="sales">Question commerciale</option>
+                                    <option value="service">Demande de service</option>
+                                    <option value="partnership">Partenariat</option>
                                 </select>
                             </div>
-                            <div class="col-12">
+                            
+                            <div class="form-group full-width">
                                 <label for="message" class="form-label">Message *</label>
-                                <textarea class="form-control" id="message" name="message" rows="5" required placeholder="Please describe your inquiry in detail..."></textarea>
+                                <textarea class="form-textarea" id="message" name="message" rows="6" required placeholder="Décrivez votre demande en détail..."></textarea>
                             </div>
-                            <div class="col-12">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter">
-                                    <label class="form-check-label" for="newsletter">
-                                        Subscribe to our newsletter for updates and promotions
+                            
+                            <div class="form-group full-width">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="newsletter" name="newsletter" class="form-checkbox">
+                                    <label for="newsletter" class="checkbox-label">
+                                        S'abonner à notre newsletter pour recevoir les mises à jour et promotions
                                     </label>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                            
+                            <div class="form-group full-width">
+                                <button type="submit" class="submit-btn">
+                                    <i class="fas fa-paper-plane"></i>
+                                    <span>Envoyer le message</span>
                                 </button>
                             </div>
                         </div>
                     </form>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Business Hours -->
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-success text-white">
-                    <h3 class="card-title mb-0">
-                        <i class="fas fa-clock me-2"></i>Business Hours
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h5>Office Hours</h5>
-                            <ul class="list-unstyled">
-                                <li><strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM</li>
-                                <li><strong>Saturday:</strong> 9:00 AM - 2:00 PM</li>
-                                <li><strong>Sunday:</strong> Closed</li>
-                            </ul>
+                <!-- Contact Info Sidebar -->
+                <div class="contact-info-sidebar">
+                    <div class="info-card">
+                        <div class="info-header">
+                            <h3 class="info-title">Informations de contact</h3>
                         </div>
-                        <div class="col-md-6">
-                            <h5>Support Hours</h5>
-                            <ul class="list-unstyled">
-                                <li><strong>Technical Support:</strong> 24/7</li>
-                                <li><strong>Emergency Service:</strong> 24/7</li>
-                                <li><strong>Online Support:</strong> 24/7</li>
-                            </ul>
+                        <div class="info-content">
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="info-details">
+                                    <h4 class="info-label">Email</h4>
+                                    <p class="info-value">contact@keyreport.ma</p>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="info-details">
+                                    <h4 class="info-label">Téléphone</h4>
+                                    <p class="info-value">+212 6 04 12 12 83</p>
+                                </div>
+                            </div>
+                            
+                            <div class="info-item">
+                                <div class="info-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="info-details">
+                                    <h4 class="info-label">Adresse</h4>
+                                    <p class="info-value">Mazola rue 6<br>Casablanca, Maroc</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Business Hours -->
+                    <div class="hours-card">
+                        <div class="hours-header">
+                            <h3 class="hours-title">Heures d'ouverture</h3>
+                        </div>
+                        <div class="hours-content">
+                            <div class="hours-section">
+                                <h4 class="hours-section-title">Bureau</h4>
+                                <div class="hours-list">
+                                    <div class="hours-item">
+                                        <span class="hours-day">Lun - Ven</span>
+                                        <span class="hours-time">9h00 - 18h00</span>
+                                    </div>
+                                    <div class="hours-item">
+                                        <span class="hours-day">Samedi</span>
+                                        <span class="hours-time">9h00 - 14h00</span>
+                                    </div>
+                                    <div class="hours-item">
+                                        <span class="hours-day">Dimanche</span>
+                                        <span class="hours-time">Fermé</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="hours-section">
+                                <h4 class="hours-section-title">Support</h4>
+                                <div class="hours-list">
+                                    <div class="hours-item">
+                                        <span class="hours-day">Support technique</span>
+                                        <span class="hours-time">24h/24</span>
+                                    </div>
+                                    <div class="hours-item">
+                                        <span class="hours-day">Service d'urgence</span>
+                                        <span class="hours-time">24h/24</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -167,53 +223,52 @@
         </div>
     </div>
 
-    <!-- Services -->
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info text-white">
-                    <h3 class="card-title mb-0">
-                        <i class="fas fa-cogs me-2"></i>Our Services
-                    </h3>
+    <!-- Services Section -->
+    <div class="services-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Nos Services</h2>
+                <p class="section-subtitle">Découvrez la gamme complète de nos services IT professionnels</p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-laptop"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3 class="service-title">Vente de Matériel</h3>
+                        <p class="service-description">Composants IT de qualité et équipements professionnels</p>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="service-icon bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                    <i class="fas fa-laptop"></i>
-                                </div>
-                                <h6>Hardware Sales</h6>
-                                <p class="text-muted small">Quality IT components and equipment</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="service-icon bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                    <i class="fas fa-tools"></i>
-                                </div>
-                                <h6>Installation</h6>
-                                <p class="text-muted small">Professional setup and configuration</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="service-icon bg-warning text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                    <i class="fas fa-wrench"></i>
-                                </div>
-                                <h6>Maintenance</h6>
-                                <p class="text-muted small">Regular maintenance and updates</p>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="text-center">
-                                <div class="service-icon bg-info text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                    <i class="fas fa-headset"></i>
-                                </div>
-                                <h6>Support</h6>
-                                <p class="text-muted small">24/7 technical support</p>
-                            </div>
-                        </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3 class="service-title">Installation</h3>
+                        <p class="service-description">Configuration et mise en place professionnelle</p>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-wrench"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3 class="service-title">Maintenance</h3>
+                        <p class="service-description">Maintenance régulière et mises à jour</p>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div class="service-content">
+                        <h3 class="service-title">Support</h3>
+                        <p class="service-description">Support technique 24h/24 et 7j/7</p>
                     </div>
                 </div>
             </div>
@@ -221,31 +276,616 @@
     </div>
 </div>
 
+{% block extra_css %}
 <style>
-.contact-item {
-    transition: transform 0.2s ease;
+/* CSS Variables */
+:root {
+    --primary-color: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary-color: #8b5cf6;
+    --accent-color: #06b6d4;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --bg-tertiary: #f3f4f6;
+    --border-color: #e5e7eb;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
 }
 
-.contact-item:hover {
-    transform: translateX(5px);
+/* Contact Page */
+.contact-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+/* Hero Section */
+.contact-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 6rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-2xl);
+    padding: 0.75rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-description {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+    opacity: 0.9;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Contact Methods */
+.contact-methods {
+    padding: 4rem 0;
+    background: var(--bg-primary);
+}
+
+.methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.method-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-2xl);
+    padding: 2rem;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.method-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.method-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-color);
+}
+
+.method-icon {
+    width: 4rem;
+    height: 4rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.method-content {
+    text-align: center;
+}
+
+.method-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.method-description {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.method-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.method-link:hover {
+    color: var(--primary-dark);
+    transform: translateX(4px);
+}
+
+/* Main Contact Section */
+.contact-main {
+    padding: 4rem 0;
+}
+
+.contact-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+/* Contact Form */
+.contact-form-section {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-2xl);
+    padding: 3rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.form-header {
+    margin-bottom: 2rem;
+}
+
+.form-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.contact-form {
+    margin-top: 2rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.form-input, .form-select, .form-textarea {
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.form-checkbox {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.125rem;
+    accent-color: var(--primary-color);
+}
+
+.checkbox-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: var(--radius-xl);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Contact Info Sidebar */
+.contact-info-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.info-card, .hours-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.info-header, .hours-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    padding: 1.5rem;
+    color: white;
+}
+
+.info-title, .hours-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.info-content, .hours-content {
+    padding: 1.5rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+}
+
+.info-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.info-details {
+    flex: 1;
+}
+
+.info-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.info-value {
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Business Hours */
+.hours-section {
+    margin-bottom: 1.5rem;
+}
+
+.hours-section:last-child {
+    margin-bottom: 0;
+}
+
+.hours-section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.hours-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.hours-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+}
+
+.hours-day {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.hours-time {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* Services Section */
+.services-section {
+    padding: 4rem 0;
+    background: var(--bg-primary);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.service-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-2xl);
+    padding: 2rem;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-color);
 }
 
 .service-icon {
-    transition: transform 0.2s ease;
+    width: 4rem;
+    height: 4rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    font-size: 1.5rem;
 }
 
-.service-icon:hover {
-    transform: scale(1.1);
+.service-content {
+    text-align: center;
 }
 
-.card {
-    transition: box-shadow 0.3s ease;
+.service-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
 }
 
-.card:hover {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+.service-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    
+    .contact-info-sidebar {
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-description {
+        font-size: 1.125rem;
+    }
+    
+    .methods-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .contact-form-section {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-hero {
+        padding: 4rem 0 3rem;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .contact-form-section {
+        padding: 1.5rem;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-up {
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>
+{% endblock %}
 {% endblock %}
 
 

@@ -326,9 +326,6 @@ class Order(models.Model):
     customer_notes = models.TextField(blank=True, verbose_name=_('Customer Notes'))
     staff_notes = models.TextField(blank=True, verbose_name=_('Staff Notes'))
     
-    # Delivery code for cash on delivery
-    delivery_code = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Delivery Code'))
-    
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

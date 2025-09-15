@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_modern.html' %}
 {% load static %}
 
 {% block title %}Shopping Cart - Key Reports Analytics{% endblock %}
@@ -191,18 +191,134 @@
             </div>
         </div>
     {% else %}
-        <!-- Empty Cart -->
-        <div class="row">
-            <div class="col-12">
-                <div class="text-center py-5">
-                    <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
-                    <h3 class="text-muted mb-3">Your cart is empty</h3>
-                    <p class="text-muted mb-4">
-                        Looks like you haven't added any analytics components to your cart yet.
-                    </p>
-                    <a href="{% url 'store:product_list' %}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-chart-bar me-2"></i>Browse Components
-                    </a>
+        <!-- Empty Cart - Modern Design -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <div class="empty-cart-container">
+                    <!-- Animated Cart Icon -->
+                    <div class="empty-cart-icon">
+                        <div class="cart-animation">
+                            <i class="fas fa-shopping-cart"></i>
+                            <div class="cart-shadow"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Empty Cart Content -->
+                    <div class="empty-cart-content">
+                        <h2 class="empty-cart-title">Votre panier est vide</h2>
+                        <p class="empty-cart-description">
+                            Découvrez notre sélection de composants IT professionnels et ajoutez-les à votre panier pour commencer votre commande.
+                        </p>
+                        
+                        <!-- Quick Actions -->
+                        <div class="empty-cart-actions">
+                            <a href="{% url 'store:product_list' %}" class="btn btn-primary btn-lg me-3">
+                                <i class="fas fa-search me-2"></i>Explorer les Produits
+                            </a>
+                            <a href="{% url 'store:categories' %}" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-th-large me-2"></i>Voir les Catégories
+                            </a>
+                        </div>
+                        
+                        <!-- Popular Categories -->
+                        <div class="popular-categories">
+                            <h5 class="text-muted mb-3">Catégories Populaires</h5>
+                            <div class="category-tags">
+                                <a href="{% url 'store:product_list' %}?category=business-intelligence" class="category-tag">
+                                    <i class="fas fa-chart-line me-1"></i>Business Intelligence
+                                </a>
+                                <a href="{% url 'store:product_list' %}?category=computer-accessories" class="category-tag">
+                                    <i class="fas fa-desktop me-1"></i>Accessoires IT
+                                </a>
+                                <a href="{% url 'store:product_list' %}?category=network-equipment" class="category-tag">
+                                    <i class="fas fa-network-wired me-1"></i>Équipements Réseau
+                                </a>
+                                <a href="{% url 'store:product_list' %}?category=security-cameras" class="category-tag">
+                                    <i class="fas fa-shield-alt me-1"></i>Sécurité
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Featured Products -->
+                        <div class="featured-products">
+                            <h5 class="text-muted mb-3">Produits Recommandés</h5>
+                            <div class="featured-grid">
+                                <div class="featured-item">
+                                    <div class="featured-icon">
+                                        <i class="fas fa-laptop"></i>
+                                    </div>
+                                    <div class="featured-content">
+                                        <h6>Ordinateurs Portables</h6>
+                                        <p>Performances professionnelles</p>
+                                    </div>
+                                </div>
+                                <div class="featured-item">
+                                    <div class="featured-icon">
+                                        <i class="fas fa-server"></i>
+                                    </div>
+                                    <div class="featured-content">
+                                        <h6>Serveurs</h6>
+                                        <p>Infrastructure robuste</p>
+                                    </div>
+                                </div>
+                                <div class="featured-item">
+                                    <div class="featured-icon">
+                                        <i class="fas fa-database"></i>
+                                    </div>
+                                    <div class="featured-content">
+                                        <h6>Stockage</h6>
+                                        <p>Solutions de données</p>
+                                    </div>
+                                </div>
+                                <div class="featured-item">
+                                    <div class="featured-icon">
+                                        <i class="fas fa-wifi"></i>
+                                    </div>
+                                    <div class="featured-content">
+                                        <h6>Réseau</h6>
+                                        <p>Connectivité avancée</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Benefits Section -->
+                        <div class="benefits-section">
+                            <h5 class="text-muted mb-3">Pourquoi Choisir Key Analytics?</h5>
+                            <div class="benefits-list">
+                                <div class="benefit-item">
+                                    <i class="fas fa-shipping-fast text-primary"></i>
+                                    <span>Livraison gratuite</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-shield-alt text-success"></i>
+                                    <span>Garantie 2 ans</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-headset text-info"></i>
+                                    <span>Support 24/7</span>
+                                </div>
+                                <div class="benefit-item">
+                                    <i class="fas fa-undo text-warning"></i>
+                                    <span>Retour facile</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Newsletter Signup -->
+                        <div class="newsletter-signup">
+                            <h5 class="text-muted mb-3">Restez Informé</h5>
+                            <p class="small text-muted mb-3">Recevez nos dernières offres et nouveautés</p>
+                            <form class="newsletter-form">
+                                <div class="input-group">
+                                    <input type="email" class="form-control" placeholder="Votre email" required>
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -247,6 +363,103 @@ function updateQuantity(itemId) {
         }
     });
 }
+
+// Enhanced empty cart functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Newsletter signup
+    const newsletterForm = document.querySelector('.newsletter-form');
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[type="email"]').value;
+            const button = this.querySelector('button');
+            
+            // Show loading state
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            button.disabled = true;
+            
+            // Simulate newsletter signup
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-success');
+                
+                // Show success message
+                showNotification('Merci! Vous êtes maintenant abonné à notre newsletter.', 'success');
+                
+                // Reset form after 2 seconds
+                setTimeout(() => {
+                    this.reset();
+                    button.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                    button.disabled = false;
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-primary');
+                }, 2000);
+            }, 1500);
+        });
+    }
+    
+    // Featured items click handlers
+    const featuredItems = document.querySelectorAll('.featured-item');
+    featuredItems.forEach((item, index) => {
+        item.addEventListener('click', function() {
+            const categories = ['computer-accessories', 'network-equipment', 'data-processing', 'network-equipment'];
+            const category = categories[index] || 'computer-accessories';
+            window.location.href = `/products/?category=${category}`;
+        });
+    });
+    
+    // Category tags click handlers
+    const categoryTags = document.querySelectorAll('.category-tag');
+    categoryTags.forEach(tag => {
+        tag.addEventListener('click', function(e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            
+            // Add click animation
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+                window.location.href = href;
+            }, 150);
+        });
+    });
+    
+    // Add hover effects to benefit items
+    const benefitItems = document.querySelectorAll('.benefit-item');
+    benefitItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px) scale(1.02)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+});
+
+// Notification system
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; max-width: 400px;';
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+            <span>${message}</span>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 4000);
+}
 </script>
 {% endblock %}
 
@@ -266,6 +479,418 @@ function updateQuantity(itemId) {
 
 .payment-methods i:hover {
     transform: scale(1.1);
+}
+
+/* Empty Cart Modern Design */
+.empty-cart-container {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin: 2rem 0;
+}
+
+.empty-cart-icon {
+    margin-bottom: 2rem;
+}
+
+.cart-animation {
+    position: relative;
+    display: inline-block;
+    animation: cartBounce 2s ease-in-out infinite;
+}
+
+.cart-animation i {
+    font-size: 5rem;
+    color: #6c757d;
+    display: block;
+}
+
+.cart-shadow {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    animation: shadowPulse 2s ease-in-out infinite;
+}
+
+@keyframes cartBounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes shadowPulse {
+    0%, 100% {
+        opacity: 0.3;
+        transform: translateX(-50%) scale(1);
+    }
+    50% {
+        opacity: 0.1;
+        transform: translateX(-50%) scale(0.8);
+    }
+}
+
+.empty-cart-content {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.empty-cart-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.empty-cart-description {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.empty-cart-actions {
+    margin-bottom: 3rem;
+}
+
+.empty-cart-actions .btn {
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.empty-cart-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.popular-categories {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.popular-categories h5 {
+    font-weight: 600;
+    color: #495057;
+}
+
+.category-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.category-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+}
+
+.category-tag:hover {
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.category-tag i {
+    font-size: 0.8rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .empty-cart-container {
+        padding: 2rem 1rem;
+        margin: 1rem 0;
+    }
+    
+    .empty-cart-title {
+        font-size: 2rem;
+    }
+    
+    .empty-cart-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .empty-cart-actions .btn {
+        width: 100%;
+    }
+    
+    .category-tags {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .category-tag {
+        width: 100%;
+        max-width: 250px;
+        justify-content: center;
+    }
+}
+
+/* Featured Products */
+.featured-products {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    margin-top: 2rem;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.featured-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.featured-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.featured-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.featured-content h6 {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.featured-content p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* Benefits Section */
+.benefits-section {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 2rem;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    margin-top: 2rem;
+}
+
+.benefits-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.benefit-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.benefit-item i {
+    font-size: 1.2rem;
+    margin-right: 0.75rem;
+    width: 20px;
+}
+
+.benefit-item span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #495057;
+}
+
+/* Newsletter Signup */
+.newsletter-signup {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    margin-top: 2rem;
+    color: white;
+    text-align: center;
+}
+
+.newsletter-signup h5 {
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.newsletter-signup p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.5rem;
+}
+
+.newsletter-form .input-group {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.newsletter-form .form-control {
+    border: none;
+    border-radius: 25px 0 0 25px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+}
+
+.newsletter-form .btn {
+    border: none;
+    border-radius: 0 25px 25px 0;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.newsletter-form .btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+/* Enhanced Animations */
+.empty-cart-container {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.featured-item {
+    animation: slideInLeft 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.featured-item:nth-child(1) { animation-delay: 0.1s; }
+.featured-item:nth-child(2) { animation-delay: 0.2s; }
+.featured-item:nth-child(3) { animation-delay: 0.3s; }
+.featured-item:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.benefit-item {
+    animation: slideInRight 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.benefit-item:nth-child(1) { animation-delay: 0.1s; }
+.benefit-item:nth-child(2) { animation-delay: 0.2s; }
+.benefit-item:nth-child(3) { animation-delay: 0.3s; }
+.benefit-item:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .featured-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .benefits-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .featured-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .featured-icon {
+        margin-right: 0;
+        margin-bottom: 0.75rem;
+    }
+    
+    .newsletter-form .input-group {
+        flex-direction: column;
+    }
+    
+    .newsletter-form .form-control {
+        border-radius: 25px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .newsletter-form .btn {
+        border-radius: 25px;
+    }
 }
 </style>
 {% endblock %}

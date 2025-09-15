@@ -1,193 +1,1112 @@
-{% extends 'base.html' %}
+{% extends 'base_modern.html' %}
 {% load static %}
 
-{% block title %}Support Tickets - Key Reports Analytics{% endblock %}
+{% block title %}Support Tickets - Key Analytics Report{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0">
-                <i class="fas fa-headset me-2"></i>Support Tickets
-            </h1>
-            {% if user.is_authenticated %}
-                <a href="{% url 'support:ticket_create' %}" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>New Ticket
-                </a>
-            {% endif %}
+<!-- Modern Support Page -->
+<div class="support-page">
+    <!-- Hero Section -->
+    <div class="support-hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-headset me-2"></i>
+                    <span>Support Technique</span>
+                </div>
+                <h1 class="hero-title">
+                    Centre de Support
+                    <span class="gradient-text">Client</span>
+                </h1>
+                <p class="hero-description">
+                    Notre équipe d'experts est là pour vous accompagner. 
+                    Gérez vos tickets de support et obtenez une assistance technique de qualité.
+                </p>
+                
+                {% if user.is_authenticated %}
+                <div class="hero-actions">
+                    <a href="{% url 'support:ticket_create' %}" class="btn-hero-primary">
+                        <i class="fas fa-plus"></i>
+                        <span>Nouveau Ticket</span>
+                    </a>
+                    <a href="#tickets-section" class="btn-hero-secondary">
+                        <i class="fas fa-list"></i>
+                        <span>Mes Tickets</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
         </div>
+    </div>
 
-        <!-- Filters -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <form method="get" class="row g-3">
-                    <div class="col-md-3">
-                        <label for="status" class="form-label">Status</label>
-                        <select name="status" id="status" class="form-select">
-                            <option value="">All Statuses</option>
-                            <option value="open" {% if status_filter == 'open' %}selected{% endif %}>Open</option>
-                            <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>In Progress</option>
-                            <option value="waiting_customer" {% if status_filter == 'waiting_customer' %}selected{% endif %}>Waiting for Customer</option>
-                            <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>Resolved</option>
-                            <option value="closed" {% if status_filter == 'closed' %}selected{% endif %}>Closed</option>
+    <!-- Statistics Section -->
+    <div class="support-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">{{ tickets|length }}</h3>
+                        <p class="stat-label">Tickets Total</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">
+                            {% for ticket in tickets %}
+                                {% if ticket.status == 'open' or ticket.status == 'in_progress' %}
+                                    {% if forloop.first %}1{% else %}{{ open_count|add:1 }}{% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </h3>
+                        <p class="stat-label">En Cours</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">
+                            {% for ticket in tickets %}
+                                {% if ticket.status == 'resolved' or ticket.status == 'closed' %}
+                                    {% if forloop.first %}1{% else %}{{ resolved_count|add:1 }}{% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </h3>
+                        <p class="stat-label">Résolus</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">4.8</h3>
+                        <p class="stat-label">Satisfaction</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tickets Section -->
+    <div class="tickets-section" id="tickets-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Mes Tickets de Support</h2>
+                <p class="section-subtitle">Gérez et suivez vos demandes d'assistance technique</p>
+            </div>
+
+            <!-- Modern Filters -->
+            <div class="filters-container">
+                <form method="get" class="filters-form">
+                    <div class="filter-group">
+                        <label for="status" class="filter-label">Statut</label>
+                        <select name="status" id="status" class="filter-select">
+                            <option value="">Tous les statuts</option>
+                            <option value="open" {% if status_filter == 'open' %}selected{% endif %}>Ouvert</option>
+                            <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>En cours</option>
+                            <option value="waiting_customer" {% if status_filter == 'waiting_customer' %}selected{% endif %}>En attente</option>
+                            <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>Résolu</option>
+                            <option value="closed" {% if status_filter == 'closed' %}selected{% endif %}>Fermé</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label for="priority" class="form-label">Priority</label>
-                        <select name="priority" id="priority" class="form-select">
-                            <option value="">All Priorities</option>
-                            <option value="low" {% if priority_filter == 'low' %}selected{% endif %}>Low</option>
-                            <option value="medium" {% if priority_filter == 'medium' %}selected{% endif %}>Medium</option>
-                            <option value="high" {% if priority_filter == 'high' %}selected{% endif %}>High</option>
-                            <option value="urgent" {% if priority_filter == 'urgent' %}selected{% endif %}>Urgent</option>
+                    <div class="filter-group">
+                        <label for="priority" class="filter-label">Priorité</label>
+                        <select name="priority" id="priority" class="filter-select">
+                            <option value="">Toutes les priorités</option>
+                            <option value="low" {% if priority_filter == 'low' %}selected{% endif %}>Faible</option>
+                            <option value="medium" {% if priority_filter == 'medium' %}selected{% endif %}>Moyenne</option>
+                            <option value="high" {% if priority_filter == 'high' %}selected{% endif %}>Élevée</option>
+                            <option value="urgent" {% if priority_filter == 'urgent' %}selected{% endif %}>Urgente</option>
                         </select>
                     </div>
-                    <div class="col-md-3 d-flex align-items-end">
-                        <button type="submit" class="btn btn-outline-primary me-2">
-                            <i class="fas fa-filter me-1"></i>Filter
+                    <div class="filter-actions">
+                        <button type="submit" class="btn-filter">
+                            <i class="fas fa-filter"></i>
+                            <span>Filtrer</span>
                         </button>
-                        <a href="{% url 'support:ticket_list' %}" class="btn btn-outline-secondary">
-                            <i class="fas fa-times me-1"></i>Clear
+                        <a href="{% url 'support:ticket_list' %}" class="btn-clear">
+                            <i class="fas fa-times"></i>
+                            <span>Effacer</span>
                         </a>
                     </div>
                 </form>
             </div>
-        </div>
 
-        <!-- Tickets Table -->
-        <div class="card">
-            <div class="card-body">
+            <!-- Modern Tickets Grid -->
+            <div class="tickets-grid">
                 {% if tickets %}
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Ticket #</th>
-                                    <th>Title</th>
-                                    <th>Type</th>
-                                    <th>Priority</th>
-                                    <th>Status</th>
-                                    <th>Customer</th>
-                                    <th>Created</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for ticket in tickets %}
-                                <tr>
-                                    <td>
-                                        <strong>{{ ticket.ticket_number }}</strong>
-                                    </td>
-                                    <td>
-                                        <a href="{% url 'support:ticket_detail' ticket.pk %}" class="text-decoration-none">
-                                            {{ ticket.title|truncatechars:50 }}
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-info">{{ ticket.get_ticket_type_display }}</span>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-{{ ticket.get_priority_display_class }}">
-                                            {{ ticket.get_priority_display }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-{{ ticket.get_status_display_class }}">
-                                            {{ ticket.get_status_display }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        {% if user.is_staff_member %}
-                                            {{ ticket.customer.get_full_name|default:ticket.customer.email }}
-                                        {% else %}
-                                            <span class="text-muted">You</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <small class="text-muted">
-                                            {{ ticket.created_at|date:"M d, Y" }}
-                                        </small>
-                                    </td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm" role="group">
-                                            <a href="{% url 'support:ticket_detail' ticket.pk %}" 
-                                               class="btn btn-outline-primary" 
-                                               title="View Details">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            {% if user.is_staff_member or ticket.customer == user %}
-                                                <a href="{% url 'support:ticket_update' ticket.pk %}" 
-                                                   class="btn btn-outline-secondary" 
-                                                   title="Edit">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                    {% for ticket in tickets %}
+                    <div class="ticket-card" data-ticket-id="{{ ticket.pk }}">
+                        <div class="ticket-header">
+                            <div class="ticket-number">
+                                <span class="ticket-id">{{ ticket.ticket_number }}</span>
+                                <span class="ticket-date">{{ ticket.created_at|date:"d M Y" }}</span>
+                            </div>
+                            <div class="ticket-status">
+                                <span class="status-badge status-{{ ticket.status }}">
+                                    {{ ticket.get_status_display }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="ticket-content">
+                            <h3 class="ticket-title">
+                                <a href="{% url 'support:ticket_detail' ticket.pk %}">
+                                    {{ ticket.title }}
+                                </a>
+                            </h3>
+                            
+                            <div class="ticket-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-tag"></i>
+                                    <span class="type-badge">{{ ticket.get_ticket_type_display }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span class="priority-badge priority-{{ ticket.priority }}">
+                                        {{ ticket.get_priority_display }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            {% if ticket.description %}
+                            <p class="ticket-description">
+                                {{ ticket.description|truncatewords:20 }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="ticket-footer">
+                            <div class="ticket-customer">
+                                {% if user.is_staff_member %}
+                                    <div class="customer-avatar">
+                                        <span>{{ ticket.customer.get_full_name|first|default:ticket.customer.email|first|upper }}</span>
+                                    </div>
+                                    <div class="customer-info">
+                                        <span class="customer-name">{{ ticket.customer.get_full_name|default:ticket.customer.email }}</span>
+                                    </div>
+                                {% else %}
+                                    <div class="customer-avatar">
+                                        <span>Vous</span>
+                                    </div>
+                                    <div class="customer-info">
+                                        <span class="customer-name">Votre ticket</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="ticket-actions">
+                                <a href="{% url 'support:ticket_detail' ticket.pk %}" 
+                                   class="action-btn view-btn" 
+                                   title="Voir les détails">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                {% if user.is_staff_member or ticket.customer == user %}
+                                <a href="{% url 'support:ticket_update' ticket.pk %}" 
+                                   class="action-btn edit-btn" 
+                                   title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
+                    {% endfor %}
 
-                    <!-- Pagination -->
+                    <!-- Modern Pagination -->
                     {% if tickets.has_other_pages %}
-                        <nav aria-label="Tickets pagination" class="mt-4">
-                            <ul class="pagination justify-content-center">
+                        <div class="pagination-container">
+                            <nav class="pagination-nav">
                                 {% if tickets.has_previous %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ tickets.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if priority_filter %}&priority={{ priority_filter }}{% endif %}">
-                                            <i class="fas fa-chevron-left"></i>
-                                        </a>
-                                    </li>
+                                    <a href="?page={{ tickets.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if priority_filter %}&priority={{ priority_filter }}{% endif %}" 
+                                       class="pagination-btn prev-btn">
+                                        <i class="fas fa-chevron-left"></i>
+                                        <span>Précédent</span>
+                                    </a>
                                 {% endif %}
 
-                                {% for num in tickets.paginator.page_range %}
-                                    {% if tickets.number == num %}
-                                        <li class="page-item active">
-                                            <span class="page-link">{{ num }}</span>
-                                        </li>
-                                    {% elif num > tickets.number|add:'-3' and num < tickets.number|add:'3' %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if priority_filter %}&priority={{ priority_filter }}{% endif %}">{{ num }}</a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
+                                <div class="pagination-numbers">
+                                    {% for num in tickets.paginator.page_range %}
+                                        {% if tickets.number == num %}
+                                            <span class="pagination-number active">{{ num }}</span>
+                                        {% elif num > tickets.number|add:'-3' and num < tickets.number|add:'3' %}
+                                            <a href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if priority_filter %}&priority={{ priority_filter }}{% endif %}" 
+                                               class="pagination-number">{{ num }}</a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
 
                                 {% if tickets.has_next %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ tickets.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if priority_filter %}&priority={{ priority_filter }}{% endif %}">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </a>
-                                    </li>
+                                    <a href="?page={{ tickets.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if priority_filter %}&priority={{ priority_filter }}{% endif %}" 
+                                       class="pagination-btn next-btn">
+                                        <span>Suivant</span>
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
                                 {% endif %}
-                            </ul>
-                        </nav>
+                            </nav>
+                        </div>
                     {% endif %}
                 {% else %}
-                    <div class="text-center py-5">
-                        <i class="fas fa-headset fa-3x text-muted mb-3"></i>
-                        <h4 class="text-muted">No tickets found</h4>
-                        <p class="text-muted">
-                            {% if user.is_authenticated %}
-                                {% if status_filter or priority_filter %}
-                                    No tickets match your current filters.
+                    <div class="no-tickets">
+                        <div class="no-tickets-content">
+                            <div class="no-tickets-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <h3 class="no-tickets-title">Aucun ticket trouvé</h3>
+                            <p class="no-tickets-description">
+                                {% if user.is_authenticated %}
+                                    {% if status_filter or priority_filter %}
+                                        Aucun ticket ne correspond à vos filtres actuels.
+                                    {% else %}
+                                        Vous n'avez pas encore créé de ticket de support.
+                                    {% endif %}
                                 {% else %}
-                                    You haven't created any support tickets yet.
+                                    Veuillez vous connecter pour voir vos tickets de support.
                                 {% endif %}
-                            {% else %}
-                                Please log in to view your support tickets.
+                            </p>
+                            {% if user.is_authenticated and not status_filter and not priority_filter %}
+                                <a href="{% url 'support:ticket_create' %}" class="btn-create-ticket">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Créer votre premier ticket</span>
+                                </a>
                             {% endif %}
-                        </p>
-                        {% if user.is_authenticated and not status_filter and not priority_filter %}
-                            <a href="{% url 'support:ticket_create' %}" class="btn btn-primary">
-                                <i class="fas fa-plus me-2"></i>Create Your First Ticket
-                            </a>
-                        {% endif %}
+                        </div>
                     </div>
                 {% endif %}
             </div>
         </div>
     </div>
 </div>
+
+{% block extra_css %}
+<style>
+/* CSS Variables */
+:root {
+    --primary-color: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary-color: #8b5cf6;
+    --accent-color: #06b6d4;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --bg-tertiary: #f3f4f6;
+    --border-color: #e5e7eb;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+}
+
+/* Support Page */
+.support-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+/* Hero Section */
+.support-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 6rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.support-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-2xl);
+    padding: 0.75rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-description {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-hero-primary, .btn-hero-secondary {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-xl);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn-hero-primary {
+    background: white;
+    color: var(--primary-color);
+}
+
+.btn-hero-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: var(--primary-color);
+}
+
+.btn-hero-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.btn-hero-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Statistics Section */
+.support-stats {
+    padding: 4rem 0;
+    background: var(--bg-primary);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.stat-icon {
+    width: 4rem;
+    height: 4rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0.5rem 0 0;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Tickets Section */
+.tickets-section {
+    padding: 4rem 0;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Filters */
+.filters-container {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-2xl);
+    padding: 2rem;
+    margin-bottom: 3rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.filters-form {
+    display: flex;
+    gap: 2rem;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    font-size: 0.875rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-filter, .btn-clear {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-filter {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+}
+
+.btn-filter:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-clear {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-clear:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--primary-color);
+    color: var(--text-primary);
+}
+
+/* Tickets Grid */
+.tickets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+}
+
+.ticket-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.ticket-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-color);
+}
+
+.ticket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.ticket-number {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.ticket-id {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.ticket-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ticket-status {
+    flex-shrink: 0;
+}
+
+.status-badge {
+    padding: 0.375rem 0.875rem;
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-open {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error-color);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.status-in_progress {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-waiting_customer {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--accent-color);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+.status-resolved {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-closed {
+    background: rgba(107, 114, 128, 0.1);
+    color: var(--text-secondary);
+    border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+.ticket-content {
+    padding: 1.5rem;
+}
+
+.ticket-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.ticket-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.ticket-title a:hover {
+    color: var(--primary-color);
+}
+
+.ticket-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.meta-item i {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.type-badge {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.priority-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.priority-low {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+}
+
+.priority-medium {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--accent-color);
+}
+
+.priority-high {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+}
+
+.priority-urgent {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error-color);
+}
+
+.ticket-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.ticket-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+.ticket-customer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.customer-avatar {
+    width: 2rem;
+    height: 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.customer-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.customer-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.ticket-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+}
+
+.view-btn {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary-color);
+}
+
+.view-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+.edit-btn {
+    background: rgba(107, 114, 128, 0.1);
+    color: var(--text-secondary);
+}
+
+.edit-btn:hover {
+    background: var(--text-secondary);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Pagination */
+.pagination-container {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.pagination-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.pagination-number {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.pagination-number:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination-number.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* No Tickets */
+.no-tickets {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.no-tickets-content {
+    text-align: center;
+    max-width: 400px;
+}
+
+.no-tickets-icon {
+    font-size: 4rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+
+.no-tickets-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.no-tickets-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.btn-create-ticket {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border-radius: var(--radius-xl);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn-create-ticket:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .tickets-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
+    
+    .filters-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-actions {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-description {
+        font-size: 1.125rem;
+    }
+    
+    .tickets-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stat-icon {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .ticket-footer {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .ticket-actions {
+        justify-content: center;
+    }
+    
+    .pagination-nav {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .pagination-numbers {
+        order: -1;
+    }
+}
+
+@media (max-width: 480px) {
+    .support-hero {
+        padding: 4rem 0 3rem;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-hero-primary, .btn-hero-secondary {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-up {
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+{% endblock %}
 {% endblock %}

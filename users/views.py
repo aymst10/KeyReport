@@ -209,14 +209,9 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
 
 @login_required
 def dashboard(request):
-    """User dashboard view."""
-    user = request.user
-    context = {
-        'user': user,
-        'recent_orders': [],  # You can add order history here
-        'support_tickets': [],  # You can add support tickets here
-    }
-    return render(request, 'users/dashboard.html', context)
+    """User dashboard view - redirects to modern dashboard."""
+    # Redirect to modern dashboard
+    return redirect('store:modern_dashboard')
 
 
 @login_required

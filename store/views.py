@@ -35,58 +35,9 @@ def contact_demo(request):
 
 
 def home(request):
-    """Home page view."""
-    from django.db.models import Avg, Count
-    
-    # Get featured products with ratings
-    featured_products = Product.objects.filter(
-        is_featured=True, 
-        is_active=True
-    ).annotate(
-        avg_rating=Avg('reviews__rating')
-    ).order_by('-avg_rating', '-created_at')[:6]
-    
-    # Get top-rated products
-    top_rated_products = Product.objects.filter(
-        is_active=True
-    ).annotate(
-        avg_rating=Avg('reviews__rating'),
-        review_count=Count('reviews')
-    ).filter(
-        avg_rating__gte=4.0
-    ).order_by('-avg_rating', '-review_count')[:4]
-    
-    # Get user-specific recommendations if logged in
-    user_recommendations = []
-    if request.user.is_authenticated:
-        # Get products from categories the user has purchased
-        user_orders = Order.objects.filter(customer=request.user)
-        purchased_categories = set()
-        for order in user_orders:
-            for item in order.items.all():
-                purchased_categories.add(item.product.category)
-        
-        if purchased_categories:
-            user_recommendations = Product.objects.filter(
-                category__in=purchased_categories,
-                is_active=True
-            ).annotate(
-                avg_rating=Avg('reviews__rating')
-            ).filter(
-                avg_rating__gte=3.5
-            ).exclude(
-                id__in=[item.product.id for order in user_orders for item in order.items.all()]
-            ).order_by('-avg_rating')[:4]
-    
-    categories = Category.objects.filter(is_active=True)[:8]
-    
-    context = {
-        'featured_products': featured_products,
-        'top_rated_products': top_rated_products,
-        'user_recommendations': user_recommendations,
-        'categories': categories,
-    }
-    return render(request, 'store/home.html', context)
+    """Home page view - redirects to modern home page."""
+    # Redirect to modern home page
+    return redirect('store:modern_home')
 
 
 
@@ -219,38 +170,51 @@ def category_detail(request, slug):
 
 def add_to_cart(request, product_id):
     """Add product to cart."""
+    if not request.user.is_authenticated:
+        messages.error(request, 'Vous devez être connecté pour ajouter des articles au panier.')
+        return redirect('users:login')
+    
     if request.method == 'POST':
         product = get_object_or_404(Product, id=product_id, is_active=True)
         quantity = int(request.POST.get('quantity', 1))
         
         if quantity <= 0:
-            messages.error(request, 'Quantity must be greater than 0.')
+            messages.error(request, 'La quantité doit être supérieure à 0.')
             return redirect('store:product_detail', slug=product.slug)
         
         if not product.is_in_stock:
-            messages.error(request, 'Product is out of stock.')
+            messages.error(request, 'Le produit est en rupture de stock.')
             return redirect('store:product_detail', slug=product.slug)
         
         if quantity > product.stock_quantity:
-            messages.error(request, f'Only {product.stock_quantity} items available in stock.')
+            messages.error(request, f'Seulement {product.stock_quantity} articles disponibles en stock.')
             return redirect('store:product_detail', slug=product.slug)
         
-        # Get or create cart for user
-        cart, created = Cart.objects.get_or_create(user=request.user)
-        
-        # Check if product already in cart
-        cart_item, created = CartItem.objects.get_or_create(
-            cart=cart,
-            product=product,
-            defaults={'quantity': quantity}
-        )
-        
-        if not created:
-            cart_item.quantity += quantity
-            cart_item.save()
-        
-        messages.success(request, f'{product.name} added to cart.')
-        return redirect('store:cart')
+        try:
+            # Get or create cart for user
+            cart, created = Cart.objects.get_or_create(user=request.user)
+            
+            # Check if product already in cart
+            try:
+                cart_item = CartItem.objects.get(cart=cart, product=product)
+                # Product already exists, update quantity
+                cart_item.quantity += quantity
+                cart_item.save()
+                messages.success(request, f'{product.name} - Quantité mise à jour dans le panier.')
+            except CartItem.DoesNotExist:
+                # Product doesn't exist, create new item
+                cart_item = CartItem.objects.create(
+                    cart=cart,
+                    product=product,
+                    quantity=quantity
+                )
+                messages.success(request, f'{product.name} ajouté au panier.')
+            
+            return redirect('store:cart')
+            
+        except Exception as e:
+            messages.error(request, f'Erreur lors de l\'ajout au panier: {str(e)}')
+            return redirect('store:product_detail', slug=product.slug)
     
     return redirect('store:product_list')
 
@@ -258,6 +222,10 @@ def add_to_cart(request, product_id):
 
 def cart_view(request):
     """Shopping cart view."""
+    if not request.user.is_authenticated:
+        messages.info(request, 'Veuillez vous connecter pour voir votre panier.')
+        return redirect('users:login')
+    
     try:
         cart = Cart.objects.get(user=request.user)
         cart_items = cart.items.all()

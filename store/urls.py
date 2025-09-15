@@ -1,12 +1,15 @@
 from django.urls import path
 from . import views
 from . import professional_payment_views
+from . import views_modern
 
 app_name = 'store'
 
 urlpatterns = [
     # Public views
     path('', views.home, name='home'),
+    path('modern/', views_modern.modern_home, name='modern_home'),
+    path('dashboard/', views_modern.modern_dashboard, name='modern_dashboard'),
     path('products/', views.product_list, name='product_list'),
     path('contact/', views.contact, name='contact'),
     

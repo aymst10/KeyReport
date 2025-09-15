@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_modern.html' %}
 {% load static %}
 
 {% block title %}Paiement Sécurisé{% endblock %}
@@ -193,17 +193,30 @@
     .loading {
         display: none;
         text-align: center;
-        margin-top: 1rem;
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 0.75rem;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     
     .spinner {
-        border: 3px solid #f3f3f3;
+        border: 3px solid #e9ecef;
         border-top: 3px solid #007bff;
         border-radius: 50%;
-        width: 30px;
-        height: 30px;
+        width: 35px;
+        height: 35px;
         animation: spin 1s linear infinite;
         margin: 0 auto 1rem;
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+    }
+    
+    .loading p {
+        color: #495057;
+        font-weight: 500;
+        margin: 0;
+        font-size: 0.95rem;
     }
     
     @keyframes spin {
@@ -369,7 +382,7 @@
             <div class="form-group">
                 <label class="form-label">Numéro de carte</label>
                 <div style="position: relative;">
-                    <input type="text" name="card_number" id="card_number" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                    <input type="text" name="card_number" id="card_number" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
                     <span class="card-brand-indicator" id="card-brand"></span>
                 </div>
                 <div class="validation-message" id="card_number_error" style="display: none;"></div>
@@ -378,19 +391,19 @@
             <div class="card-input-group">
                 <div class="form-group">
                     <label class="form-label">Date d'expiration</label>
-                    <input type="text" name="expiry_date" id="expiry_date" class="form-control" placeholder="MM/AA" maxlength="5" required>
+                    <input type="text" name="expiry_date" id="expiry_date" class="form-control" placeholder="MM/AA" maxlength="5">
                     <div class="validation-message" id="expiry_date_error" style="display: none;"></div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">CVV</label>
-                    <input type="text" name="cvv" id="cvv" class="form-control" placeholder="123" maxlength="4" required>
+                    <input type="text" name="cvv" id="cvv" class="form-control" placeholder="123" maxlength="4">
                     <div class="validation-message" id="cvv_error" style="display: none;"></div>
                 </div>
             </div>
             
             <div class="form-group">
                 <label class="form-label">Nom du titulaire</label>
-                <input type="text" name="cardholder_name" id="cardholder_name" class="form-control" placeholder="Nom complet" required>
+                <input type="text" name="cardholder_name" id="cardholder_name" class="form-control" placeholder="Nom complet">
                 <div class="validation-message" id="cardholder_name_error" style="display: none;"></div>
             </div>
         </div>
@@ -633,7 +646,7 @@ document.addEventListener('DOMContentLoaded', function() {
             showValidationMessage('expiry_date', validation.valid, validation.message);
         });
     }
-    
+
     // CVV validation
     const cvvInput = document.getElementById('cvv');
     if (cvvInput) {
@@ -657,14 +670,64 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Form submission validation
-    form.addEventListener('submit', function(e) {
+    // Initialize button state on page load
+    payButton.innerHTML = '<i class="fas fa-lock"></i> Payer {{ order.total_amount }} MAD';
+    loading.style.display = 'none';
+    
+    // Initialize required attributes based on default selected payment method
+    function initializeRequiredAttributes() {
+        // Remove all required attributes first
+        const allInputs = document.querySelectorAll('input[required]');
+        allInputs.forEach(input => input.removeAttribute('required'));
+        
+        const defaultSelectedMethod = document.querySelector('input[name="payment_method"]:checked');
+        if (defaultSelectedMethod) {
+            // Add required attributes based on selected method
+            if (defaultSelectedMethod.value === 'credit_card') {
+                document.getElementById('card_number').setAttribute('required', 'required');
+                document.getElementById('expiry_date').setAttribute('required', 'required');
+                document.getElementById('cvv').setAttribute('required', 'required');
+                document.getElementById('cardholder_name').setAttribute('required', 'required');
+            } else if (defaultSelectedMethod.value === 'paypal') {
+                document.querySelector('input[name="paypal_email"]').setAttribute('required', 'required');
+            }
+        }
+    }
+    
+    // Initialize on page load
+    initializeRequiredAttributes();
+    
+    // Validate current payment method and set initial button state
+    validateCurrentPaymentMethod();
+    
+    // Set default payment method and enable button
+    setTimeout(function() {
+        const defaultSelectedMethod = document.querySelector('input[name="payment_method"]:checked');
+        console.log('Default selected method:', defaultSelectedMethod ? defaultSelectedMethod.value : 'none');
+        
+        // If no method is selected, default to cash delivery
+        if (!defaultSelectedMethod) {
+            console.log('No method selected, defaulting to cash delivery');
+            const cashDeliveryRadio = document.getElementById('cash_delivery');
+            if (cashDeliveryRadio) {
+                cashDeliveryRadio.checked = true;
+                document.getElementById('cashDeliveryForm').style.display = 'block';
+                payButton.disabled = false;
+                console.log('Cash delivery selected by default - button enabled');
+            }
+        } else if (defaultSelectedMethod.value === 'cash_delivery' || defaultSelectedMethod.value === 'bank_transfer') {
+            console.log('Enabling button for:', defaultSelectedMethod.value);
+            payButton.disabled = false;
+        }
+    }, 100); // Small delay to ensure DOM is ready
+
+    // Function to validate current payment method and enable/disable button
+    function validateCurrentPaymentMethod() {
         const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
         
         if (!selectedMethod) {
-            e.preventDefault();
-            alert('Veuillez sélectionner une méthode de paiement');
-            return;
+            payButton.disabled = true;
+            return false;
         }
         
         if (selectedMethod.value === 'credit_card') {
@@ -679,22 +742,106 @@ document.addEventListener('DOMContentLoaded', function() {
             const cvvValidation = validateCVV(cvv, cardNumber);
             const nameValidation = validateCardholderName(cardholderName);
             
-            if (!cardValidation.valid || !expiryValidation.valid || !cvvValidation.valid || !nameValidation.valid) {
-                e.preventDefault();
-                alert('Veuillez corriger les erreurs dans le formulaire avant de continuer');
-                return;
-            }
+            const isValid = cardValidation.valid && expiryValidation.valid && cvvValidation.valid && nameValidation.valid;
+            payButton.disabled = !isValid;
+            return isValid;
+            
+        } else if (selectedMethod.value === 'paypal') {
+            // Validate PayPal email
+            const paypalEmail = document.querySelector('input[name="paypal_email"]').value;
+            const isValid = paypalEmail && paypalEmail.includes('@');
+            payButton.disabled = !isValid;
+            return isValid;
+            
+        } else if (selectedMethod.value === 'cash_delivery') {
+            // Cash delivery doesn't need additional validation
+            console.log('Cash delivery selected - enabling button');
+            payButton.disabled = false;
+            return true;
+            
+        } else if (selectedMethod.value === 'bank_transfer') {
+            // Bank transfer doesn't need additional validation
+            console.log('Bank transfer selected - enabling button');
+            payButton.disabled = false;
+            return true;
         }
         
-        // Show loading state
-        payButton.style.display = 'none';
-        loading.style.display = 'block';
+        return false;
+    }
+
+    // Add event listeners to payment method radio buttons
+    const paymentMethodRadios = document.querySelectorAll('input[name="payment_method"]');
+    paymentMethodRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Show/hide appropriate form sections
+            const allForms = document.querySelectorAll('.payment-form');
+            allForms.forEach(form => form.style.display = 'none');
+            
+            if (this.value === 'credit_card') {
+                document.getElementById('creditCardForm').style.display = 'block';
+            } else if (this.value === 'paypal') {
+                document.getElementById('paypalForm').style.display = 'block';
+            } else if (this.value === 'cash_delivery') {
+                document.getElementById('cashDeliveryForm').style.display = 'block';
+            } else if (this.value === 'bank_transfer') {
+                document.getElementById('bankTransferForm').style.display = 'block';
+            }
+            
+            // Re-initialize required attributes for the new payment method
+            initializeRequiredAttributes();
+            
+            // Validate and enable/disable button
+            validateCurrentPaymentMethod();
+        });
+    });
+
+    // Add event listeners to form fields for real-time validation
+    const creditCardInputs = document.querySelectorAll('#creditCardForm input');
+    creditCardInputs.forEach(input => {
+        input.addEventListener('input', validateCurrentPaymentMethod);
+    });
+
+    const paypalInput = document.querySelector('input[name="paypal_email"]');
+    if (paypalInput) {
+        paypalInput.addEventListener('input', validateCurrentPaymentMethod);
+    }
+
+    // Form submission validation
+    form.addEventListener('submit', function(e) {
+        const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
         
-        // Reset loading state after a delay (in case of errors)
+        if (!selectedMethod) {
+            e.preventDefault();
+            alert('Veuillez sélectionner une méthode de paiement');
+            return;
+        }
+        
+        // Validate based on selected method
+        if (!validateCurrentPaymentMethod()) {
+            e.preventDefault();
+            if (selectedMethod.value === 'credit_card') {
+                alert('Veuillez corriger les erreurs dans le formulaire de carte bancaire');
+            } else if (selectedMethod.value === 'paypal') {
+                alert('Veuillez entrer une adresse email PayPal valide');
+            }
+            return;
+        }
+
+        // Only show loading state if validation passes
+        payButton.disabled = true;
+        payButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement en cours...';
+        loading.style.display = 'block';
+
+        // Reset button state after 1 second as fallback
         setTimeout(function() {
-            payButton.style.display = 'block';
-            loading.style.display = 'none';
-        }, 10000); // 10 seconds timeout
+            if (payButton.disabled) {
+                payButton.disabled = false;
+                payButton.innerHTML = '<i class="fas fa-lock"></i> Payer {{ order.total_amount }} MAD';
+                loading.style.display = 'none';
+            }
+        }, 1000);
+        
+        // Allow the form to submit naturally
     });
 
 });

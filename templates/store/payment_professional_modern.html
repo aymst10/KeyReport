@@ -1,0 +1,970 @@
+{% extends 'base_modern.html' %}
+{% load static %}
+
+{% block title %}Paiement Sécurisé - Key Analytics Report{% endblock %}
+
+{% block content %}
+<!-- Modern Payment Page -->
+<div class="payment-page">
+    <!-- Hero Section -->
+    <div class="payment-hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-credit-card me-2"></i>
+                    <span>Paiement Sécurisé</span>
+                </div>
+                <h1 class="hero-title">
+                    Finalisez votre
+                    <span class="gradient-text">Commande</span>
+                </h1>
+                <p class="hero-description">
+                    Choisissez votre méthode de paiement préférée et finalisez votre commande en toute sécurité.
+                    Vos données sont protégées par un cryptage SSL de niveau bancaire.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Main Section -->
+    <div class="payment-main">
+        <div class="container">
+            <div class="payment-layout">
+                <!-- Order Summary Sidebar -->
+                <div class="order-summary-sidebar">
+                    <div class="summary-card">
+                        <div class="summary-header">
+                            <h3 class="summary-title">Résumé de la commande</h3>
+                        </div>
+                        <div class="summary-content">
+                            <div class="order-items">
+                                {% for item in order.items.all %}
+                                <div class="order-item">
+                                    <div class="item-info">
+                                        <h4 class="item-name">{{ item.product.name }}</h4>
+                                        <p class="item-quantity">Quantité: {{ item.quantity }}</p>
+                                    </div>
+                                    <div class="item-price">{{ item.total_price }} MAD</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="order-total">
+                                <div class="total-line">
+                                    <span class="total-label">Total</span>
+                                    <span class="total-amount">{{ order.total_amount }} MAD</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shipping Info -->
+                    <div class="shipping-card">
+                        <div class="shipping-header">
+                            <h3 class="shipping-title">Informations de livraison</h3>
+                        </div>
+                        <div class="shipping-content">
+                            <div class="shipping-item">
+                                <div class="shipping-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="shipping-details">
+                                    <h4 class="shipping-label">Adresse</h4>
+                                    <p class="shipping-value">
+                                        {{ order.shipping_address }}<br>
+                                        {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_zip_code }}<br>
+                                        {{ order.shipping_country }}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="shipping-item">
+                                <div class="shipping-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="shipping-details">
+                                    <h4 class="shipping-label">Contact</h4>
+                                    <p class="shipping-value">
+                                        <i class="fas fa-envelope me-1"></i>{{ order.contact_email }}<br>
+                                        <i class="fas fa-phone me-1"></i>{{ order.contact_phone }}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            {% if order.customer_notes %}
+                            <div class="shipping-item">
+                                <div class="shipping-icon">
+                                    <i class="fas fa-sticky-note"></i>
+                                </div>
+                                <div class="shipping-details">
+                                    <h4 class="shipping-label">Instructions</h4>
+                                    <p class="shipping-value">{{ order.customer_notes }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="shipping-actions">
+                                <a href="{% url 'store:order_form_edit' order.id %}" class="edit-link">
+                                    <i class="fas fa-edit"></i>
+                                    <span>Modifier</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Form -->
+                <div class="payment-form-section">
+                    <form method="post" id="paymentForm" action="{% url 'store:process_professional_payment' order.id %}">
+                        {% csrf_token %}
+                        
+                        <!-- Payment Methods -->
+                        <div class="payment-methods-section">
+                            <h2 class="section-title">Méthode de paiement</h2>
+                            <div class="payment-methods-grid">
+                                <div class="payment-method-card" data-method="credit_card">
+                                    <input type="radio" name="payment_method" value="credit_card" id="credit_card">
+                                    <div class="method-content">
+                                        <div class="method-icon">
+                                            <i class="fab fa-cc-visa"></i>
+                                            <i class="fab fa-cc-mastercard"></i>
+                                        </div>
+                                        <div class="method-info">
+                                            <h3 class="method-title">Carte Bancaire</h3>
+                                            <p class="method-description">Visa, Mastercard</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="payment-method-card" data-method="paypal">
+                                    <input type="radio" name="payment_method" value="paypal" id="paypal">
+                                    <div class="method-content">
+                                        <div class="method-icon">
+                                            <i class="fab fa-paypal"></i>
+                                        </div>
+                                        <div class="method-info">
+                                            <h3 class="method-title">PayPal</h3>
+                                            <p class="method-description">Paiement rapide et sécurisé</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="payment-method-card" data-method="cash_delivery">
+                                    <input type="radio" name="payment_method" value="cash_delivery" id="cash_delivery">
+                                    <div class="method-content">
+                                        <div class="method-icon">
+                                            <i class="fas fa-money-bill-wave"></i>
+                                        </div>
+                                        <div class="method-info">
+                                            <h3 class="method-title">Paiement à la livraison</h3>
+                                            <p class="method-description">Payez en espèces</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Credit Card Form -->
+                        <div class="payment-form-card" id="creditCardForm" style="display: none;">
+                            <div class="form-header">
+                                <h3 class="form-title">
+                                    <i class="fas fa-credit-card"></i>
+                                    Informations de la carte
+                                </h3>
+                            </div>
+                            
+                            <div class="form-content">
+                                <div class="form-group">
+                                    <label class="form-label">Numéro de carte</label>
+                                    <div class="input-wrapper">
+                                        <input type="text" name="card_number" id="card_number" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                                        <span class="card-brand-indicator" id="card-brand"></span>
+                                    </div>
+                                    <div class="validation-message" id="card_number_error" style="display: none;"></div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Date d'expiration</label>
+                                        <input type="text" name="expiry_date" id="expiry_date" class="form-input" placeholder="MM/AA" maxlength="5" required>
+                                        <div class="validation-message" id="expiry_date_error" style="display: none;"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">CVV</label>
+                                        <input type="text" name="cvv" id="cvv" class="form-input" placeholder="123" maxlength="4" required>
+                                        <div class="validation-message" id="cvv_error" style="display: none;"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Nom du titulaire</label>
+                                    <input type="text" name="cardholder_name" id="cardholder_name" class="form-input" placeholder="Nom complet" required>
+                                    <div class="validation-message" id="cardholder_name_error" style="display: none;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PayPal Form -->
+                        <div class="payment-form-card" id="paypalForm" style="display: none;">
+                            <div class="form-header">
+                                <h3 class="form-title">
+                                    <i class="fab fa-paypal"></i>
+                                    Connexion PayPal
+                                </h3>
+                            </div>
+                            <div class="form-content">
+                                <p class="form-description">Vous serez redirigé vers PayPal pour finaliser votre paiement.</p>
+                                <div class="form-group">
+                                    <label class="form-label">Email PayPal</label>
+                                    <input type="email" name="paypal_email" class="form-input" placeholder="votre@email.com">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cash Delivery Form -->
+                        <div class="payment-form-card" id="cashDeliveryForm" style="display: none;">
+                            <div class="form-header">
+                                <h3 class="form-title">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    Paiement à la livraison
+                                </h3>
+                            </div>
+                            <div class="form-content">
+                                <p class="form-description">Vous paierez en espèces lors de la livraison de votre commande.</p>
+                                <div class="form-group">
+                                    <label class="form-label">Montant à payer</label>
+                                    <input type="text" class="form-input readonly" value="{{ order.total_amount }} MAD" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="payment-actions">
+                            <button type="submit" class="submit-btn" id="payButton">
+                                <i class="fas fa-lock"></i>
+                                <span>Payer {{ order.total_amount }} MAD</span>
+                            </button>
+                            
+                            <div class="loading" id="loading">
+                                <div class="spinner"></div>
+                                <p>Traitement du paiement en cours...</p>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Security Badges -->
+                    <div class="security-section">
+                        <div class="security-badges">
+                            <div class="security-badge">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Paiement sécurisé SSL</span>
+                            </div>
+                            <div class="security-badge">
+                                <i class="fas fa-lock"></i>
+                                <span>Données cryptées</span>
+                            </div>
+                            <div class="security-badge">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Garantie de sécurité</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+/* CSS Variables */
+:root {
+    --primary-color: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary-color: #8b5cf6;
+    --accent-color: #06b6d4;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --bg-tertiary: #f3f4f6;
+    --border-color: #e5e7eb;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+}
+
+/* Payment Page */
+.payment-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+/* Hero Section */
+.payment-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 6rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.payment-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-2xl);
+    padding: 0.75rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-description {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+    opacity: 0.9;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Payment Main Section */
+.payment-main {
+    padding: 4rem 0;
+}
+
+.payment-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+/* Order Summary Sidebar */
+.order-summary-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.summary-card, .shipping-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.summary-header, .shipping-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    padding: 1.5rem;
+    color: white;
+}
+
+.summary-title, .shipping-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.summary-content, .shipping-content {
+    padding: 1.5rem;
+}
+
+.order-items {
+    margin-bottom: 1.5rem;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.item-quantity {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.item-price {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.order-total {
+    padding-top: 1rem;
+    border-top: 2px solid var(--border-color);
+}
+
+.total-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-label {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.total-amount {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+/* Shipping Info */
+.shipping-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.shipping-item:last-child {
+    margin-bottom: 0;
+}
+
+.shipping-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.shipping-details {
+    flex: 1;
+}
+
+.shipping-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.shipping-value {
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.shipping-actions {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.edit-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.edit-link:hover {
+    color: var(--primary-dark);
+    transform: translateX(4px);
+}
+
+/* Payment Form Section */
+.payment-form-section {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-2xl);
+    padding: 3rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+}
+
+/* Payment Methods */
+.payment-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.payment-method-card {
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--bg-primary);
+    position: relative;
+}
+
+.payment-method-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.payment-method-card.selected {
+    border-color: var(--primary-color);
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.payment-method-card input[type="radio"] {
+    display: none;
+}
+
+.method-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.method-icon {
+    width: 3rem;
+    height: 3rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.method-info {
+    flex: 1;
+}
+
+.method-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.method-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Payment Form Cards */
+.payment-form-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.form-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    padding: 1.5rem;
+    color: white;
+}
+
+.form-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.form-content {
+    padding: 2rem;
+}
+
+.form-description {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-input.readonly {
+    background: var(--bg-tertiary);
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.card-brand-indicator {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.25rem;
+    opacity: 0.7;
+}
+
+.validation-message {
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+}
+
+.validation-error {
+    color: var(--error-color);
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.validation-success {
+    color: var(--success-color);
+    background-color: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Payment Actions */
+.payment-actions {
+    margin-bottom: 2rem;
+}
+
+.submit-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.25rem 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: var(--radius-xl);
+    font-weight: 600;
+    font-size: 1.125rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.submit-btn:disabled {
+    background: var(--text-muted);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.loading {
+    display: none;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.spinner {
+    border: 3px solid var(--bg-tertiary);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Security Section */
+.security-section {
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.security-badges {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.security-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--success-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .payment-layout {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    
+    .order-summary-sidebar {
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-description {
+        font-size: 1.125rem;
+    }
+    
+    .payment-methods-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .payment-form-section {
+        padding: 2rem;
+    }
+    
+    .security-badges {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .payment-hero {
+        padding: 4rem 0 3rem;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .section-title {
+        font-size: 1.25rem;
+    }
+    
+    .payment-form-section {
+        padding: 1.5rem;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-up {
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+{% endblock %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentMethods = document.querySelectorAll('.payment-method-card');
+    const creditCardForm = document.getElementById('creditCardForm');
+    const paypalForm = document.getElementById('paypalForm');
+    const cashDeliveryForm = document.getElementById('cashDeliveryForm');
+    const payButton = document.getElementById('payButton');
+    const loading = document.getElementById('loading');
+    const form = document.getElementById('paymentForm');
+
+    // Payment method selection
+    paymentMethods.forEach(method => {
+        method.addEventListener('click', function() {
+            // Remove selected class from all methods
+            paymentMethods.forEach(m => m.classList.remove('selected'));
+            
+            // Add selected class to clicked method
+            this.classList.add('selected');
+            
+            // Check the radio button
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            // Show/hide forms
+            creditCardForm.style.display = 'none';
+            paypalForm.style.display = 'none';
+            cashDeliveryForm.style.display = 'none';
+            
+            const methodType = this.dataset.method;
+            if (methodType === 'credit_card') {
+                creditCardForm.style.display = 'block';
+            } else if (methodType === 'paypal') {
+                paypalForm.style.display = 'block';
+            } else if (methodType === 'cash_delivery') {
+                cashDeliveryForm.style.display = 'block';
+            }
+        });
+    });
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
+        if (!selectedMethod) {
+            e.preventDefault();
+            alert('Veuillez sélectionner une méthode de paiement.');
+            return;
+        }
+        
+        // Show loading state
+        payButton.disabled = true;
+        payButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traitement en cours...';
+        loading.style.display = 'block';
+        
+        // Reset loading state after 15 seconds (fallback)
+        setTimeout(() => {
+            payButton.disabled = false;
+            payButton.innerHTML = '<i class="fas fa-lock"></i><span>Payer {{ order.total_amount }} MAD</span>';
+            loading.style.display = 'none';
+        }, 15000);
+    });
+});
+</script>
+{% endblock %}
